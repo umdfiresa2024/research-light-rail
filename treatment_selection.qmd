@@ -51,7 +51,7 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y13<-df3 |>
-  filter(share_rail==0 & share_light>0.1)
+  mutate(year=2013)
 
 #NC, TX, MN
 id<-c(4008, 6008, 5027)
@@ -84,7 +84,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y04<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2004)
 ```
 
@@ -113,7 +112,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y05<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2005)
 ```
 
@@ -142,7 +140,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y06<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2006)
 ```
 
@@ -171,7 +168,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y07<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2007)
 ```
 
@@ -205,7 +201,6 @@ df_az<-df3 |>
 id_az<-c(9032, 9034, 9131, 9136, 9172, 9169, 9132, 9140, 9209)
 
 df_y08<-df3 |>
-  filter(ID %in% id)|>
   mutate(year=2008)
 
 az_y08<-df3 |>
@@ -238,7 +233,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y09<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2009)
 
 az_y09<-df3 |>
@@ -271,7 +265,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y10<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2010)
 
 az_y10<-df3 |>
@@ -304,7 +297,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y11<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2011)
 
 az_y11<-df3 |>
@@ -337,7 +329,6 @@ df3<-pivot_wider(df2,
   mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
 
 df_y11<-df3 |>
-  filter(ID %in% id) |>
   mutate(year=2012)
 
 az_y12<-df3 |>
@@ -348,7 +339,7 @@ az_y12<-df3 |>
 ## Charlotte, NC Light Rail Shares
 
 ```{r}
-charlotte<-rbind(df_y07, df_y08, df_y09, df_y10) |>
+charlotte<-rbind(df_y07, df_y08, df_y09, df_y10, df_y11) |>
   filter(State=="NC")
 
 ggplot(data=charlotte)+
@@ -399,4 +390,36 @@ tx<-rbind(df_y04, df_y05, df_y06, df_y072) |>
 ggplot(data=tx)+
   geom_line(aes(y=share_light, x=year, col="light rail"))+
   geom_line(aes(y=share_bus, x=year, col="bus"))
+```
+
+## Control cities construction
+
+```{r}
+df_y072<-df_y07 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y082<-df_y08 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y092<-df_y09 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y102<-df_y10 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y112<-df_y11 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+cntrl<-rbind(df_y04, df_y05, df_y06, df_y072, df_y082, df_y092, df_y102, df_y112) |>
+  group_by(ID, year) |>
+  summarize(bus=sum(bus), 
+            LR=sum(LR), 
+            rail=sum(rail), 
+            oth=sum(oth), 
+            total=sum(total))
 ```
