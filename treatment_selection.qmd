@@ -535,4 +535,5 @@ tx_cntrl<-merge(all_04_08, id_ua, by="ID") |>
 
 ```{r}
 cities<-c(charlotte_cntrl$Urbanized.Area, az_cntrl$Urbanized.Area, mn_cntrl$Urbanized.Area, tx_cntrl$Urbanized.Area)
+write.csv(cities, "cntrl_cities.csv")
 ```
