@@ -1,0 +1,24 @@
+---
+title: "Sythetic Control Notes"
+author: "Thanicha"
+format: html
+editor: visual
+---
+
+-   The control group are untreated units.
+
+-   The set of predictors $k$ for unit $j$ $X_{1j},...,X_{kj}$ are unaffected by the intervention.
+
+Bias bound
+
+-   Linear factor model for the control variable $Y_{jt} ^N = \delta_t + \theta_t Z_j + \lambda _t \mu_j + \epsilon_{jt}$
+
+    -   $Z_j$ are observed predictors (factor loadings)
+
+    -   $\mu_j$ are unobserved predictors (factor loadings)
+
+    -   A synthetic control that reproduces the values of $Z_1$ and $\mu_1$ would provide an unbiased estimator for the treatment effect of the treated.
+
+    -   Overfitting bias - when $\mu_j$ is unobserved, small pre-intervention period, large variations in transitory shocks.
+
+## 

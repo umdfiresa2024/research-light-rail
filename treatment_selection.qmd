@@ -48,7 +48,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y13<-df3 |>
   mutate(year=2013)
@@ -81,7 +81,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y04<-df3 |>
   mutate(year=2004)
@@ -109,7 +109,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y05<-df3 |>
   mutate(year=2005)
@@ -137,7 +137,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y06<-df3 |>
   mutate(year=2006)
@@ -165,7 +165,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y07<-df3 |>
   mutate(year=2007)
@@ -193,7 +193,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_az<-df3 |>
   filter(State=="AZ")
@@ -230,7 +230,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y09<-df3 |>
   mutate(year=2009)
@@ -262,7 +262,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y10<-df3 |>
   mutate(year=2010)
@@ -294,7 +294,7 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
 df_y11<-df3 |>
   mutate(year=2011)
@@ -326,9 +326,9 @@ df3<-pivot_wider(df2,
                  values_from = "UPT",
                  values_fill=0) |>
   mutate(total=LR+bus+cars+oth+rail) |>
-  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total)
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
 
-df_y11<-df3 |>
+df_y12<-df3 |>
   mutate(year=2012)
 
 az_y12<-df3 |>
@@ -340,7 +340,7 @@ az_y12<-df3 |>
 
 ```{r}
 charlotte<-rbind(df_y07, df_y08, df_y09, df_y10, df_y11) |>
-  filter(State=="NC")
+  filter(ID==4008) 
 
 ggplot(data=charlotte)+
   geom_line(aes(y=share_light, x=year, col="light rail"))+
@@ -356,8 +356,10 @@ az<-rbind(az_y08, az_y09, az_y10, az_y11, az_y12) |>
             cars=sum(cars), 
             LR=sum(LR), 
             rail=sum(rail), 
+            oth=sum(oth),
             total=sum(total)) |>
-  mutate(share_bus=bus/total, share_rail=rail/total, share_light=LR/total)
+  mutate(share_bus=bus/total, share_rail=rail/total, share_light=LR/total, 
+         share_oth=oth/total, share_cars=cars/total)
 
 ggplot(data=az)+
   geom_line(aes(y=share_light, x=year, col="light rail"))+
@@ -385,6 +387,7 @@ ggplot(data=mn)+
 
 ```{r}
 tx<-rbind(df_y04, df_y05, df_y06, df_y072) |>
+  mutate(share_oth=oth/total, share_cars=cars/total) |>
   filter(ID==6008)
 
 ggplot(data=tx)+
@@ -392,7 +395,7 @@ ggplot(data=tx)+
   geom_line(aes(y=share_bus, x=year, col="bus"))
 ```
 
-## Control cities construction
+## Control cities construction for Charlotte
 
 ```{r}
 df_y072<-df_y07 |>
@@ -415,11 +418,121 @@ df_y112<-df_y11 |>
   ungroup() |>
   dplyr::select(-State, -Name) 
 
-cntrl<-rbind(df_y04, df_y05, df_y06, df_y072, df_y082, df_y092, df_y102, df_y112) |>
+all_04_11<-rbind(df_y04, df_y05, df_y06, df_y072, df_y082, df_y092, 
+                 df_y102, df_y112) |>
   group_by(ID, year) |>
   summarize(bus=sum(bus), 
             LR=sum(LR), 
             rail=sum(rail), 
+            cars=sum(cars),
             oth=sum(oth), 
             total=sum(total))
+
+sum_04_11<-all_04_11 |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, 
+         share_oth=oth/total, share_cars=cars/total) |>
+  group_by(ID) |>
+  summarize(share_light=mean(share_light), share_rail=mean(share_rail)) |>
+  filter(share_light==0, share_rail==0)
+```
+
+Match ID to cities
+
+```{r}
+id_ua <- read.csv("NTD/2013_Operating_Stats.csv") |>
+  group_by(Urbanized.Area, ID) |>
+  tally() |>
+  select(-n)
+```
+
+Find light rail and rail shares by city, not by ID
+
+```{r}
+charlotte_cntrl<-merge(all_04_11, id_ua, by="ID") |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, 
+         share_oth=oth/total, share_cars=cars/total) |>
+  group_by(Urbanized.Area) |>
+  summarize(share_light=mean(share_light), 
+            share_rail=mean(share_rail),
+            share_bus=mean(share_bus), 
+            share_oth=mean(share_oth), 
+            share_cars=mean(share_cars)) |>
+  filter(share_light==0, share_rail==0, share_oth<0.1) |>
+  filter(str_detect(Urbanized.Area, ", NC") | str_detect(Urbanized.Area, ", SC"))
+```
+
+## Control cities construction for Phoenix
+
+```{r}
+df_y122<-df_y12 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+all_04_11<-rbind(df_y05, df_y06, df_y072, df_y082, df_y092, df_y102, df_y112, df_y122) |>
+  group_by(ID, year) |>
+  summarize(bus=sum(bus), 
+            LR=sum(LR), 
+            rail=sum(rail), 
+            cars=sum(cars),
+            oth=sum(oth), 
+            total=sum(total))
+
+az_cntrl<-merge(all_04_11, id_ua, by="ID") |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, 
+         share_oth=oth/total, share_cars=cars/total) |>
+  group_by(Urbanized.Area) |>
+  summarize(share_light=mean(share_light), 
+            share_rail=mean(share_rail),
+            share_bus=mean(share_bus), 
+            share_oth=mean(share_oth), 
+            share_cars=mean(share_cars)) |>
+  filter(share_light==0, share_rail==0) |>
+  filter(str_detect(Urbanized.Area, ", AZ"))
+```
+
+## Control cities construction for MN
+
+```{r}
+all_04_08<-rbind(df_y04, df_y05, df_y06, df_y072, df_y082) |>
+  group_by(ID, year) |>
+  summarize(bus=sum(bus), 
+            LR=sum(LR), 
+            rail=sum(rail), 
+            cars=sum(cars),
+            oth=sum(oth), 
+            total=sum(total))
+
+mn_cntrl<-merge(all_04_08, id_ua, by="ID") |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, 
+         share_oth=oth/total, share_cars=cars/total) |>
+  group_by(Urbanized.Area) |>
+  summarize(share_light=mean(share_light), 
+            share_rail=mean(share_rail),
+            share_bus=mean(share_bus), 
+            share_oth=mean(share_oth), 
+            share_cars=mean(share_cars)) |>
+  filter(share_light==0, share_rail==0, share_oth<0.05) |>
+  filter(str_detect(Urbanized.Area, ", MN") | str_detect(Urbanized.Area, ", WI"))
+```
+
+## Control cities construction for TX
+
+```{r}
+tx_cntrl<-merge(all_04_08, id_ua, by="ID") |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, 
+         share_oth=oth/total, share_cars=cars/total) |>
+  group_by(Urbanized.Area) |>
+  summarize(share_light=mean(share_light), 
+            share_rail=mean(share_rail),
+            share_bus=mean(share_bus), 
+            share_oth=mean(share_oth), 
+            share_cars=mean(share_cars)) |>
+  filter(share_light==0, share_rail==0, share_oth<0.05) |>
+  filter(str_detect(Urbanized.Area, ", TX"))
+```
+
+## **List of control cities**
+
+```{r}
+cities<-c(charlotte_cntrl$Urbanized.Area, az_cntrl$Urbanized.Area, mn_cntrl$Urbanized.Area, tx_cntrl$Urbanized.Area)
 ```
