@@ -1,0 +1,43 @@
+"Address","lon","lat","address","joint_address"
+"Asheville, NC",-82.5514869,35.5950581,"asheville, nc, usa",NA
+"Columbia, SC",-81.0348144,34.0007104,"columbia, sc, usa",NA
+"Concord, NC",-80.579511,35.4087517,"concord, nc, usa",NA
+"Durham, NC",-78.898619,35.9940329,"durham, nc, usa",NA
+"Fayetteville, NC",-78.8783774,35.0523673,"fayetteville, nc, usa",NA
+"Greenville, SC",-82.3940104,34.8526176,"greenville, sc, usa",NA
+"Wilmington, NC",-77.8868117,34.2103894,"wilmington, nc, usa",NA
+"Winston-Salem, NC",-80.244216,36.0998596,"winston-salem, nc, usa",NA
+"Flagstaff, AZ",-111.651302,35.1982836,"flagstaff, az, usa",NA
+"Lake Havasu City, AZ",-114.3224548,34.483901,"lake havasu city, az, usa",NA
+"Sierra Vista, AZ",-110.2772856,31.5455001,"sierra vista, az, usa",NA
+"Tucson, AZ",-110.9741769,32.2539787,"tucson, az, usa",NA
+"Janesville, WI",-89.0187222,42.6827885,"janesville, wi, usa",NA
+"Madison, WI",-89.4007501,43.0721661,"madison, wi, usa",NA
+"Racine, WI",-87.7828523,42.7261309,"racine, wi, usa",NA
+"Rochester, MN",-92.4801989,44.0121221,"rochester, mn, usa",NA
+"Wausau, WI",-89.6301221,44.9591352,"wausau, wi, usa",NA
+"Austin, TX",-97.7430608,30.267153,"austin, tx, usa",NA
+"Beaumont, TX",-94.1265562,30.080174,"beaumont, tx, usa",NA
+"Brownsville, TX",-97.4974838,25.9017472,"brownsville, tx, usa",NA
+"Corpus Christi, TX",-97.396381,27.8005828,"corpus christi, tx, usa",NA
+"El Paso, TX-NM",-106.4850217,31.7618778,"el paso, tx, usa",NA
+"Laredo, TX",-99.5075519,27.5035613,"laredo, tx, usa",NA
+"Lubbock, TX",-101.8456417,33.5845617,"lubbock, tx, usa",NA
+"Odessa, TX",-102.3676431,31.8456816,"odessa, tx, usa",NA
+"San Antonio, TX",-98.4945922,29.4251905,"san antonio, tx, usa",NA
+"Waco, TX",-97.1466695,31.549333,"waco, tx, usa",NA
+"Charlotte, NC",-80.8431267,35.2270869,"charlotte, nc, usa",NA
+"Minneapolis-St. Paul, MN",-93.2009998,44.9374831,"twin cities, mn, usa",NA
+"Houston, TX",-95.3698028,29.7604267,"houston, tx, usa",NA
+"Socastee, SC",-78.9983676,33.683504,"socastee, sc, usa","Myrtle Beach-Socastee, SC-NC"
+"Myrtle Beach, SC",-78.8802094,33.6954218,"myrtle beach, sc, usa","Myrtle Beach-Socastee, SC-NC"
+"Charleston, SC",-79.9319664,32.7833163,"charleston, sc, usa","Charleston-North Charleston, SC"
+"North Charleston, SC",-80.0113869,32.8769132,"north charleston, sc, usa","Charleston-North Charleston, SC"
+"Duluth, MN",-92.1004852,46.7866719,"duluth, mn, usa","Duluth, MN-WI"
+"College Station, TX",-96.3344068,30.627977,"college station, tx, usa","College Station-Bryan, TX"
+"Bryan, TX",-96.3699632,30.6743643,"bryan, tx, usa","College Station-Bryan, TX"
+"Phoenix, AZ",-112.0740373,33.4483771,"phoenix, az, usa","Phoenix-Mesa, AZ"
+"Mesa, AZ",-111.8314724,33.4151843,"mesa, az, usa","Phoenix-Mesa, AZ"
+"Denton, TX",-97.1330683,33.2148412,"denton, tx, usa","Denton-Lewisville, TX"
+"Lewisville, TX",-96.9941903,33.0463292,"lewisville, tx, usa","Denton-Lewisville, TX"
+"Beloit, WI",-89.0317765,42.5083482,"beloit, wi 53511, usa","Beloit, WI-IL"

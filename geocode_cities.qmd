@@ -1,0 +1,88 @@
+---
+title: "Geocode City Centers"
+format: html
+editor: visual
+---
+
+```{r}
+library("tidyverse")
+library("ggmap")
+```
+
+```{r}
+c<-read.csv("cntrl_cities.csv")
+
+t<-c("Charlotte, NC", "Phoenix-Mesa, AZ", "Minneapolis-St. Paul, MN", "Houston, TX")
+
+cities<-c(c$x, t)
+```
+
+register_google(key = "\[your Google API key\]", write = TRUE)
+
+```{r}
+addr <- data.frame(Address = cities,
+                   stringsAsFactors = FALSE)
+
+addr.geo <- mutate_geocode(addr, location = Address, output = "latlona")
+```
+
+geocode address for non-unique cities
+
+```{r}
+c2<-c("Socastee, SC",
+      "Myrtle Beach, SC",
+      "Charleston, SC",
+      "North Charleston, SC",
+      "Duluth, MN",
+      "Duluth, WI",
+      "College Station, TX",
+      "Bryan, TX",
+      "Phoenix, AZ",
+      "Mesa, AZ",
+      "Denton, TX",
+      "Lewisville, TX",
+      "Beloit, WI",
+      "Beloit, IL")
+
+addr2 <- data.frame(Address = c2,
+                   stringsAsFactors = FALSE)
+
+addr.geo2 <- mutate_geocode(addr2, location = Address, output = "latlona")
+```
+
+```{r}
+allc<-rbind(addr.geo, addr.geo2) 
+
+allc2<-allc |>
+  mutate(joint_address=ifelse(str_detect(Address, "Phoenix") | 
+                                str_detect(Address, "Mesa"),
+                                "Phoenix-Mesa, AZ", NA)) |>
+  mutate(joint_address=ifelse(str_detect(Address, "Charleston"),
+                                "Charleston-North Charleston, SC", 
+                              joint_address)) |>
+  mutate(joint_address=ifelse(str_detect(Address, "Duluth"),
+                                "Duluth, MN-WI", 
+                              joint_address)) |>
+  mutate(joint_address=ifelse(str_detect(Address, "Beloit"),
+                                "Beloit, WI-IL", 
+                              joint_address)) |>
+  mutate(joint_address=ifelse(str_detect(Address, "Myrtle Beach") | 
+                                str_detect(Address, "Socastee"),
+                                "Myrtle Beach-Socastee, SC-NC", 
+                              joint_address)) |>
+  mutate(joint_address=ifelse(str_detect(Address, "College Station") | 
+                                str_detect(Address, "Bryan"),
+                                "College Station-Bryan, TX", 
+                              joint_address)) |>
+  mutate(joint_address=ifelse(str_detect(Address, "Denton") | 
+                                str_detect(Address, "Lewisville"),
+                                "Denton-Lewisville, TX", 
+                              joint_address))
+
+allc3 <- allc2 |>
+  filter(Address != joint_address | is.na(joint_address)) |>
+  filter(Address != "Duluth, WI") |>
+  filter(Address != "Beloit, IL")
+
+write.csv(allc3, "allcities_latlon,csv", row.names = F)
+```
