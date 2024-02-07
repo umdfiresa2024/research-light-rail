@@ -84,5 +84,5 @@ allc3 <- allc2 |>
   filter(Address != "Duluth, WI") |>
   filter(Address != "Beloit, IL")
 
-write.csv(allc3, "allcities_latlon,csv", row.names = F)
+write.csv(allc3, "allcities_latlon.csv", row.names = F)
 ```
