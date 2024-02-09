@@ -1,0 +1,35 @@
+"","Address","lon","lat","address","joint_address"
+"1","Asheville, NC",-82.5514869,35.5950581,"asheville, nc, usa",NA
+"2","Columbia, SC",-81.0348144,34.0007104,"columbia, sc, usa",NA
+"3","Concord, NC",-80.579511,35.4087517,"concord, nc, usa",NA
+"4","Durham, NC",-78.898619,35.9940329,"durham, nc, usa",NA
+"5","Fayetteville, NC",-78.8783774,35.0523673,"fayetteville, nc, usa",NA
+"6","Greenville, SC",-82.3940104,34.8526176,"greenville, sc, usa",NA
+"7","Wilmington, NC",-77.8868117,34.2103894,"wilmington, nc, usa",NA
+"8","Winston-Salem, NC",-80.244216,36.0998596,"winston-salem, nc, usa",NA
+"9","Flagstaff, AZ",-111.651302,35.1982836,"flagstaff, az, usa",NA
+"10","Lake Havasu City, AZ",-114.3224548,34.483901,"lake havasu city, az, usa",NA
+"11","Sierra Vista, AZ",-110.2772856,31.5455001,"sierra vista, az, usa",NA
+"12","Tucson, AZ",-110.9741769,32.2539787,"tucson, az, usa",NA
+"13","Janesville, WI",-89.0187222,42.6827885,"janesville, wi, usa",NA
+"14","Madison, WI",-89.4007501,43.0721661,"madison, wi, usa",NA
+"15","Racine, WI",-87.7828523,42.7261309,"racine, wi, usa",NA
+"16","Rochester, MN",-92.4801989,44.0121221,"rochester, mn, usa",NA
+"17","Wausau, WI",-89.6301221,44.9591352,"wausau, wi, usa",NA
+"18","Austin, TX",-97.7430608,30.267153,"austin, tx, usa",NA
+"19","Beaumont, TX",-94.1265562,30.080174,"beaumont, tx, usa",NA
+"20","Brownsville, TX",-97.4974838,25.9017472,"brownsville, tx, usa",NA
+"21","Corpus Christi, TX",-97.396381,27.8005828,"corpus christi, tx, usa",NA
+"22","El Paso, TX-NM",-106.4850217,31.7618778,"el paso, tx, usa",NA
+"23","Laredo, TX",-99.5075519,27.5035613,"laredo, tx, usa",NA
+"24","Lubbock, TX",-101.8456417,33.5845617,"lubbock, tx, usa",NA
+"25","Odessa, TX",-102.3676431,31.8456816,"odessa, tx, usa",NA
+"26","San Antonio, TX",-98.4945922,29.4251905,"san antonio, tx, usa",NA
+"27","Waco, TX",-97.1466695,31.549333,"waco, tx, usa",NA
+"28","Charlotte, NC",-80.8431267,35.2270869,"charlotte, nc, usa",NA
+"29","Minneapolis-St. Paul, MN",-93.2009998,44.9374831,"twin cities, mn, usa",NA
+"30","Houston, TX",-95.3698028,29.7604267,"houston, tx, usa",NA
+"31","Duluth, MN",-92.1004852,46.7866719,"duluth, mn, usa","Duluth, MN-WI"
+"32","Phoenix, AZ",-112.0740373,33.4483771,"phoenix, az, usa","Phoenix-Mesa, AZ"
+"33","Mesa, AZ",-111.8314724,33.4151843,"mesa, az, usa","Phoenix-Mesa, AZ"
+"34","Beloit, WI",-89.0317765,42.5083482,"beloit, wi 53511, usa","Beloit, WI-IL"
