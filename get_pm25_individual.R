@@ -45,7 +45,7 @@ for (m in 1:length(months)) {
     
   }
   write.csv(days_output, 
-            paste0("PM25_daily/",
+            paste0("PM25_daily/indv_",
                    months[m],
                    ".csv")
             , row.names = F)
