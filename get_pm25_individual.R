@@ -21,7 +21,7 @@ pts_buffer<-buffer(x, width = 10000)
 path<-"G:/Shared drives/2023 FIRE-SA PRM/Spring Research/Light Rails/DATA/PM25/"
 months<-dir(path)
 # for each month
-for (m in 1:length(months)) {
+for (m in 161:length(months)) {
   print(months[m])
   #for (m in 1:2) {
   days<-dir(paste0(path,months[m]))
