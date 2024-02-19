@@ -37,6 +37,8 @@ plot(agg3)
 agg3<-c(agg, agg2)
 plot(agg3)
 
+agg4<-rbind(agg, agg2, agg3)
+
 ###figure out how to combine agg, agg2, and agg3 in one SpatVectorFile
 ###Call the output agg4
 
