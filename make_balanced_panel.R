@@ -32,3 +32,5 @@ table(merra$add)
 
 #pm2.5
 f<-dir("PM25_daily", pattern="indv")
+
+i<-1
