@@ -7,7 +7,9 @@ editor: visual
 
 -   The control group are untreated units.
 
--   The set of predictors $k$ for unit $j$ $X_{1j},...,X_{kj}$ are unaffected by the intervention.
+-   The set of predictors $k$ for unit $j$ $X_{1j},...,X_{kj}$ included pre-intervention values of $Y_{jt}$ and which are unaffected by the intervention.
+
+-   $\tau = Y_I - Y_N$ is the effect of the intervention
 
 Bias bound
 
@@ -21,4 +23,8 @@ Bias bound
 
     -   Overfitting bias - when $\mu_j$ is unobserved, small pre-intervention period, large variations in transitory shocks.
 
-## 
+-   $X_1$ vector that includes $Z_1$ and pre-intervention outcomes from the treated unit
+
+-   $X_0$ vector that includes $Z_0$ and pre-intervention outcomes from untreated unit.
+
+-   $X_1 = X_0 W*$ is the synthetic control that can represent the treated unit.
