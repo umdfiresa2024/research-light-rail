@@ -34,9 +34,6 @@ plot(pts_buffer)
 agg3<-aggregate(pts_buffer)
 plot(agg3)
 
-agg3<-c(agg, agg2)
-plot(agg3)
-
 agg4<-rbind(agg, agg2, agg3)
 
 ###figure out how to combine agg, agg2, and agg3 in one SpatVectorFile
