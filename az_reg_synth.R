@@ -35,7 +35,7 @@ df2<-df |>
   filter(add %in% cgroup) |>
   mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
   mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
-  mutate(treat=ifelse(add=="Minneapolis-St. Paul, MN" & date>=open, 1, 0)) |>
+  mutate(treat=ifelse(add=="Phoenix-Mesa, AZ" & date>=open, 1, 0)) |>
   mutate(time=interval(start, as.Date(date))/months(1)) |>
   mutate(add_num=factor(add, levels=cgroup)) |>
   mutate(add_num=as.numeric(add_num)) |>

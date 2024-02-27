@@ -1,0 +1,60 @@
+---
+title: "Light Rail Regressions"
+format: html
+editor: visual
+---
+
+```{r}
+#| message: false
+
+library("tidyverse")
+library("Synth")
+library("gsynth")
+```
+
+## Charlotte 
+
+Regressions with all data
+
+```{r}
+p<-read.csv("pm25_allcities_lrbuff.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Charlotte, NC", "Asheville, NC", "Charleston-North Charleston, SC", 
+          "Columbia, SC", "Concord, NC", "Durham, NC", "Fayetteville, NC", "Greenville, SC", 
+          "Myrtle Beach-Socastee, SC-NC", "Wilmington, NC", "Winston-Salem, NC")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Charlotte, NC",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=c("Charlotte, NC", "Asheville, NC", 
+                                      "Charleston-North Charleston, SC", 
+                                      "Columbia, SC", "Concord, NC", 
+                                      "Durham, NC", "Fayetteville, NC", 
+                                      "Greenville, SC", 
+                                      "Myrtle Beach-Socastee, SC-NC", 
+                                      "Wilmington, NC", "Winston-Salem, NC"))) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)
+
+summary(m1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 as.factor(month) + year, data=df2))
+```
+
+Regressions without construction time
+
+```{r}
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+summary(m2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 as.factor(month) + year, data=df3))
+```

@@ -100,6 +100,41 @@ p<-rbind(p_o2, p_indv) |>
 
 write.csv(p, "pm25_allcities.csv", row.names = F)
 
+#############pm2.5 around light rails for treated cities#########################
+p<-read.csv("pm25_allcities.csv")
+f<-dir("PM25_daily", pattern="lr_centroid")
+
+p_indv<-c()
+for (i in 1:length(f)) {
+  print(f[i])
+  pdf<-read.csv(paste0("PM25_daily/",f[i])) |>
+    mutate(year=substr(date, 1, 4)) |>
+    mutate(month=substr(date, 5, 6)) |>
+    group_by(city_num, month, year) |>
+    summarise(pm25=mean(pm25))
+  
+  p_indv<-rbind(p_indv, pdf)
+}
+
+p_i<-p_indv |>
+  ungroup() |>
+  mutate(add=ifelse(city_num==1, "Charlotte, NC", NA)) |>
+  mutate(add=ifelse(city_num==2, "Houston, TX", add)) |>
+  mutate(add=ifelse(city_num==3, "Minneapolis-St. Paul, MN", add)) |>
+  mutate(add=ifelse(city_num==4, "Phoenix-Mesa, AZ", add)) |>
+  select(-city_num)
+
+treatc<-c("Charlotte, NC", "Houston, TX", "Minneapolis-St. Paul, MN", "Phoenix-Mesa, AZ")
+
+pall<-p |>
+  filter(!(add %in% treatc)) |>
+  select(-date)
+
+p2<-rbind(p_i, pall) |>
+  mutate(date=as.Date(paste0("01/", month, "/", year), format="%d/%m/%Y")) 
+
+write.csv(p2, "pm25_allcities_lrbuff.csv", row.names = F)
+
 #############merge data #########################################################
 
 p<-read.csv("pm25_allcities.csv")
