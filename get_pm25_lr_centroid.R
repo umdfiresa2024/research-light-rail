@@ -41,7 +41,7 @@ plot(pts_buffer)
 path<-"G:/Shared drives/2023 FIRE-SA PRM/Spring Research/Light Rails/DATA/PM25/"
 months<-dir(path)
 # for each month
-for (m in 1:length(months)) {
+for (m in 175:length(months)) {
   print(months[m])
   days<-dir(paste0(path,months[m]))
   
@@ -69,3 +69,9 @@ for (m in 1:length(months)) {
             , row.names = F)
   
 }
+
+write.csv(days_output, 
+          paste0("PM25_daily/lr_centroid_20140712",
+                 months[m],
+                 ".csv")
+          , row.names = F)
