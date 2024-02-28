@@ -48,7 +48,7 @@ summary(test$pm25)
 cm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 ```
 
 Regressions without construction time
@@ -60,7 +60,7 @@ df3<-df2 |>
 cm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 Regressions with city-level data
@@ -96,7 +96,7 @@ summary(test$pm25)
 cm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 
 df3<-df2 |>
   filter(!(time>12 & time<48))
@@ -104,7 +104,7 @@ df3<-df2 |>
 cm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ```{r}
@@ -116,7 +116,7 @@ stargazer(cm1, cm2, cm3, cm4,  type="text",
 cm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ## Houston
@@ -150,7 +150,7 @@ df2<-df |>
 hm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 
 ```
 
@@ -161,7 +161,7 @@ df3<-df2 |>
 hm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ```{r}
@@ -193,7 +193,7 @@ df2<-df |>
 hm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 
 df3<-df2 |>
   filter(!(time>12 & time<48))
@@ -201,7 +201,7 @@ df3<-df2 |>
 hm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 
 stargazer(hm1, hm2, hm3, hm4,  type="text", 
  dep.var.labels=c("PM25"), out="models_houston.txt")
@@ -211,7 +211,7 @@ stargazer(hm1, hm2, hm3, hm4,  type="text",
 hm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 Time period in Park & Senor (2002-2005)
@@ -220,10 +220,12 @@ Time period in Park & Senor (2002-2005)
 df3<-df2 |>
   filter(year>=2002 & year<=2005)
 
-summary(m2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+summary(m2<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3))
+                 as.factor(month) + as.factor(year), data=df3))
+
+
 ```
 
 ## Minneapolis
@@ -260,7 +262,7 @@ df2<-df |>
 mm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 
 ```
 
@@ -272,7 +274,7 @@ df3<-df2 |>
 mm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ```{r}
@@ -306,7 +308,7 @@ df2<-df |>
 mm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 
 df3<-df2 |>
   filter(!(time>12 & time<48))
@@ -314,7 +316,7 @@ df3<-df2 |>
 mm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 
 stargazer(mm1, mm2, mm3, mm4,  type="text", 
  dep.var.labels=c("PM25"), out="models_mn.txt")
@@ -324,7 +326,7 @@ stargazer(mm1, mm2, mm3, mm4,  type="text",
 mm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ## Phoenix
@@ -355,7 +357,7 @@ df2<-df |>
 pm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 ```
 
 ```{r}
@@ -366,7 +368,7 @@ df3<-df2 |>
 pm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ```{r}
@@ -394,7 +396,7 @@ df2<-df |>
 pm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df2)
+                 as.factor(month) + as.factor(year), data=df2)
 
 df3<-df2 |>
   filter(!(time>12 & time<48))
@@ -402,7 +404,7 @@ df3<-df2 |>
 pm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 
 stargazer(pm1, pm2, pm3, pm4,  type="text", 
  dep.var.labels=c("PM25"), out="models_phoenix.txt")
@@ -412,7 +414,7 @@ stargazer(pm1, pm2, pm3, pm4,  type="text",
 pm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
                  PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + year, data=df3)
+                 as.factor(month) + as.factor(year), data=df3)
 ```
 
 ```{r}

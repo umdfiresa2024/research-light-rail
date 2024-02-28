@@ -77,4 +77,14 @@ path.plot(synth.res    = synth.out,
 abline(v   = 48,
        lty = 2)
 
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-10, 10),
+          Main         = ""
+)
+
+abline(v   = 48,
+       lty = 2)
 
