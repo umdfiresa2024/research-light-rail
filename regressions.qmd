@@ -11,11 +11,12 @@ library("tidyverse")
 library("Synth")
 library("gsynth")
 library("stargazer")
+library("lfe")
 ```
 
 ## Charlotte
 
-Regressions with all data
+### Around light rail route
 
 ```{r}
 p<-read.csv("pm25_allcities_lrbuff.csv")
@@ -45,10 +46,20 @@ test<-df2 |>
   filter(add=="Charlotte, NC")
 summary(test$pm25)
 
-cm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+cm1<-felm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + as.factor(year), data=df2)
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
+            month + year, data=df2)
+
+df3<-df2 |>
+  mutate(contime=ifelse(time>12 & time<48,1,0))
+
+cm2<-felm(pm25 ~ opentime:treatcity + opentime + treatcity +
+          contime:treatcity + contime + 
+          PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+          PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
+            month + year, data=df3)
+
 ```
 
 Regressions without construction time
@@ -57,15 +68,16 @@ Regressions without construction time
 df3<-df2 |>
   filter(!(time>12 & time<48))
 
-cm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+cm3<-felm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + as.factor(year), data=df3)
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
+            month + year, data=df3)
 ```
 
-Regressions with city-level data
+### City-level data
 
 ```{r}
+#| echo: false
 p<-read.csv("pm25_allcities.csv")
 m<-read.csv("merra_allcities.csv")
 
@@ -93,30 +105,33 @@ test<-df2 |>
   filter(add=="Charlotte, NC")
 summary(test$pm25)
 
-cm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+cm4<-felm(pm25 ~ opentime:treatcity + opentime + treatcity +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + as.factor(year), data=df2)
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
+            month + year, data=df2)
 
 df3<-df2 |>
-  filter(!(time>12 & time<48))
+  mutate(contime=ifelse(time>12 & time<48,1,0))
 
-cm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + as.factor(year), data=df3)
+cm5<-felm(pm25 ~ opentime:treatcity + opentime + treatcity +
+          contime:treatcity + contime + 
+          PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+          PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
+            month + year, data=df3)
+
+stargazer(cm1, cm2, cm3, cm4, cm5, type="text", 
+ dep.var.labels=c("PM25"), out="Output Tables/models_charlotte.txt")
 ```
 
 ```{r}
-stargazer(cm1, cm2, cm3, cm4,  type="text", 
- dep.var.labels=c("PM25"), out="models_charlotte.txt")
-```
+df3<-df2 |>
+  mutate(contime=ifelse(time>12 & time<48,1,0))
 
-```{r}
-cm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+cm6<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+            contime:treatcity + contime +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + as.factor(year), data=df3)
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
+            month + year, data=df3)
 ```
 
 ## Houston
@@ -411,10 +426,14 @@ stargazer(pm1, pm2, pm3, pm4,  type="text",
 ```
 
 ```{r}
-pm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+df3<-df2 |>
+  mutate(contime=ifelse(time>12 & time<48,1,0))
+
+pm5<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+          contime:treatcity + contime +
                  PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
-                 as.factor(month) + as.factor(year), data=df3)
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2|
+            month+year, data=df3)
 ```
 
 ```{r}
