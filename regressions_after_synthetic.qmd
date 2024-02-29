@@ -1,0 +1,487 @@
+---
+title: "Light Rail Regressions"
+format: html
+editor: visual
+---
+
+```{r}
+#| message: false
+
+library("tidyverse")
+library("Synth")
+library("gsynth")
+library("stargazer")
+```
+
+## Charlotte
+
+Regressions with all data
+
+```{r}
+p<-read.csv("pm25_allcities_lrbuff.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Charlotte, NC", "Concord, NC", "Winston-Salem, NC", "Columbia, SC")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Charlotte, NC",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96) |>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+test<-df2 |>
+  filter(add=="Charlotte, NC")
+summary(test$pm25)
+
+cm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df2)
+```
+
+Regressions with city-level data
+
+```{r}
+p<-read.csv("pm25_allcities.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Charlotte, NC", "Concord, NC", "Winston-Salem, NC", "Columbia, SC")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Charlotte, NC",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96) |>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+cm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df2)
+
+```
+
+```{r}
+stargazer(cm1, cm2, cm3, cm4,  type="text", 
+ dep.var.labels=c("PM25"), out="models_charlotte.txt")
+```
+
+```{r}
+cm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+```
+
+## Houston
+
+```{r}
+p<-read.csv("pm25_allcities_lrbuff.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Houston, TX", "Austin, TX", "Beaumont, TX", "Brownsville, TX",
+          "College Station-Bryan, TX", "Corpus Christi, TX", 
+          "Denton-Lewisville, TX", 
+          "El Paso, TX-NM", "Laredo, TX", "Waco, TX",
+          "Lubbock, TX", "Odessa, TX", "San Antonio, TX")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/01/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/01/2004", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Houston, TX",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+#alltime periods
+hm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df2)
+
+```
+
+```{r}
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+hm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+```
+
+```{r}
+p<-read.csv("pm25_allcities.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Houston, TX", "Austin, TX", "Beaumont, TX", "Brownsville, TX",
+          "College Station-Bryan, TX", "Corpus Christi, TX", 
+          "Denton-Lewisville, TX", 
+          "El Paso, TX-NM", "Laredo, TX", "Waco, TX",
+          "Lubbock, TX", "Odessa, TX", "San Antonio, TX")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/01/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/01/2004", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Houston, TX",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+#alltime periods
+hm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df2)
+
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+hm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+
+stargazer(hm1, hm2, hm3, hm4,  type="text", 
+ dep.var.labels=c("PM25"), out="models_houston.txt")
+```
+
+```{r}
+hm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+```
+
+Time period in Park & Senor (2002-2005)
+
+```{r}
+df3<-df2 |>
+  filter(year>=2002 & year<=2005)
+
+summary(m2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3))
+```
+
+## Minneapolis
+
+```{r}
+
+p<-read.csv("pm25_allcities_lrbuff.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Minneapolis-St. Paul, MN", "Beloit, WI-IL", "Duluth, MN-WI", 
+          "Janesville, WI",
+          "Rochester, MN", "Wausau, WI")
+
+test<-df |>
+  filter(add=="Minneapolis-St. Paul, MN")
+summary(test$pm25)
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/06/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/06/2004", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Minneapolis-St. Paul, MN",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+#alltime periods
+mm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
+                 as.factor(month) + year, data=df2)
+
+```
+
+```{r}
+#take out construction time
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+mm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
+                 as.factor(month) + year, data=df3)
+```
+
+```{r}
+p<-read.csv("pm25_allcities.csv")
+m<-read.csv("merra_allcities.csv")
+
+test<-df |>
+  filter(add=="Minneapolis-St. Paul, MN")
+summary(test$pm25)
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Minneapolis-St. Paul, MN", "Beloit, WI-IL", "Duluth, MN-WI", 
+          "Janesville, WI",
+          "Rochester, MN", "Wausau, WI")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/06/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/06/2004", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Minneapolis-St. Paul, MN",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+#alltime periods
+mm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
+                 as.factor(month) + year, data=df2)
+
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+mm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
+                 as.factor(month) + year, data=df3)
+
+stargazer(mm1, mm2, mm3, mm4,  type="text", 
+ dep.var.labels=c("PM25"), out="models_mn.txt")
+```
+
+```{r}
+mm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
+                 as.factor(month) + year, data=df3)
+```
+
+## Phoenix
+
+```{r}
+
+p<-read.csv("pm25_allcities_lrbuff.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Phoenix-Mesa, AZ", "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Phoenix-Mesa, AZ",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+#alltime periods
+pm1<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df2)
+```
+
+```{r}
+#take out construction time
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+pm2<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+```
+
+```{r}
+p<-read.csv("pm25_allcities.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Phoenix-Mesa, AZ", "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Phoenix-Mesa, AZ",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+#alltime periods
+pm3<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df2)
+
+df3<-df2 |>
+  filter(!(time>12 & time<48))
+
+pm4<-lm(pm25 ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+
+stargazer(pm1, pm2, pm3, pm4,  type="text", 
+ dep.var.labels=c("PM25"), out="models_phoenix.txt")
+```
+
+```{r}
+pm5<-lm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month) + year, data=df3)
+```
+
+```{r}
+stargazer(cm5, hm5, mm5, pm5,  type="text", 
+ dep.var.labels=c("PM25"), out="models_logs.txt")
+```
+
+## All cities
+
+```{r}
+p<-read.csv("pm25_allcities.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup1<-c("Asheville, NC", "Charleston-North Charleston, SC", "Charlotte, NC",
+          "Columbia, SC", "Concord, NC", "Durham, NC", "Fayetteville, NC",
+          "Greenville, SC", 
+          "Myrtle Beach-Socastee, SC-NC", "Wilmington, NC", "Winston-Salem, NC")
+
+df1<-df |>
+  filter(add %in% cgroup1) |>
+  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(treat=ifelse(add=="Charlotte, NC" & date>=open, 1, 0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup1)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  mutate(group1=1, group2=0, group3=0, group4=0)
+
+cgroup2<-c("Houston, TX", "Austin, TX", "Beaumont, TX", "Brownsville, TX",
+          "College Station-Bryan, TX", "Corpus Christi, TX", 
+          "Denton-Lewisville, TX", 
+          "El Paso, TX-NM", "Laredo, TX", "Waco, TX",
+          "Lubbock, TX", "Odessa, TX", "San Antonio, TX")
+
+df2<-df |>
+  filter(add %in% cgroup2) |>  
+  mutate(start=as.Date("01/01/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/01/2004", format="%d/%m/%Y")) |>
+  mutate(treat=ifelse(add=="Houston, TX" & date>=open, 1, 0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  mutate(group1=0, group2=1, group3=0, group4=0)
+
+cgroup3<-c("Minneapolis-St. Paul, MN", "Beloit, WI-IL", "Duluth, MN-WI", 
+           "Janesville, WI",
+          "Rochester, MN", "Wausau, WI")
+
+df3<-df |>
+  filter(add %in% cgroup3) |>  
+  mutate(start=as.Date("01/06/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/06/2004", format="%d/%m/%Y")) |>
+  mutate(treat=ifelse(add=="Minneapolis-St. Paul, MN" & date>=open, 1, 0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  mutate(group1=0, group2=0, group3=1, group4=0)
+
+cgroup4<-c("Phoenix-Mesa, AZ", "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ")
+
+df4<-df |>
+  filter(add %in% cgroup) |>  
+  mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
+  mutate(treat=ifelse(add=="Phoenix-Mesa, AZ" & date>=open, 1, 0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  mutate(group1=0, group2=0, group3=0, group4=1)
+
+dfall<-rbind(df1, df2, df3, df4) |>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+
+summary(m1<-lm(pm25 ~ treat + group1 + group2 + group3 + 
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                 as.factor(month):group1 + as.factor(month):group2 +
+         as.factor(month):group3 + as.factor(month) + year, data=dfall))
+
+summary(m2<-lm(pm25 ~ treat + group1 + group2 + group3 + 
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML + 
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 + 
+                 as.factor(month):group1 + as.factor(month):group2 +
+                 as.factor(month):group3 + as.factor(month) + year + as.factor(add), data=dfall))
+```
+
+```{r}
+dfall<-rbind(df1, df4) |>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+summary(m1<-lm(pm25 ~ treat + group1 +
+                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
+                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 +
+                   as.factor(month) + year, data=dfall))
+
+```

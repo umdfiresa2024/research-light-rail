@@ -1,0 +1,230 @@
+---
+title: "Light Rail Synthetic Control"
+format: html
+editor: visual
+---
+
+```{r}
+#| message: false
+
+library("tidyverse")
+library("Synth")
+library("gsynth")
+library("stargazer")
+```
+
+## Charlotte
+
+```{r}
+p<-read.csv("pm25_allcities.csv")
+m<-read.csv("merra_allcities.csv")
+
+df<-merge(p, m, by=c("date", "add", "month", "year"))
+
+cgroup<-c("Charlotte, NC", "Asheville, NC", "Charleston-North Charleston, SC", 
+          "Columbia, SC", "Concord, NC", "Durham, NC", "Fayetteville, NC", 
+          "Greenville, SC", "Myrtle Beach-Socastee, SC-NC", "Wilmington, NC",
+          "Winston-Salem, NC")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Charlotte, NC",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96) |>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+
+```
+
+```{r}
+dataprep.out <-
+  dataprep(
+    df2,
+    predictors            = c("PRECTOT", "PRECSNO", "QSH", "RHOA", "SPEED", 
+                              "TLML","PRECTOT2", "PRECSNO2", "QSH2", "RHOA2",
+                              "SPEED2", "TLML2"),
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "add",
+    treatment.identifier  = 1,
+    controls.identifier   = c(2:11),
+    time.predictors.prior = c(-46:48),
+    time.optimize.ssr     = c(-45:36), #before construction time
+    time.plot             = c(1:96)
+  )
+
+synth.out <- synth(dataprep.out)
+
+print(synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+)
+
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = 48,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = 48,
+       lty = 2)
+```
+
+## Houston
+
+```{r}
+cgroup<-c("Houston, TX", "Austin, TX", "Beaumont, TX", "Brownsville, TX",
+          "College Station-Bryan, TX", "Corpus Christi, TX", 
+          "Denton-Lewisville, TX", 
+          "El Paso, TX-NM", "Laredo, TX", "Waco, TX",
+          "Lubbock, TX", "Odessa, TX", "San Antonio, TX")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/01/2000", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/01/2004", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Houston, TX",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+```
+
+```{r}
+dataprep.out <-
+  dataprep(
+    df2,
+    predictors            = c("PRECTOT", "PRECSNO", "QSH", "RHOA", "SPEED", 
+                              "TLML","PRECTOT2", "PRECSNO2", "QSH2", "RHOA2",
+                              "SPEED2", "TLML2"),
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "add",
+    treatment.identifier  = 1,
+    controls.identifier   = c(2:13),
+    time.predictors.prior = c(0:48),
+    time.optimize.ssr     = c(0:36), #before construction time
+    time.plot             = c(1:96)
+  )
+
+synth.out <- synth(dataprep.out)
+
+print(synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+)
+
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = 48,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-1, 10),
+          Main         = ""
+)
+
+abline(v   = 48,
+       lty = 2)
+```
+
+## Phoenix-Mesa
+
+```{r}
+cgroup<-c("Phoenix-Mesa, AZ", "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ")
+
+df2<-df |>
+  filter(add %in% cgroup) |>
+  mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(add=="Phoenix-Mesa, AZ",1,0)) |>
+  mutate(time=interval(start, as.Date(date))/months(1)) |>
+  mutate(add_num=factor(add, levels=cgroup)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(time<=96)|>
+  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
+         SPEED2=SPEED^2, TLML2=TLML^2)
+```
+
+```{r}
+
+dataprep.out <-
+  dataprep(
+    df2,
+    predictors            = c("PRECTOT", "PRECSNO", "QSH", "RHOA", "SPEED", 
+                              "TLML","PRECTOT2", "PRECSNO2", "QSH2", "RHOA2",
+                              "SPEED2", "TLML2"),
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "add",
+    treatment.identifier  = 1,
+    controls.identifier   = c(2:4),
+    time.predictors.prior = c(-59:48),
+    time.optimize.ssr     = c(-59:36), #before construction time
+    time.plot             = c(1:96)
+  )
+
+synth.out <- synth(dataprep.out)
+
+print(synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+)
+
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = 48,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(0, 10),
+          Main         = ""
+)
+
+abline(v   = 48,
+       lty = 2)
+
+```
