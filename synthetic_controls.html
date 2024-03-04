@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Light Rail Synthetic Control</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="synthetic_controls_files/libs/clipboard/clipboard.min.js"></script>
+<script src="synthetic_controls_files/libs/quarto-html/quarto.js"></script>
+<script src="synthetic_controls_files/libs/quarto-html/popper.min.js"></script>
+<script src="synthetic_controls_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="synthetic_controls_files/libs/quarto-html/anchor.min.js"></script>
+<link href="synthetic_controls_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="synthetic_controls_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="synthetic_controls_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="synthetic_controls_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="synthetic_controls_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Light Rail Synthetic Control</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyverse' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"Synth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'Synth' was built under R version 4.3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gsynth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'gsynth' was built under R version 4.3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"stargazer"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="charlotte" class="level2">
+<h2 class="anchored" data-anchor-id="charlotte">Charlotte</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"pm25_allcities.csv"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>m<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"merra_allcities.csv"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">merge</span>(p, m, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"add"</span>, <span class="st">"month"</span>, <span class="st">"year"</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>cgroup<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Charlotte, NC"</span>, <span class="st">"Asheville, NC"</span>, <span class="st">"Charleston-North Charleston, SC"</span>, </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Columbia, SC"</span>, <span class="st">"Concord, NC"</span>, <span class="st">"Durham, NC"</span>, <span class="st">"Fayetteville, NC"</span>, </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Greenville, SC"</span>, <span class="st">"Myrtle Beach-Socastee, SC-NC"</span>, <span class="st">"Wilmington, NC"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Winston-Salem, NC"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>df2<span class="ot">&lt;-</span>df <span class="sc">|&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(add <span class="sc">%in%</span> cgroup) <span class="sc">|&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">start=</span><span class="fu">as.Date</span>(<span class="st">"01/11/2003"</span>, <span class="at">format=</span><span class="st">"%d/%m/%Y"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">open=</span><span class="fu">as.Date</span>(<span class="st">"01/11/2007"</span>, <span class="at">format=</span><span class="st">"%d/%m/%Y"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">opentime=</span><span class="fu">ifelse</span>(<span class="fu">as.Date</span>(date)<span class="sc">&gt;</span>open,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatcity=</span><span class="fu">ifelse</span>(add<span class="sc">==</span><span class="st">"Charlotte, NC"</span>,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time=</span><span class="fu">interval</span>(start, <span class="fu">as.Date</span>(date))<span class="sc">/</span><span class="fu">months</span>(<span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">add_num=</span><span class="fu">factor</span>(add, <span class="at">levels=</span>cgroup)) <span class="sc">|&gt;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">add_num=</span><span class="fu">as.numeric</span>(add_num)) <span class="sc">|&gt;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time<span class="sc">&lt;=</span><span class="dv">96</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PRECTOT2=</span>PRECTOT<span class="sc">^</span><span class="dv">2</span>, <span class="at">PRECSNO2=</span>PRECSNO<span class="sc">^</span><span class="dv">2</span>, <span class="at">QSH2=</span>QSH<span class="sc">^</span><span class="dv">2</span>, <span class="at">RHOA2=</span>RHOA<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">SPEED2=</span>SPEED<span class="sc">^</span><span class="dv">2</span>, <span class="at">TLML2=</span>TLML<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dataprep.out <span class="ot">&lt;-</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dataprep</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    df2,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">predictors            =</span> <span class="fu">c</span>(<span class="st">"PRECTOT"</span>, <span class="st">"PRECSNO"</span>, <span class="st">"QSH"</span>, <span class="st">"RHOA"</span>, <span class="st">"SPEED"</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"TLML"</span>,<span class="st">"PRECTOT2"</span>, <span class="st">"PRECSNO2"</span>, <span class="st">"QSH2"</span>, <span class="st">"RHOA2"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"SPEED2"</span>, <span class="st">"TLML2"</span>),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependent             =</span> <span class="st">"pm25"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit.variable         =</span> <span class="st">"add_num"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.variable         =</span> <span class="st">"time"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit.names.variable   =</span> <span class="st">"add"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment.identifier  =</span> <span class="dv">1</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">controls.identifier   =</span> <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.predictors.prior =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">46</span><span class="sc">:</span><span class="dv">48</span>),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.optimize.ssr     =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">45</span><span class="sc">:</span><span class="dv">36</span>), <span class="co">#before construction time</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.plot             =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>synth.out <span class="ot">&lt;-</span> <span class="fu">synth</span>(dataprep.out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+X1, X0, Z1, Z0 all come directly from dataprep object.
+
+
+**************** 
+ searching for synthetic control unit  
+ 
+
+**************** 
+**************** 
+**************** 
+
+MSPE (LOSS V): 0.4422599 
+
+solution.v:
+ 0.0001299253 0.1699162 0.005818388 0.07490267 0.001664966 0.1087902 0.1507047 0.2140651 0.05821549 0.05969218 0.0002590818 0.1558411 
+
+solution.w:
+ 0.01605876 0.004396688 0.09087856 0.7216908 0.0243283 0.01257191 0.01793926 0.007782891 0.003284674 0.1010682 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(synth.tables   <span class="ot">&lt;-</span> <span class="fu">synth.tab</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">synth.res    =</span> synth.out)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$tab.pred
+           Treated Synthetic Sample Mean
+PRECTOT      0.000     0.000       0.000
+PRECSNO      0.000     0.000       0.000
+QSH          0.009     0.009       0.010
+RHOA         1.191     1.192       1.192
+SPEED        4.881     5.296       5.230
+TLML       289.073   288.950     289.571
+PRECTOT2     0.000     0.000       0.000
+PRECSNO2     0.000     0.000       0.000
+QSH2         0.000     0.000       0.000
+RHOA2        1.419     1.422       1.422
+SPEED2      24.328    28.725      28.121
+TLML2    83624.007 83553.730   83909.254
+
+$tab.v
+         v.weights
+PRECTOT  0        
+PRECSNO  0.17     
+QSH      0.006    
+RHOA     0.075    
+SPEED    0.002    
+TLML     0.109    
+PRECTOT2 0.151    
+PRECSNO2 0.214    
+QSH2     0.058    
+RHOA2    0.06     
+SPEED2   0        
+TLML2    0.156    
+
+$tab.w
+   w.weights                      unit.names unit.numbers
+2      0.016                   Asheville, NC            2
+3      0.004 Charleston-North Charleston, SC            3
+4      0.091                    Columbia, SC            4
+5      0.722                     Concord, NC            5
+6      0.024                      Durham, NC            6
+7      0.013                Fayetteville, NC            7
+8      0.018                  Greenville, SC            8
+9      0.008    Myrtle Beach-Socastee, SC-NC            9
+10     0.003                  Wilmington, NC           10
+11     0.101               Winston-Salem, NC           11
+
+$tab.loss
+          Loss W    Loss V
+[1,] 0.005749738 0.4422599</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">path.plot</span>(<span class="at">synth.res    =</span> synth.out,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylab         =</span> <span class="fu">c</span>(<span class="st">"Y"</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">Xlab         =</span> <span class="fu">c</span>(<span class="st">"Months"</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">Legend       =</span> <span class="fu">c</span>(<span class="st">"Treated City"</span>,<span class="st">"Synthetic City"</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">Legend.position =</span> <span class="fu">c</span>(<span class="st">"topleft"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v   =</span> <span class="dv">48</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="synthetic_controls_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gaps.plot</span>(<span class="at">synth.res    =</span> synth.out,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylab         =</span> <span class="fu">c</span>(<span class="st">"Gap"</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">Xlab         =</span> <span class="fu">c</span>(<span class="st">"Year"</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylim         =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">Main         =</span> <span class="st">""</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v   =</span> <span class="dv">48</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="synthetic_controls_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="houston" class="level2">
+<h2 class="anchored" data-anchor-id="houston">Houston</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cgroup<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Houston, TX"</span>, <span class="st">"Austin, TX"</span>, <span class="st">"Beaumont, TX"</span>, <span class="st">"Brownsville, TX"</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"College Station-Bryan, TX"</span>, <span class="st">"Corpus Christi, TX"</span>, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Denton-Lewisville, TX"</span>, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"El Paso, TX-NM"</span>, <span class="st">"Laredo, TX"</span>, <span class="st">"Waco, TX"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Lubbock, TX"</span>, <span class="st">"Odessa, TX"</span>, <span class="st">"San Antonio, TX"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>df2<span class="ot">&lt;-</span>df <span class="sc">|&gt;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(add <span class="sc">%in%</span> cgroup) <span class="sc">|&gt;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">start=</span><span class="fu">as.Date</span>(<span class="st">"01/01/2000"</span>, <span class="at">format=</span><span class="st">"%d/%m/%Y"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">open=</span><span class="fu">as.Date</span>(<span class="st">"01/01/2004"</span>, <span class="at">format=</span><span class="st">"%d/%m/%Y"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">opentime=</span><span class="fu">ifelse</span>(<span class="fu">as.Date</span>(date)<span class="sc">&gt;</span>open,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatcity=</span><span class="fu">ifelse</span>(add<span class="sc">==</span><span class="st">"Houston, TX"</span>,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time=</span><span class="fu">interval</span>(start, <span class="fu">as.Date</span>(date))<span class="sc">/</span><span class="fu">months</span>(<span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">add_num=</span><span class="fu">factor</span>(add, <span class="at">levels=</span>cgroup)) <span class="sc">|&gt;</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">add_num=</span><span class="fu">as.numeric</span>(add_num)) <span class="sc">|&gt;</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time<span class="sc">&lt;=</span><span class="dv">96</span>)<span class="sc">|&gt;</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PRECTOT2=</span>PRECTOT<span class="sc">^</span><span class="dv">2</span>, <span class="at">PRECSNO2=</span>PRECSNO<span class="sc">^</span><span class="dv">2</span>, <span class="at">QSH2=</span>QSH<span class="sc">^</span><span class="dv">2</span>, <span class="at">RHOA2=</span>RHOA<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">SPEED2=</span>SPEED<span class="sc">^</span><span class="dv">2</span>, <span class="at">TLML2=</span>TLML<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dataprep.out <span class="ot">&lt;-</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dataprep</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    df2,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">predictors            =</span> <span class="fu">c</span>(<span class="st">"PRECTOT"</span>, <span class="st">"PRECSNO"</span>, <span class="st">"QSH"</span>, <span class="st">"RHOA"</span>, <span class="st">"SPEED"</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"TLML"</span>,<span class="st">"PRECTOT2"</span>, <span class="st">"PRECSNO2"</span>, <span class="st">"QSH2"</span>, <span class="st">"RHOA2"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"SPEED2"</span>, <span class="st">"TLML2"</span>),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependent             =</span> <span class="st">"pm25"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit.variable         =</span> <span class="st">"add_num"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.variable         =</span> <span class="st">"time"</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit.names.variable   =</span> <span class="st">"add"</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment.identifier  =</span> <span class="dv">1</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">controls.identifier   =</span> <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.predictors.prior =</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">48</span>),</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.optimize.ssr     =</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">36</span>), <span class="co">#before construction time</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.plot             =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>synth.out <span class="ot">&lt;-</span> <span class="fu">synth</span>(dataprep.out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+X1, X0, Z1, Z0 all come directly from dataprep object.
+
+
+**************** 
+ searching for synthetic control unit  
+ 
+
+**************** 
+**************** 
+**************** 
+
+MSPE (LOSS V): 20.47466 
+
+solution.v:
+ 0.262991 0.0002480604 0.0006793188 0.1866178 0.1992732 0.04335228 0.0002711913 5.13238e-05 0.0002788435 0.1448399 0.1611753 0.0002217446 
+
+solution.w:
+ 0.04252924 0.6405162 0.02298807 0.08364199 0.04329925 0.04243629 0.00887745 0.02261469 0.04450758 0.0006406887 0.002393575 0.04555495 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(synth.tables   <span class="ot">&lt;-</span> <span class="fu">synth.tab</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">synth.res    =</span> synth.out)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$tab.pred
+           Treated Synthetic Sample Mean
+PRECTOT      0.000     0.000       0.000
+PRECSNO      0.000     0.000       0.000
+QSH          0.013     0.013       0.011
+RHOA         1.196     1.191       1.154
+SPEED        5.875     5.864       6.634
+TLML       293.492   293.283     292.800
+PRECTOT2     0.000     0.000       0.000
+PRECSNO2     0.000     0.000       0.000
+QSH2         0.000     0.000       0.000
+RHOA2        1.431     1.419       1.335
+SPEED2      35.195    35.320      44.955
+TLML2    86177.146 86060.106   85785.845
+
+$tab.v
+         v.weights
+PRECTOT  0.263    
+PRECSNO  0        
+QSH      0.001    
+RHOA     0.187    
+SPEED    0.199    
+TLML     0.043    
+PRECTOT2 0        
+PRECSNO2 0        
+QSH2     0        
+RHOA2    0.145    
+SPEED2   0.161    
+TLML2    0        
+
+$tab.w
+   w.weights                unit.names unit.numbers
+2      0.043                Austin, TX            2
+3      0.641              Beaumont, TX            3
+4      0.023           Brownsville, TX            4
+5      0.084 College Station-Bryan, TX            5
+6      0.043        Corpus Christi, TX            6
+7      0.042     Denton-Lewisville, TX            7
+8      0.009            El Paso, TX-NM            8
+9      0.023                Laredo, TX            9
+10     0.045                  Waco, TX           10
+11     0.001               Lubbock, TX           11
+12     0.002                Odessa, TX           12
+13     0.046           San Antonio, TX           13
+
+$tab.loss
+          Loss W   Loss V
+[1,] 0.004156726 20.47466</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">path.plot</span>(<span class="at">synth.res    =</span> synth.out,</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylab         =</span> <span class="fu">c</span>(<span class="st">"Y"</span>),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">Xlab         =</span> <span class="fu">c</span>(<span class="st">"Months"</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">Legend       =</span> <span class="fu">c</span>(<span class="st">"Treated City"</span>,<span class="st">"Synthetic City"</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">Legend.position =</span> <span class="fu">c</span>(<span class="st">"topleft"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v   =</span> <span class="dv">48</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="synthetic_controls_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gaps.plot</span>(<span class="at">synth.res    =</span> synth.out,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylab         =</span> <span class="fu">c</span>(<span class="st">"Gap"</span>),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">Xlab         =</span> <span class="fu">c</span>(<span class="st">"Year"</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylim         =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">10</span>),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">Main         =</span> <span class="st">""</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v   =</span> <span class="dv">48</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="synthetic_controls_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="phoenix-mesa" class="level2">
+<h2 class="anchored" data-anchor-id="phoenix-mesa">Phoenix-Mesa</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cgroup<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Phoenix-Mesa, AZ"</span>, <span class="st">"Flagstaff, AZ"</span>, <span class="st">"Sierra Vista, AZ"</span>, <span class="st">"Tucson, AZ"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df2<span class="ot">&lt;-</span>df <span class="sc">|&gt;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(add <span class="sc">%in%</span> cgroup) <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">start=</span><span class="fu">as.Date</span>(<span class="st">"01/12/2004"</span>, <span class="at">format=</span><span class="st">"%d/%m/%Y"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">open=</span><span class="fu">as.Date</span>(<span class="st">"01/12/2008"</span>, <span class="at">format=</span><span class="st">"%d/%m/%Y"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">opentime=</span><span class="fu">ifelse</span>(<span class="fu">as.Date</span>(date)<span class="sc">&gt;</span>open,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatcity=</span><span class="fu">ifelse</span>(add<span class="sc">==</span><span class="st">"Phoenix-Mesa, AZ"</span>,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time=</span><span class="fu">interval</span>(start, <span class="fu">as.Date</span>(date))<span class="sc">/</span><span class="fu">months</span>(<span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">add_num=</span><span class="fu">factor</span>(add, <span class="at">levels=</span>cgroup)) <span class="sc">|&gt;</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">add_num=</span><span class="fu">as.numeric</span>(add_num)) <span class="sc">|&gt;</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time<span class="sc">&lt;=</span><span class="dv">96</span>)<span class="sc">|&gt;</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PRECTOT2=</span>PRECTOT<span class="sc">^</span><span class="dv">2</span>, <span class="at">PRECSNO2=</span>PRECSNO<span class="sc">^</span><span class="dv">2</span>, <span class="at">QSH2=</span>QSH<span class="sc">^</span><span class="dv">2</span>, <span class="at">RHOA2=</span>RHOA<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">SPEED2=</span>SPEED<span class="sc">^</span><span class="dv">2</span>, <span class="at">TLML2=</span>TLML<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dataprep.out <span class="ot">&lt;-</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dataprep</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    df2,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">predictors            =</span> <span class="fu">c</span>(<span class="st">"PRECTOT"</span>, <span class="st">"PRECSNO"</span>, <span class="st">"QSH"</span>, <span class="st">"RHOA"</span>, <span class="st">"SPEED"</span>, </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"TLML"</span>,<span class="st">"PRECTOT2"</span>, <span class="st">"PRECSNO2"</span>, <span class="st">"QSH2"</span>, <span class="st">"RHOA2"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"SPEED2"</span>, <span class="st">"TLML2"</span>),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependent             =</span> <span class="st">"pm25"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit.variable         =</span> <span class="st">"add_num"</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.variable         =</span> <span class="st">"time"</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit.names.variable   =</span> <span class="st">"add"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment.identifier  =</span> <span class="dv">1</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">controls.identifier   =</span> <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.predictors.prior =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">59</span><span class="sc">:</span><span class="dv">48</span>),</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.optimize.ssr     =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">59</span><span class="sc">:</span><span class="dv">36</span>), <span class="co">#before construction time</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">time.plot             =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>)</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>synth.out <span class="ot">&lt;-</span> <span class="fu">synth</span>(dataprep.out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+X1, X0, Z1, Z0 all come directly from dataprep object.
+
+
+**************** 
+ searching for synthetic control unit  
+ 
+
+**************** 
+**************** 
+**************** 
+
+MSPE (LOSS V): 16.27363 
+
+solution.v:
+ 0.09007563 0.01064422 0.0004542988 0.164535 0.1501265 0.000399553 0.08557806 0.004826011 0.01675006 0.2821431 0.1489733 0.04549433 
+
+solution.w:
+ 2.808e-07 3.501e-07 0.9999994 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(synth.tables   <span class="ot">&lt;-</span> <span class="fu">synth.tab</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">synth.res    =</span> synth.out)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$tab.pred
+           Treated Synthetic Sample Mean
+PRECTOT      0.000     0.000       0.000
+PRECSNO      0.000     0.000       0.000
+QSH          0.006     0.006       0.006
+RHOA         1.123     1.067       1.029
+SPEED        4.756     5.126       5.454
+TLML       295.949   292.686     289.489
+PRECTOT2     0.000     0.000       0.000
+PRECSNO2     0.000     0.000       0.000
+QSH2         0.000     0.000       0.000
+RHOA2        1.263     1.139       1.061
+SPEED2      22.828    26.759      30.427
+TLML2    87645.447 85716.409   83867.320
+
+$tab.v
+         v.weights
+PRECTOT  0.09     
+PRECSNO  0.011    
+QSH      0        
+RHOA     0.165    
+SPEED    0.15     
+TLML     0        
+PRECTOT2 0.086    
+PRECSNO2 0.005    
+QSH2     0.017    
+RHOA2    0.282    
+SPEED2   0.149    
+TLML2    0.045    
+
+$tab.w
+  w.weights       unit.names unit.numbers
+2         0    Flagstaff, AZ            2
+3         0 Sierra Vista, AZ            3
+4         1       Tucson, AZ            4
+
+$tab.loss
+        Loss W   Loss V
+[1,] 0.8397809 16.27363</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">path.plot</span>(<span class="at">synth.res    =</span> synth.out,</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylab         =</span> <span class="fu">c</span>(<span class="st">"Y"</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">Xlab         =</span> <span class="fu">c</span>(<span class="st">"Months"</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">Legend       =</span> <span class="fu">c</span>(<span class="st">"Treated City"</span>,<span class="st">"Synthetic City"</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">Legend.position =</span> <span class="fu">c</span>(<span class="st">"topleft"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v   =</span> <span class="dv">48</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="synthetic_controls_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gaps.plot</span>(<span class="at">synth.res    =</span> synth.out,</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">dataprep.res =</span> dataprep.out,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylab         =</span> <span class="fu">c</span>(<span class="st">"Gap"</span>),</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">Xlab         =</span> <span class="fu">c</span>(<span class="st">"Year"</span>),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">Ylim         =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">Main         =</span> <span class="st">""</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v   =</span> <span class="dv">48</span>,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="synthetic_controls_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
