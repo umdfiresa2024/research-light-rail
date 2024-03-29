@@ -19,10 +19,45 @@ trans <- subset(Transit_Map_GEO, Transit_Map_GEO$route_long == "METRORAIL RED LI
 char_lr<-aggregate(trans, dissolve=TRUE)
 lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
-#make light rail route buffer
+#make 10 km buffer around light rail centroid
+lrc<-centroids(lr_project, inside=FALSE)
+lrc_buff<-buffer(lrc, width = 10000)
+
+#make 1 km buffer around light rail route 
 lr_buffer<-terra::buffer(lr_project, width = 1000)
 
-bg <- get_tiles(ext(lr_project))
-plot(bg)
+#get roads data
+r<-vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2021_txharris_roads/tl_2021_48201_roads.shp")
+r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+i<-subset(r_project, r_project$RTTYP=="I")
+c<-subset(r_project, r_project$RTTYP=="C")
+m<-subset(r_project, r_project$RTTYP=="M")
+o<-subset(r_project, r_project$RTTYP=="O")
+s<-subset(r_project, r_project$RTTYP=="S")
 
+#make plot of houston and light rail buffer
+bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+plot(bg)
 lines(lr_project, col="blue")
+lines(lr_buffer, col="black")
+lines(lrc_buff, col="darkgreen")
+lines(s, col="purple")
+lines(i, col="red")
+
+#crop s and i highways that are within 10 km of the light rail centroid
+sint<-crop(s, lrc_buff)
+iint<-crop(i, lrc_buff)
+u<-aggregate(rbind(sint, iint), dissolve=TRUE)
+
+#make a buffer around major roads but take out areas that overlap with the light rail
+u_buffer<-terra::buffer(u, width = 1000)
+u_nolr<-erase(u_buffer, lr_buffer)
+  
+bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+plot(bg)
+lines(lr_project, col="blue")
+lines(lr_buffer, col="black")
+lines(lrc_buff, col="darkgreen")
+lines(u_nolr, col="purple")
+
+
