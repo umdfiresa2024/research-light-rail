@@ -22,6 +22,7 @@ lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
 #make 10 km buffer around light rail centroid
 lrc<-centroids(lr_project, inside=FALSE)
 lrc_buff<-buffer(lrc, width = 10000)
+writeVector(lrc_buff, "Houston Shapefiles/lr_1km_buff", overwrite=TRUE)
 
 #make 1 km buffer around light rail route 
 lr_buffer<-terra::buffer(lr_project, width = 1000)
