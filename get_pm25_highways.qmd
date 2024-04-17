@@ -296,3 +296,32 @@ for (m in 1:length(months)) {
             , row.names = F)
 }
 ```
+
+Aggregate data into one data frame
+
+```{r}
+idv_cities<-rbind(cities[29,], cities[28,], cities[38,], cities[30,])
+
+idv_cities$city_num <- seq.int(4)
+```
+
+```{r}
+f<-dir("PM25_daily", pattern="highway")
+
+p_highway<-c()
+for (i in 1:length(f)) {
+  print(f[i])
+  pdf<-read.csv(paste0("PM25_daily/",f[i])) |>
+    mutate(year=substr(date, 1, 4)) |>
+    mutate(month=substr(date, 5, 6)) |>
+    mutate(day=substr(date, 7,8))
+  
+  p_highway<-rbind(p_highway, pdf)
+}
+```
+
+```{r}
+ph<-merge(idv_cities, p_highway, by="city_num")
+
+write.csv(ph, "pm25_highway_daily.csv", row.names=F)
+```
