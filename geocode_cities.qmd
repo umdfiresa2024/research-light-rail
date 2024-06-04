@@ -18,11 +18,11 @@ cities<-c(c$x, t)
 
 ```
 
-register_google(key = "AIzaSyBFzZRvnnrYw2l5CQRrbBnPZt2-EIAsiD8", write = TRUE)
+register_google(key = "\[insert api key\]", write = TRUE)
 
 ```{r}
 
-register_google(key = "AIzaSyBFzZRvnnrYw2l5CQRrbBnPZt2-EIAsiD8", write = TRUE)
+register_google(key = "[insert api key]", write = TRUE)
 
 addr <- data.frame(Address = cities,
                    stringsAsFactors = FALSE)

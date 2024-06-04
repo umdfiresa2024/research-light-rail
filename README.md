@@ -107,9 +107,81 @@ around both cities’ population centroid for each month.
 The 10 km radius around the population centroid is the black line, and
 the 10 km buffer radius around the light rail centroid is the red line.
 
-    Warning: package 'maptiles' was built under R version 4.3.2
+``` r
+library("maptiles")
+```
+
+    Warning: package 'maptiles' was built under R version 4.3.3
+
+``` r
+library("terra")
+
+#city centroid
+cities<-read.csv("allcities_latlon.csv")
+
+df<-cities |>
+  filter(Address=="Charlotte, NC") |>
+  select(lon, lat)
+
+#converts df into a spatvector
+x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+plot(x)
+```
 
 ![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
+
+``` r
+#check unit of x
+crs(x)
+```
+
+    [1] "GEOGCRS[\"unknown\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ID[\"EPSG\",6326]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433],\n        ID[\"EPSG\",8901]],\n    CS[ellipsoidal,2],\n        AXIS[\"longitude\",east,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]],\n        AXIS[\"latitude\",north,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]]"
+
+``` r
+#create a 10 km (10,000 meter) buffer (radius)
+pts_buffer<-buffer(x, width = 10000)
+
+plot(pts_buffer)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-5-2.png)
+
+``` r
+#light rail centroid
+char_lr <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
+
+plot(char_lr)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-5-3.png)
+
+``` r
+#combines entire route into one line
+char_lr<-aggregate(char_lr, dissolve=TRUE)
+
+#change coordinate system to match points
+lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+#find centroid of light rail route
+lrc<-centroids(lr_project, inside=FALSE)
+
+#create 10 km buffer around light rail centroid
+pts_buffer1<-buffer(lrc, width = 10000)
+
+#approximate size of the background
+extent<-buffer(x, width = 10000)
+
+bg <- get_tiles(ext(extent))
+
+plot(bg)
+points(x)
+lines(lr_project, col="blue")
+lines(pts_buffer1, col="red")
+lines(pts_buffer)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-5-4.png)
 
 ![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
 
@@ -664,7 +736,7 @@ clustered at the city level.
                              (0.000)           (0.000)           (0.000)     
                                                                              
     QSH2                     946.608        2,401.849***         943.627     
-                           (1,908.163)        (876.298)        (1,915.182)   
+                           (1,908.163)        (876.298)        (1,915.183)   
                                                                              
     RHOA2                     0.218             6.383             0.195      
                              (5.614)           (6.082)           (5.674)     

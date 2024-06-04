@@ -12,7 +12,7 @@ library("Synth")
 library("gsynth")
 ```
 
-## Charlotte 
+## Charlotte
 
 Regressions with all data
 
