@@ -160,20 +160,43 @@ df<-cities |>
   filter(Address=="Charlotte, NC") |>
   select(lon, lat)
 
+#converts df into a spatvector
 x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+plot(x)
+
+#check unit of x
+crs(x)
+
+#create a 10 km (10,000 meter) buffer (radius)
 pts_buffer<-buffer(x, width = 10000)
+
+plot(pts_buffer)
   
 #light rail centroid
-char_lr <- vect("G:/Shared drives/2022 FIRE-SA/ARCHIVED - SUMMER INTERNSHIP/Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
+char_lr <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
+
+plot(char_lr)
+
+#combines entire route into one line
 char_lr<-aggregate(char_lr, dissolve=TRUE)
+
+#change coordinate system to match points
 lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+#find centroid of light rail route
 lrc<-centroids(lr_project, inside=FALSE)
+
+#create 10 km buffer around light rail centroid
 pts_buffer1<-buffer(lrc, width = 10000)
 
+#approximate size of the background
 extent<-buffer(x, width = 10000)
 
 bg <- get_tiles(ext(extent))
+
 plot(bg)
+points(x)
 lines(lr_project, col="blue")
 lines(pts_buffer1, col="red")
 lines(pts_buffer)

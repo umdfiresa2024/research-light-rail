@@ -15,11 +15,15 @@ c<-read.csv("cntrl_cities.csv")
 t<-c("Charlotte, NC", "Phoenix-Mesa, AZ", "Minneapolis-St. Paul, MN", "Houston, TX")
 
 cities<-c(c$x, t)
+
 ```
 
-register_google(key = "\[your Google API key\]", write = TRUE)
+register_google(key = "AIzaSyBFzZRvnnrYw2l5CQRrbBnPZt2-EIAsiD8", write = TRUE)
 
 ```{r}
+
+register_google(key = "AIzaSyBFzZRvnnrYw2l5CQRrbBnPZt2-EIAsiD8", write = TRUE)
+
 addr <- data.frame(Address = cities,
                    stringsAsFactors = FALSE)
 
