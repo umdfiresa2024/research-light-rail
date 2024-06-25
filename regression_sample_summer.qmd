@@ -66,8 +66,16 @@ df3<-df2 %>%
   mutate(construction=ifelse(date>conststart & date<opendate, 
                              1, 0)) %>%
   mutate(hv_rule=ifelse(date>hvrule_start,1,0)) %>%
+  #Create P(t) variables
   mutate(t=as.numeric(date-startdate)) %>%
-  mutate(t2=t^2, t3=t^3, t4=t^4)
+  mutate(t2=t^2, t3=t^3, t4=t^4) %>%
+  #Create lagged values (do this for temperature, humidity, and wind speed)
+  arrange(station_ID, date) %>%
+  group_by(station_ID) %>%
+  mutate(lag_temp=lag(temp)) %>%
+  #Create polynomials of temperature
+  mutate(lag_temp2=lag_temp^2, lag_temp3=lag_temp^3, lag_temp4=lag_temp^4)
+
     
 ```
 
