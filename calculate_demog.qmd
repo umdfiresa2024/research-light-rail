@@ -117,27 +117,36 @@ buff<-vect("Phoenix Shapefiles/roads_1km_buff/roads_1km_buff.shp")
 plot(buff)
 ```
 
-Download shapefiles from this website <https://www.census.gov/cgi-bin/geo/shapefiles/index.php>
+Download shapefiles from [tigris package](https://github.com/walkerke/tigris)
 
 ```{r}
-block_shapes<-vect("Phoenix Shapefiles/tl_2010_04013_tabblock00/tl_2010_04013_tabblock00.shp")
-plot(buff)
-lines(block_shapes, col="grey")
-
-blockdf<-as.data.frame(block_shapes)
+shape<-tigris::blocks(state="AZ", county="Maricopa", class="sp", year=2010)
+shapevect<-vect(shape)
+shapedf<-as.data.frame(shape)
 ```
 
 ```{r}
-racename2<-racename %>%
-  mutate(BLKIDFP00=paste0(substr(GEOID,1,10), "0", substr(GEOID,11,15)))
-
-blockrace<-merge(block_shapes, racename, by.x="BLKIDFP00", by.y="GEOID")
+blockrace<-merge(shape, racename, by.x="GEOID10", by.y="GEOID")
 
 blockracedf<-as.data.frame(blockrace)
 
-#check digits
-nchar(racename2$BLKIDFP00)[1]
-nchar(blockdf$BLKIDFP00)[1]
+summary(blockracedf)
+
+#100 percent match
+```
+
+Intersect blocks with buffers
+
+```{r}
+int<-crop(blockrace, buff)
+
+int$intarea<-expanse(int, unit="m")
+
+intdf<-as.data.frame(int) %>%
+  mutate(frac_area=intarea/blockarea) %>%
+  mutate(total=total*frac_area, white=white*frac_area, black=black*frac_area, native=native*frac_area, 
+         asian=asian*frac_area, hisp=hisp*frac_area) %>%
+  summarize(total=sum(total), white=sum(white), black=sum(black), native=sum(native), asian=sum(asian), hisp=sum(hisp))
 ```
 
 Average number of people affected
