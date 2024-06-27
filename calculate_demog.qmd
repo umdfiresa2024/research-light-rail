@@ -1,0 +1,145 @@
+---
+title: "Calculate Affected Demographics"
+format: html
+editor: visual
+---
+
+In this document, you will calculate station-level PM2.5 changes. Afterward, you will calculate impacted demographic groups around each station.
+
+# Calculating Station-Level Pollution Change
+
+```{r}
+library("tidyverse")
+library("knitr")
+```
+
+Upload your team's full data frame required to estimate the impact of light rails on PM2.5 levels surrounding all stations. Below is a simplified example.
+
+```{r}
+df<-read.csv("pm25_highway_daily.csv") 
+
+df2<-df %>%
+  mutate(date=substr(date,1,8)) %>%
+  mutate(date=as.Date(date, format='%Y%m%d'))
+
+#period of analysis
+startdate<-as.Date("2003-11-01", format='%Y-%m-%d')
+enddate<-as.Date("2011-11-01", format='%Y-%m-%d')
+
+#opening data of metro
+opendate<-as.Date("2007-11-01", format='%Y-%m-%d')
+
+#date when groundbreak starts
+conststart<-as.Date("2005-01-01", format='%Y-%m-%d')
+
+#heavy duty vehicle run
+hvrule_start<-as.Date("2007-01-01", format='%Y-%m-%d')
+
+df3<-df2 %>%
+  filter(date>=startdate & date<=enddate) %>%
+  mutate(MetroOpen=ifelse(date>=opendate, 1, 0)) %>%
+  mutate(dow=wday(date)) %>%
+  mutate(construction=ifelse(date>conststart & date<opendate, 1, 0)) %>%
+  mutate(hv_rule=ifelse(date>hvrule_start,1,0)) %>%
+  mutate(t=as.numeric(date-startdate)) %>%
+  mutate(t2=t^2, t3=t^3, t4=t^4)
+```
+
+Run stations level regressions. Use the best regression specification (in your team's opinion) from the average effect calculation.
+
+```{r}
+summary(m1<-lm(log(pm25) ~ MetroOpen:as.factor(city_num) +
+                 construction + hv_rule + as.factor(month) + 
+                 t + t2 + t3 + t4, data=df3))
+```
+
+The code below prints out the station-level effect and the p-values
+
+```{r}
+len_coef<-length(coef(m1))
+
+#get coefficients of the station-level effect
+coef<-coef(m1)[(len_coef-3): len_coef]
+
+#get p values of the station-level effect (p<0.05 is statistically significant)
+pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
+
+kable(cbind(coef, pval), digits=2)
+```
+
+# Query demographic data
+
+Helpful resource: <https://walker-data.com/tidycensus/articles/basic-usage.html>
+
+Get census key
+
+```{r}
+library(tidycensus)
+api_key <- "43a847b486e6474534b5e09d747e72ffd18f4ba2"
+census_api_key(api_key, install=TRUE, overwrite = T)
+readRenviron("~/.Renviron")
+```
+
+Identify variables that you would like to query
+
+```{r}
+vars<-load_variables(year=2010, dataset="sf1", cache = TRUE)
+#P005001 Total
+#P005003 White
+#P005004 Black
+#P005005 Native
+#P005006 Asian
+#P005010 Hispanic
+```
+
+Query variables
+
+```{r}
+targetvars<-c("P005001", "P005003", "P005004", "P005005", "P005006", "P005010")
+race<-get_decennial(geography = "block", variables=targetvars, state="AZ", county="Maricopa", output="wide")
+```
+
+Rename columns
+
+```{r}
+racename<-race %>%
+  rename(total=P005001, white=P005003, black=P005004, native=P005005, asian=P005006, hisp=P005010)
+```
+
+# Calculate affected demographic group
+
+```{r}
+library("terra")
+```
+
+```{r}
+buff<-vect("Phoenix Shapefiles/roads_1km_buff/roads_1km_buff.shp")
+plot(buff)
+```
+
+Download shapefiles from this website <https://www.census.gov/cgi-bin/geo/shapefiles/index.php>
+
+```{r}
+block_shapes<-vect("Phoenix Shapefiles/tl_2010_04013_tabblock00/tl_2010_04013_tabblock00.shp")
+plot(buff)
+lines(block_shapes, col="grey")
+
+blockdf<-as.data.frame(block_shapes)
+```
+
+```{r}
+racename2<-racename %>%
+  mutate(BLKIDFP00=paste0(substr(GEOID,1,10), "0", substr(GEOID,11,15)))
+
+blockrace<-merge(block_shapes, racename, by.x="BLKIDFP00", by.y="GEOID")
+
+blockracedf<-as.data.frame(blockrace)
+
+#check digits
+nchar(racename2$BLKIDFP00)[1]
+nchar(blockdf$BLKIDFP00)[1]
+```
+
+Average number of people affected
+
+$\dfrac{Hisp_{area1} \times Reduction_{area1} + Hisp_{area2} \times Reduction_{area2}}{Hisp_{area1} + Hisp_{area2}}$
