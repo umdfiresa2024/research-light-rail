@@ -1,0 +1,100 @@
+---
+title: "Light Rail Analysis"
+format: html
+editor: visual
+---
+
+## DB-OLS
+
+```{r}
+library("tidyverse")
+```
+
+$log(AirQuality_t) = \delta_0 + \delta_1 MetroOpen_t + \delta_2 x_t + \delta_3 P(t) + \delta_4 P(t) \times MetroOpen_t + e_t$
+
+Controls $x_t$ include:
+
+-   gas content regulation dummy
+
+-   $temp$, $temp_{-1}$, $temp_{-1}^2$, $temp_{-1}^3$, $temp_{-1}^4$ and same thing for wind speed and humidity
+
+-   month FE
+
+-   day of week FE
+
+-   hour FE
+
+-   hour FE $\times$ day of week FE
+
+$P(t)$ is $t$, $t^2$, $t^3$
+
+Make a table of average pollution before and after
+
+```{r}
+setwd("C:/Git Local/research-light-rail")
+
+df<-read.csv("pm25_highway_daily.csv") %>%
+  filter(Address=="Charlotte, NC")
+```
+
+```{r}
+df2<-df %>%
+  mutate(date=substr(date,1,8)) %>%
+  mutate(date=as.Date(date, format='%Y%m%d'))
+```
+
+```{r}
+#period of analysis
+startdate<-as.Date("2003-11-01", format='%Y-%m-%d')
+enddate<-as.Date("2011-11-01", format='%Y-%m-%d')
+
+#opening data of metro
+opendate<-as.Date("2007-11-01", format='%Y-%m-%d')
+
+#date when groundbreak starts
+conststart<-as.Date("2005-01-01", format='%Y-%m-%d')
+
+#heavy duty vehicle run
+hvrule_start<-as.Date("2007-01-01", format='%Y-%m-%d')
+```
+
+```{r}
+df3<-df2 %>%
+  filter(date>=startdate & date<=enddate) %>%
+  mutate(MetroOpen=ifelse(date>=opendate, 1, 0)) %>%
+  mutate(dow=wday(date)) %>%
+  mutate(construction=ifelse(date>conststart & date<opendate, 
+                             1, 0)) %>%
+  mutate(hv_rule=ifelse(date>hvrule_start,1,0)) %>%
+  #Create P(t) variables
+  mutate(t=as.numeric(date-startdate)) %>%
+  mutate(t2=t^2, t3=t^3, t4=t^4) %>%
+  #Create lagged values (do this for temperature, humidity, and wind speed)
+  arrange(station_ID, date) %>%
+  group_by(station_ID) %>%
+  mutate(lag_temp=lag(temp)) %>%
+  #Create polynomials of temperature
+  mutate(lag_temp2=lag_temp^2, lag_temp3=lag_temp^3, lag_temp4=lag_temp^4)
+
+    
+```
+
+```{r}
+summary(m1<-lm(log(pm25) ~ MetroOpen, data=df3))
+
+summary(m1<-lm(log(pm25) ~ MetroOpen + 
+                 construction + 
+                 as.factor(dow)+
+                 as.factor(month) + 
+                 hv_rule, data=df3))
+
+summary(m1<-lm(log(pm25) ~ MetroOpen + 
+                 construction + 
+                 as.factor(dow)+
+                 as.factor(month) + 
+                 hv_rule + 
+                 t*MetroOpen + t2*MetroOpen + t3*MetroOpen + 
+                 t4*MetroOpen, data=df3))
+
+
+```
