@@ -126,7 +126,9 @@ shapedf<-as.data.frame(shape)
 ```
 
 ```{r}
-blockrace<-merge(shape, racename, by.x="GEOID10", by.y="GEOID")
+blockrace<-merge(shapevect, racename, by.x="GEOID10", by.y="GEOID")
+
+blockrace$blockarea<-expanse(blockrace, unit="m")
 
 blockracedf<-as.data.frame(blockrace)
 
@@ -144,11 +146,36 @@ int$intarea<-expanse(int, unit="m")
 
 intdf<-as.data.frame(int) %>%
   mutate(frac_area=intarea/blockarea) %>%
-  mutate(total=total*frac_area, white=white*frac_area, black=black*frac_area, native=native*frac_area, 
-         asian=asian*frac_area, hisp=hisp*frac_area) %>%
-  summarize(total=sum(total), white=sum(white), black=sum(black), native=sum(native), asian=sum(asian), hisp=sum(hisp))
+  mutate(total=total*frac_area, 
+         white=white*frac_area, 
+         black=black*frac_area, 
+         native=native*frac_area, 
+         asian=asian*frac_area, 
+         hisp=hisp*frac_area) %>%
+  summarize(total=sum(total), 
+            white=sum(white), 
+            black=sum(black), 
+            native=sum(native), 
+            asian=sum(asian), 
+            hisp=sum(hisp)) %>%
+  mutate(pct_white=white*100/total, 
+         pct_black=black*100/total, 
+         pct_native=native*100/total,
+         pct_asian=asian*100/total,
+         pct_hisp=hisp*100/total)
 ```
 
-Average number of people affected
+Summarize demographic groups that live near light rail stations
+
+```{r}
+sum_demog<-intdf %>%
+  select(pct_hisp, pct_white, pct_native, pct_black, pct_asian)
+
+kable(sum_demog, digits=2)
+```
+
+Merge station-level demographic data with station-level pollution reduction data.
+
+Calculate the average emissions that each demographic group sees by using the formula below:
 
 $\dfrac{Hisp_{area1} \times Reduction_{area1} + Hisp_{area2} \times Reduction_{area2}}{Hisp_{area1} + Hisp_{area2}}$
