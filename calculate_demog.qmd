@@ -67,6 +67,55 @@ pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
 kable(cbind(coef, pval), digits=2)
 ```
 
+# Visualizing Station-Level Pollution Changes
+
+Upload shapefile for each buffer area
+
+```{r}
+library("terra")
+c1<-vect("Twin Cities Shapefiles/roads_1km_buff/roads_1km_buff.shp")
+c2<-vect("Charlotte Shapefiles/roads_1km_buff/roads_1km_buff.shp")
+c3<-vect("Phoenix Shapefiles/roads_1km_buff/roads_1km_buff.shp")
+c4<-vect("Houston Shapefiles/roads_1km_buff/roads_1km_buff.shp")
+
+cities<-rbind(c1,c2,c3,c4)
+```
+
+Attach data to shapefiles
+
+```{r}
+coefdf<-as.data.frame(coef)
+cities_coef<-cbind(cities, coefdf)
+```
+
+Make a map of the results
+
+Tryout different color palettes [here.](https://rdrr.io/cran/terra/man/mappal.html)
+
+```{r}
+plot(cities_coef, 
+     "coef",
+     type="interval",
+     breaks=c(-0.1, 0, 0.1, 0.2),
+     col=map.pal("grass"),
+     main="Average PM2.5 Changes (in Percents) Due to Light Rail Openings")
+```
+
+Save the map as an image file
+
+```{r}
+png(filename="samplemap.png", width=1000, height=700, units="px")
+
+plot(cities_coef, 
+     "coef",
+     type="interval",
+     breaks=c(-0.1, 0, 0.1, 0.2),
+     col=map.pal("grass"),
+     main="Average PM2.5 Changes (in Percents) \n Due to Light Rail Openings")
+
+dev.off()
+```
+
 # Query demographic data
 
 Helpful resource: <https://walker-data.com/tidycensus/articles/basic-usage.html>
