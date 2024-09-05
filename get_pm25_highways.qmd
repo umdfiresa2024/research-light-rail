@@ -25,7 +25,7 @@ df<-cities |>
 x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
 #light raile route shapefile
-Transit_Map_GEO <- vect("G:/Shared drives/2022 FIRE-SA/ARCHIVED - SUMMER INTERNSHIP/Light Rail/DATA/National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
+Transit_Map_GEO <- vect("National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
 
 trans <- subset(Transit_Map_GEO, Transit_Map_GEO$route_long == "METRORAIL RED LINE")
 
@@ -43,7 +43,7 @@ lrc_buff<-buffer(lrc, width = 10000)
 lr_buffer<-vect("Houston Shapefiles/lr_1km_buff")
   
 #get roads data
-r<-vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2021_txharris_roads/tl_2021_48201_roads.shp")
+r<-vect("tl_2021_txharris_roads/tl_2021_48201_roads.shp")
 r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 i<-subset(r_project, r_project$RTTYP=="I")
 c<-subset(r_project, r_project$RTTYP=="C")
@@ -52,7 +52,7 @@ o<-subset(r_project, r_project$RTTYP=="O")
 s<-subset(r_project, r_project$RTTYP=="S")
 
 #make plot of houston and light rail buffer
-bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+bg <- get_tiles(ext(lr_buffer)) #choose a number that will give a good picture of the light rail area
 plot(bg)
 lines(lr_project, col="blue")
 lines(lr_buffer, col="black")
@@ -72,6 +72,17 @@ lines(u_buffer, col="purple")
 lines(lr_project, col="blue")
 #writeVector(u_buffer, "Houston Shapefiles/roads_1km_buff", overwrite=TRUE)
 
+#make a buffer of highways that intersect with the light rail
+sint<-crop(s, lr_buffer)
+iint<-crop(i, lr_buffer)
+u<-aggregate(rbind(sint, iint), dissolve=TRUE)
+
+#Plot the buffers
+u_buffer2<-terra::buffer(u, width = 1000)
+plot(bg)
+lines(u_buffer2, col="purple")
+lines(lr_project, col="blue")
+
 ```
 
 Make shapefile for Charlotte
@@ -86,18 +97,18 @@ df<-cities |>
 x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
 #light rail centroid
-char_lr <- vect("G:/Shared drives/2022 FIRE-SA/ARCHIVED - SUMMER INTERNSHIP/Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
+char_lr <- vect("LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
 char_lr<-aggregate(char_lr, dissolve=TRUE)
 lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
 lrc<-centroids(lr_project, inside=FALSE)
 lrc_buff<-buffer(lrc, width = 15000)
-#lr_buffer<-terra::buffer(lr_project, width = 1000)
+lr_buffer<-terra::buffer(lr_project, width = 10000)
 #writeVector(lr_buffer, "Charlotte Shapefiles/lr_1km_buff", overwrite=TRUE)
-lr_buffer<-vect("Charlotte Shapefiles/lr_1km_buff")
+#lr_buffer<-vect("Charlotte Shapefiles/lr_1km_buff")
 
 #get roads data
-r<-vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2021_ncmecklenburg_roads/tl_2021_37119_roads.shp")
+r<-vect("tl_2021_ncmecklenburg_roads/tl_2021_37119_roads.shp")
 r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 i<-subset(r_project, r_project$RTTYP=="I")
 c<-subset(r_project, r_project$RTTYP=="C")
@@ -123,9 +134,27 @@ u<-aggregate(rbind(oint, iint), dissolve=TRUE)
 u_buffer<-terra::buffer(u, width = 1000)
 plot(bg)
 lines(u_buffer, col="purple")
+lines(lr_buffer, col="black")
 lines(lr_project, col="blue")
 #writeVector(u_buffer, "Charlotte Shapefiles/roads_1km_buff", overwrite=TRUE)
 
+#make a buffer of highways that intersect with the light rail
+sint<-crop(s, lr_buffer)
+iint<-crop(i, lr_buffer)
+u<-aggregate(rbind(sint, iint), dissolve=TRUE)
+
+sint_df <- as.data.frame(sint)
+iint_df <- as.data.frame((iint))
+
+#Plot the buffers
+u_buffer2<-terra::buffer(u, width = 1000)
+plot(bg)
+lines(u_buffer2, col="purple")
+lines(lr_project, col="blue")
+
+#Buffer part 2
+#US21 I77 US29 are substitutes
+#I:interstate U:US route S:state route
 ```
 
 Make shapefile for Phoenix-Mesa, Arizona
@@ -139,7 +168,7 @@ df<-cities |>
 #convert coordinates into a point shapefile
 x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
-Transit_Map_GEO <- vect("G:/Shared drives/2022 FIRE-SA/ARCHIVED - SUMMER INTERNSHIP/Light Rail/DATA/Valley_Metro_Light_Rail/LightRailLine.shp")
+Transit_Map_GEO <- vect("Valley_Metro_Light_Rail/LightRailLine.shp")
 
 trans <- subset(Transit_Map_GEO, Transit_Map_GEO$SYMBOLOGY=="METRO")
 char_lr<-aggregate(trans, dissolve=TRUE)
@@ -159,7 +188,7 @@ lrc_buff<-buffer(lrc, width = 20000)
 lr_buffer<-vect("Phoenix Shapefiles/lr_1km_buff")
 
 #get roads data
-r<-vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2021_azmaricopa_roads/tl_2021_04013_roads.shp")
+r<-vect("tl_2021_azmaricopa_roads/tl_2021_04013_roads.shp")
 r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 i<-subset(r_project, r_project$RTTYP=="I")
 c<-subset(r_project, r_project$RTTYP=="C")
@@ -186,7 +215,20 @@ u_buffer<-terra::buffer(u, width = 1000)
 plot(bg)
 lines(u_buffer, col="purple")
 lines(lr_project, col="blue")
+lines(lr_buffer, col="black")
+lines(lrc_buff, col="darkgreen")
 #writeVector(u_buffer, "Phoenix Shapefiles/roads_1km_buff", overwrite=TRUE)
+
+#make a buffer of highways that intersect with the light rail
+sint<-crop(s, lr_buffer)
+iint<-crop(i, lr_buffer)
+u<-aggregate(rbind(sint, iint), dissolve=TRUE)
+
+#Plot the buffers
+u_buffer2<-terra::buffer(u, width = 1000)
+plot(bg)
+lines(u_buffer2, col="purple")
+lines(lr_project, col="blue")
 ```
 
 Make shapefile for Twin Cities, MN
@@ -200,7 +242,7 @@ df<-cities |>
 #convert coordinates into a point shapefile
 x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
-Transit_Map_GEO <- vect("G:/Shared drives/2022 FIRE-SA/ARCHIVED - SUMMER INTERNSHIP/Light Rail/DATA/National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
+Transit_Map_GEO <- vect("National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
 trans <- subset(
   Transit_Map_GEO, 
   Transit_Map_GEO$route_url == "https://www.metrotransit.org/route/blue" | 
@@ -221,7 +263,7 @@ lrc_buff<-buffer(lrc, width = 10000)
 lr_buffer<-vect("Twin Cities Shapefiles/lr_1km_buff")
 
 #get roads data
-r<-vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2021_mnhennepin_roads/tl_2021_27053_roads.shp")
+r<-vect("tl_2021_mnhennepin_roads/tl_2021_27053_roads.shp")
 r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 i<-subset(r_project, r_project$RTTYP=="I")
 c<-subset(r_project, r_project$RTTYP=="C")
@@ -249,6 +291,17 @@ plot(bg)
 lines(u_buffer, col="purple")
 lines(lr_project, col="blue")
 #writeVector(u_buffer, "Twin Cities Shapefiles/roads_1km_buff", overwrite=TRUE)
+
+#make a buffer of highways that intersect with the light rail
+sint<-crop(s, lr_buffer)
+iint<-crop(i, lr_buffer)
+u<-aggregate(rbind(sint, iint), dissolve=TRUE)
+
+#Plot the buffers
+u_buffer2<-terra::buffer(u, width = 1000)
+plot(bg)
+lines(u_buffer2, col="purple")
+lines(lr_project, col="blue")
 ```
 
 Combine all highway buffers into one shapefile
