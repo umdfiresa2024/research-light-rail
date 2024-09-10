@@ -1,6 +1,66 @@
 # Do Light Rails Provide the Track to Cleaner Air?
 FIRE Sustainability Analytics
-2024-03-03
+2024-09-10
+
+# Introduction
+
+This research project aims to find if light rail openings result in an
+overall decrease in air pollution in U.S. urban areas? The answer to
+this question will help predict air pollution impacts of the Purple Line
+in Maryland that is scheduled to open in 2027.
+
+To examine the potential impact of light rail openings, we will analyze
+the outcomes in other U.S. cities with light rail systems, utilizing
+ground-level PM2.5 data developed by Di et al. (2021). This data has a
+spatial resolution of 1-kilometer grids and a daily temporal resolution
+from 2000 to 2016. We will focus on cities where light rail is the
+primary mode of rail transit, and no other urban rail systems are
+present. Four light rail systems in the United States meet these
+criteria: the Lynx Blue Line in Charlotte, North Carolina; the Red
+METRORail Line in Houston, Texas; the Blue METRO Line in
+Minneapolis-St. Paul, Minnesota; and the Valley Metro Rail in
+Phoenix-Mesa, Arizona.
+
+We will employ a difference-in-difference estimation strategy to compare
+air pollution trends in cities with light rail openings and control
+cities that had similar air pollution trends before the light rail
+openings. This will involve determining monthly average PM2.5 levels for
+all urban areas in the U.S. We will then use synthetic control methods
+to generate data for control cities with pre-light rail pollution trends
+similar to each treated city. Subsequently, we will calculate potential
+changes in air pollution due to light rail openings.
+
+This research project aims to provide the most rigorous impact
+estimation of light rail openings on air pollution to date. While
+existing studies suggest that light rails are environmentally superior
+to other transportation options, they haven’t conclusively shown that
+their opening reduces city-wide air pollution (Mulley et al., 2017; Ham
+et al., 2017).
+
+Unlike numerous studies on subway openings, there are limited studies on
+light rails. Park & Sener (2019) indicate a 24% decrease in CO measured
+from monitors after the opening of the Houston light rail, and Fageda
+(2021) suggests a 3% decrease in PM2.5 after light-rail openings in
+European cities.
+
+Our study will differ from existing studies on light rail and air
+pollution in several ways. Because Park & Sener (2019) analyzed the
+change in pollution in only one city, there may be other factors
+affecting the change in the pollution that confounds with the opening of
+the light rail. Our study will also use higher frequency pollution data
+than the annual level used in Fageda (2021), allowing us to control for
+meteorological factors. 
+
+As Park & Sener (2019) only included data two years before the light
+rail opening, and Fageda (2021) included data three years before the
+light rail openings, their findings can confound with the construction
+period of light rails. As shown in Figure 1, light rail construction
+usually happens around three years before light rail openings. There is
+also an increase in PM2.5 levels during the construction period. By
+including data only two to three years before light rail openings,
+existing studies can overestimate the degree of pollution reduction, as
+construction activities can contribute to the higher pollution levels
+before light rail openings. 
 
 ## Treatment Criteria
 
@@ -67,10 +127,17 @@ FIRE Sustainability Analytics
 
 ## Control cities
 
-Control cities for **Charlotte** are cities in South Carolina and North
-Carolina with no rails and no light rails.
+The plot below shows number of trips for each mode of revenue-generating
+transportation in Charlotte.
+
+Because buses are the primary alternative transportation in the city,
+control cities for **Charlotte** are cities that primarily runs on buses
+in South Carolina and North Carolina with no rails and no light rails.
 
 ![](README_files/figure-commonmark/unnamed-chunk-1-1.png)
+
+The plot below shows number of trips for each mode of revenue-generating
+transportation in Houston.
 
 Control cities for **Houston** are other cities in Texas with no rails,
 no light rails, and less than 5% of other forms of other transportation
@@ -78,11 +145,17 @@ in light rail opening year.
 
 ![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
 
+The plot below shows number of trips for each mode of revenue-generating
+transportation in the Twin Cities
+
 Control cities for the **Twin Cities** are other cities in Minnesota and
 Wisconsin with no rails, no light rails, and less than 5% of other forms
 of other transportation in light rail opening year.
 
 ![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
+
+The plot below shows number of trips for each mode of revenue-generating
+transportation in the Phoenix-Mesa.
 
 Control cities for **Phoenix-Mesa** are cities in other Arizona
 metropolitan areas with no rails and no light rails.
@@ -109,11 +182,6 @@ the 10 km buffer radius around the light rail centroid is the red line.
 
 ``` r
 library("maptiles")
-```
-
-    Warning: package 'maptiles' was built under R version 4.3.3
-
-``` r
 library("terra")
 
 #city centroid
@@ -126,37 +194,12 @@ df<-cities |>
 #converts df into a spatvector
 x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
-plot(x)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
-
-``` r
-#check unit of x
-crs(x)
-```
-
-    [1] "GEOGCRS[\"unknown\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ID[\"EPSG\",6326]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433],\n        ID[\"EPSG\",8901]],\n    CS[ellipsoidal,2],\n        AXIS[\"longitude\",east,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]],\n        AXIS[\"latitude\",north,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]]"
-
-``` r
 #create a 10 km (10,000 meter) buffer (radius)
 pts_buffer<-buffer(x, width = 10000)
-
-plot(pts_buffer)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-5-2.png)
-
-``` r
+  
 #light rail centroid
 char_lr <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
 
-plot(char_lr)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-5-3.png)
-
-``` r
 #combines entire route into one line
 char_lr<-aggregate(char_lr, dissolve=TRUE)
 
@@ -181,7 +224,7 @@ lines(pts_buffer1, col="red")
 lines(pts_buffer)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-5-4.png)
+![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
 
 ![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
 
@@ -736,7 +779,7 @@ clustered at the city level.
                              (0.000)           (0.000)           (0.000)     
                                                                              
     QSH2                     946.608        2,401.849***         943.627     
-                           (1,908.163)        (876.298)        (1,915.183)   
+                           (1,908.163)        (876.298)        (1,915.182)   
                                                                              
     RHOA2                     0.218             6.383             0.195      
                              (5.614)           (6.082)           (5.674)     
@@ -760,3 +803,42 @@ clustered at the city level.
     Residual Std. Error 0.224 (df = 4031) 0.187 (df = 4002) 0.224 (df = 4030)
     =========================================================================
     Note:                                         *p<0.1; **p<0.05; ***p<0.01
+
+# References
+
+Di, Q., Y. Wei, A. Shtein, C. Hultquist, X. Xing, H. Amini, L. Shi, I.
+Kloog, R. Silvern, J. Kelly, M. B. Sabath, C. Choirat, P. Koutrakis, A.
+Lyapustin, Y. Wang, L. J. Mickley & J. Schwartz. 2021. Daily and Annual
+PM2.5 Concentrations for the Contiguous United States, 1-km Grids, v1
+(2000 - 2016). Palisades, New York: NASA Socioeconomic Data and
+Applications Center (SEDAC). <https://doi.org/10.7927/0rvr-4538>
+
+Fageda, X. (2021). Do light rail systems reduce traffic externalities?
+Empirical evidence from mid-size European cities. Transportation
+Research Part D: Transport and Environment, 92, 102731.
+
+Ham, W., Vijayan, A., Schulte, N., & Herner, J. D. (2017). Commuter
+exposure to PM2. 5, BC, and UFP in six common transport
+microenvironments in Sacramento, California. Atmospheric Environment,
+167, 335-345.
+
+Houston, D., Dang, A., Wu, J., Chowdhury, Z., & Edwards, R. (2016). The
+cost of convenience; air pollution and noise on freeway and arterial
+light rail station platforms in Los Angeles. Transportation Research
+Part D: Transport and Environment, 49, 127-137.
+
+Mulley, C., Hensher, D. A., & Cosgrove, D. (2017). Is rail cleaner and
+greener than bus?. Transportation Research Part D: Transport and
+Environment, 51, 14-28.
+
+Park, E. S., & Sener, I. N. (2019). Traffic-related air emissions in
+Houston: Effects of light-rail transit. Science of the Total
+Environment, 651, 154-161.
+
+Shaver, K. (2013, October 23). Residents concerned about impact of
+proposed light-rail Purple Line. The Washington Post.
+[https://www.washingtonpost.com/](https://www.washingtonpost.com/local/trafficandcommuting/residents-concerned-about-impacts-of-proposed-light-rail-purple-line/2013/10/23/ffc25d52-3bea-11e3-a94f-b58017bfee6c_story.html)
+
+Texas A&M Transportation Institute. (2016). Light-Rail Transit (LRT) –
+Transportation Policy Research.
+<https://policy.tti.tamu.edu/strategy/light-rail-transit/>
