@@ -38,10 +38,12 @@ plot(pts_proj)
 lines(r, col="red")
 
 #crop roads outside buffer areas
-r_inside<-crop(r, pts_proj)
+r_inside<-terra::intersect(r, pts_proj)
 
 #create 1 km buffer around road segments
 r_buff<-buffer(r_inside, width = 1000)
+
+r_buff_agg<-aggregate(r_buff, by="Address")
 
 #################get pm2.5 data for one month##################################
 path<-"G:/Shared drives/2024 FIRE Light Rail/DATA/PM25/"
