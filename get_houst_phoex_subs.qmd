@@ -1,0 +1,179 @@
+---
+title: "get_houst_phoex_subs"
+format: html
+editor: visual
+---
+
+```{r}
+library("tidyverse")
+library("terra")
+library("maptiles")
+```
+
+# Houston
+
+```{r}
+#city centroid
+cities<-read.csv("allcities_latlon.csv")
+
+#get coordinate for city
+df<-cities |>
+  filter(Address=="Houston, TX") |>
+  select(lon, lat)
+
+#convert coordinates into a point shapefile
+x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+#light raile route shapefile
+Transit_Map_GEO <- vect("National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
+
+trans <- subset(Transit_Map_GEO, Transit_Map_GEO$route_long == "METRORAIL RED LINE")
+
+char_lr<-aggregate(trans, dissolve=TRUE)
+
+lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+#make 10 km buffer around light rail centroid
+lrc<-centroids(lr_project, inside=FALSE)
+lrc_buff<-buffer(lrc, width = 10000)
+
+#make 1 km buffer around light rail route 
+#lr_buffer<-terra::buffer(lr_project, width = 1000)
+#writeVector(lr_buffer, "Houston Shapefiles/lr_1km_buff", overwrite=TRUE)
+#lr_buffer<-vect("Houston Shapefiles/lr_1km_buff")
+  
+#get roads data
+r<-vect("tl_2021_txharris_roads/tl_2021_48201_roads.shp")
+r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+i<-subset(r_project, r_project$RTTYP=="I")
+c<-subset(r_project, r_project$RTTYP=="C")
+m<-subset(r_project, r_project$RTTYP=="M")
+o<-subset(r_project, r_project$RTTYP=="O")
+s<-subset(r_project, r_project$RTTYP=="S")
+```
+
+### LR Substitutes for Houston
+
+```{r}
+#Select substitute roads for Houston
+rdf <- as.data.frame(r_project)
+subI <- rdf |> 
+  filter(rdf$RTTYP == "I" | rdf$RTTYP == "U" | rdf$RTTYP == "S")
+
+#Hardy toll road??? Its RTTYP class M and isn't a us desiganted road
+i45 <- subset(r_project, r_project$FULLNAME == "I- 45")
+i45Hov1 <- subset(r_project, r_project$FULLNAME == "I- 45 Hov")
+i45Hov2 <- subset(r_project, r_project$FULLNAME == "I- 45-Hov")
+i45Hov <- union(i45Hov2, i45Hov1)
+i69 <- subset(r_project, r_project$FULLNAME == "I- 69")
+i69Hov <- subset(r_project, r_project$FULLNAME == "I- 69 Hov")
+i610 <- subset(r_project, r_project$FULLNAME == "I- 610")
+s288 <- subset(r_project, r_project$FULLNAME == "State Hwy 288")
+
+roads <- union(i45, union(i45Hov, union(i69, union(i69Hov, union(i610, s288)))))
+
+#Make big 'ol buffer
+lr_buffer<-terra::buffer(lr_project, width = 10000)
+
+#Intersect buffer and roads
+subs <- crop(roads, lr_buffer)
+
+subs_buff <- terra::buffer(subs, width = 1000)
+sbuff <- aggregate(subs_buff)
+#writeVector(sbuff, "houston_road_1km_buff", overwrite=TRUE)
+#Plot the intersection of the roads and the big buffer
+bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+plot(bg)
+lines(lr_project, col="yellow", lwd = 3)
+lines(lr_buffer, col = "blue")
+lines(sbuff, col = "black", lwd = 3)
+
+```
+
+# Phoenix
+
+```{r}
+#get coordinate for city
+df<-cities |>
+  filter(joint_address=="Phoenix-Mesa, AZ") |>
+  select(lon, lat)
+
+#convert coordinates into a point shapefile
+x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
+Transit_Map_GEO <- vect("Valley_Metro_Light_Rail/LightRailLine.shp")
+
+trans <- subset(Transit_Map_GEO, Transit_Map_GEO$SYMBOLOGY=="METRO")
+char_lr<-aggregate(trans, dissolve=TRUE)
+lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+lrc<-centroids(lr_project)
+
+lrc_buff<-buffer(lrc, width = 20000)
+
+lr_buffer<-terra::buffer(lr_project, width = 20000)
+
+#bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+#plot(bg)
+#lines(lr_project, col="blue")
+#lines(lr_buffer, col="black")
+#lines(lrc_buff, col="darkgreen")
+#writeVector(lr_buffer, "Phoenix Shapefiles/lr_1km_buff", overwrite=TRUE)
+lr_buffer<-vect("Phoenix Shapefiles/lr_1km_buff")
+
+#get roads data
+r<-vect("tl_2021_azmaricopa_roads/tl_2021_04013_roads.shp")
+r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+i<-subset(r_project, r_project$RTTYP=="I")
+c<-subset(r_project, r_project$RTTYP=="C")
+m<-subset(r_project, r_project$RTTYP=="M")
+o<-subset(r_project, r_project$RTTYP=="O")
+s<-subset(r_project, r_project$RTTYP=="S")
+```
+
+### LR Substitutes for Phoenix
+
+```{r}
+#Select substitute roads for Phoenix
+rdf <- as.data.frame(r_project)
+subI <- rdf |> 
+  filter(rdf$RTTYP == "I" | rdf$RTTYP == "U" | rdf$RTTYP == "S")
+
+us60 <- subset(r_project, r_project$FULLNAME == "US Hwy 60")
+us60HOV <- subset(r_project, r_project$FULLNAME == "US Hwy 60 (Hov)")
+i10 <- subset(r_project, r_project$FULLNAME == "I- 10")
+i10Bus <- subset(r_project, r_project$FULLNAME == "I- 10 Bus")
+i17 <- subset(r_project, r_project$FULLNAME == "I- 17")
+i17Frontage <- subset(r_project, r_project$FULLNAME == "I- 17 Frontage")
+s202 <- subset(r_project, r_project$FULLNAME == "State Rte 202")
+
+roads <- union(us60, union(us60HOV, union(i10, union(i10Bus, union(i17, union(i17Frontage, s202))))))
+
+#Make big 'ol buffer
+lr_buffer<-terra::buffer(lr_project, width = 5000)
+
+#Intersect buffer and roads
+subs <- crop(roads, lr_buffer)
+
+subs_buff <- terra::buffer(subs, width = 1000)
+sbuff <- aggregate(subs_buff)
+writeVector(sbuff, "phoenix_lr_1km_buff", overwrite=TRUE)
+#Plot the intersection of the roads and the big buffer
+bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+plot(bg)
+lines(lr_project, col="yellow", lwd = 3)
+lines(lr_buffer, col = "blue")
+lines(sbuff, col = "black", lwd = 3)
+
+#Testing
+# bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
+# plot(bg)
+# lines(lr_buffer, col="black")
+# lines(us60, col = "purple", lwd = 5)
+# lines(us60HOV, col = "lavender", lwd = 5)
+# lines(i10, col = "darkgreen", lwd = 5)
+# lines(i10Bus, col = "forestgreen", lwd = 5)
+# lines(i17, col = "blue", lwd = 3)
+# lines(i17Frontage, col = "skyblue", lwd = 5)
+# lines(s202, col = "black", lwd = 5)
+# lines(lr_project, col="yellow", lwd = 5)
+```
