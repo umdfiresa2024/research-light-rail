@@ -54,4 +54,4 @@ plot(bg)
 lines(u_buffer, col="purple", lwd = 5)
 lines(lr_project, col="blue", lwd = 5)
 
-#writeVector(u_buffer, "Treatment Area Shapefiles/Charlotte_TA", overwrite=TRUE)
+writeVector(u_buffer, "Treatment Area Shapefiles/Charlotte_TA", overwrite=TRUE)
