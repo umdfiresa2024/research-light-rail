@@ -73,17 +73,20 @@ s288 <- subset(r_project, r_project$FULLNAME == "State Hwy 288")
 roads <- union(i45, union(i45Hov, union(i69, union(i69Hov, union(i610, s288)))))
 
 #Make big 'ol buffer
-lr_buffer<-terra::buffer(lr_project, width = 10000)
+#lr_buffer<-terra::buffer(lr_project, width = 10000)
 
 #Intersect buffer and roads
 subs <- crop(roads, lr_buffer)
 
+subs_buff <- terra::buffer(subs, width = 1000)
+sbuff <- aggregate(subs_buff)
 #Plot the intersection of the roads and the big buffer
 bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
 plot(bg)
 lines(lr_project, col="yellow", lwd = 3)
 lines(lr_buffer, col = "blue")
-lines(subs, col = "black", lwd = 3)
+lines(sbuff, col = "black", lwd = 3)
+
 ```
 
 # Phoenix
@@ -150,12 +153,15 @@ lr_buffer<-terra::buffer(lr_project, width = 5000)
 #Intersect buffer and roads
 subs <- crop(roads, lr_buffer)
 
+subs_buff <- terra::buffer(subs, width = 1000)
+sbuff <- aggregate(subs_buff)
+
 #Plot the intersection of the roads and the big buffer
 bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
 plot(bg)
 lines(lr_project, col="yellow", lwd = 3)
 lines(lr_buffer, col = "blue")
-lines(subs, col = "black", lwd = 3)
+lines(sbuff, col = "black", lwd = 3)
 
 #Testing
 # bg <- get_tiles(ext(lrc_buff)) #choose a number that will give a good picture of the light rail area
