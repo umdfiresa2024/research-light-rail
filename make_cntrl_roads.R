@@ -49,7 +49,7 @@ r_buff_agg<-aggregate(r_buff, by="Address")
 path<-"G:/Shared drives/2024 FIRE Light Rail/DATA/PM25/"
 months<-dir(path)
 # for each month
-for (m in 104:length(months)) {
+for (m in 1:length(months)) {
   print(months[m])
   #for (m in 1:2) {
   days<-dir(paste0(path,months[m]))
