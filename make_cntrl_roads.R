@@ -45,6 +45,10 @@ r_buff<-buffer(r_inside, width = 1000)
 
 r_buff_agg<-aggregate(r_buff, by="Address")
 
+r_buff_df<-as.data.frame(r_buff_agg)
+
+write.csv(r_buff_df, "cntrl_road_cities.csv")
+
 #################get pm2.5 data for one month##################################
 path<-"G:/Shared drives/2024 FIRE Light Rail/DATA/PM25/"
 months<-dir(path)

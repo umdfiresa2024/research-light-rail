@@ -1,11 +1,25 @@
 library("tidyverse")
 
-idv_cities<-read.csv("nonoverlap_cities.csv") |>
-  mutate(add=ifelse(is.na(joint_address), Address, joint_address)) |>
-  select(X, add) |>
-  rename(city_num=X)
 
-f<-dir("PM25_daily", pattern="indv")
+####PM2.5 around light rail city highways#######################################
+
+ph<-read.csv("pm25_highway_daily.csv") 
+
+ph2<-ph |>
+  mutate(add=ifelse(address=="twin cities, mn, usa", "Minneapolis-St. Paul, MN", NA)) |>
+  mutate(add=ifelse(address=="houston, tx, usa", "Houston, TX", add)) |>
+  mutate(add=ifelse(address=="phoenix, az, usa", "Phoenix-Mesa, AZ", add)) |>
+  mutate(add=ifelse(address=="charlotte, nc, usa", "Charlotte, NC", add)) |>
+  filter(!is.na(add)) |>
+  select(pm25, year, month, day, add) |>
+  rename(pm25_highway=pm25)
+
+p<-merge(ph2, pi_trt, by=c("add", "day", "month", "year"))
+
+write.csv(p, "pm25_daily.csv", row.names=F)
+
+####PM2.5 around control highways##############################################
+f<-dir("PM25_daily", pattern="cntrl_highways")
 
 p_indv<-c()
 for (i in 1:length(f)) {
@@ -14,7 +28,7 @@ for (i in 1:length(f)) {
     mutate(year=substr(date, 1, 4)) |>
     mutate(month=substr(date, 5, 6)) |>
     mutate(day=substr(date, 7,8))
-
+  
   p_indv<-rbind(p_indv, pdf)
 }
 
@@ -31,17 +45,3 @@ pi_trt<-pi |>
            add=="Houston, TX") |>
   mutate(month=as.numeric(month), year=as.numeric(year), day=as.numeric(day)) 
 
-ph<-read.csv("pm25_highway_daily.csv") 
-
-ph2<-ph |>
-  mutate(add=ifelse(address=="twin cities, mn, usa", "Minneapolis-St. Paul, MN", NA)) |>
-  mutate(add=ifelse(address=="houston, tx, usa", "Houston, TX", add)) |>
-  mutate(add=ifelse(address=="phoenix, az, usa", "Phoenix-Mesa, AZ", add)) |>
-  mutate(add=ifelse(address=="charlotte, nc, usa", "Charlotte, NC", add)) |>
-  filter(!is.na(add)) |>
-  select(pm25, year, month, day, add) |>
-  rename(pm25_highway=pm25)
-
-p<-merge(ph2, pi_trt, by=c("add", "day", "month", "year"))
-
-write.csv(p, "pm25_daily.csv", row.names=F)
