@@ -65,7 +65,7 @@ for (m in 1:length(months)) {
     
     print(days[d])
     r<-rast(paste0(path, months[m], "/", days[d]))
-    buff_proj <- terra::project(r_buff,  crs(r))
+    buff_proj <- terra::project(r_buff_agg,  crs(r))
     int<-crop(r, buff_proj,
               snap="in",
               mask=TRUE)
