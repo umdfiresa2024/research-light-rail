@@ -102,9 +102,10 @@ for (i in 1:length(f)) {
   
   p_indv<-rbind(p_indv, pdf)
 }
-p_met<-p_indv
+p_met<-p_indv |>
+  rename(city_num=ID)
 
-p_met2<-merge(p_cntrl, cgroup, by="city_num")
+p_met2<-merge(p_met, cgroup, by="city_num")
 
 write.csv(p_met2, "daily roads/met_daily_cntrls.csv", row.names=F)
 
