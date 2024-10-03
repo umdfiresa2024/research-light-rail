@@ -109,3 +109,16 @@ p_met2<-merge(p_met, cgroup, by="city_num")
 
 write.csv(p_met2, "daily roads/met_daily_cntrls.csv", row.names=F)
 
+##########combine everything#####################################################
+library("tidyverse")
+
+trt_pm<-read.csv("daily roads/pm25_daily_roads.csv") 
+
+cntrl_pm<-read.csv("daily roads/pm25_daily_roads_cntrl.csv") |>
+  select(-city_num)
+
+met1<-read.csv("daily roads/met_charlotte.csv") |>
+  select
+  mutate(date=as.Date(date)) |>
+  
+trt_met<-
