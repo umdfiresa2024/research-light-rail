@@ -848,4 +848,4 @@ Park, E. S., & Sener, I. N. (2019). Traffic-related air emissions in Houston: Ef
 
 Shaver, K. (2013, October 23). Residents concerned about impact of proposed light-rail Purple Line. The Washington Post. [https://www.washingtonpost.com/](https://www.washingtonpost.com/local/trafficandcommuting/residents-concerned-about-impacts-of-proposed-light-rail-purple-line/2013/10/23/ffc25d52-3bea-11e3-a94f-b58017bfee6c_story.html)
 
-Texas A&M Transportation Institute. (2016). Light-Rail Transit (LRT) – Transportation Policy Research. <https://policy.tti.tamu.edu/strategy/light-rail-transit/>
+Texas A&M Transportation Institute. (2016). Light-Rail Transit (LRT) -- Transportation Policy Research. <https://policy.tti.tamu.edu/strategy/light-rail-transit/>
