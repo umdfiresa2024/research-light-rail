@@ -341,8 +341,132 @@ summary(m2<-feols(log(pm25) ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tav
 
 ## Synthetic Control
 
-For each city, we minimized the sum of squared residuals for the time
-period from Jan 2000 to the beginning of light rail construction.
+
+    X1, X0, Z1, Z0 all come directly from dataprep object.
+
+
+    **************** 
+     searching for synthetic control unit  
+     
+
+    **************** 
+    **************** 
+    **************** 
+
+    MSPE (LOSS V): 5.158154 
+
+    solution.v:
+     0.01062854 0.01419594 0.04264389 0.009123115 0.01263764 0.02086563 0.01341452 0.04493691 0.02220258 0.01017181 0.01169262 0.03439953 0.03439953 0.01478028 0.03221641 0.01524299 0.00440868 0.03906898 0.0554048 0.06964083 0.05396198 0.000514235 0.007512782 0.09126827 0.03904326 0.1034188 0.04886467 0.01440768 0.03468609 0.04739696 0.0002931576 0.01323661 0.03332029 
+
+    solution.w:
+     8.08457e-05 0.000182984 0.0001052532 0.0002775784 0.0008232795 0.001338086 0.2464958 0.0005569238 0.0003369966 7.04291e-05 0.000207468 0.03348701 0.00203856 0.2733088 0.0001541224 0.000811482 0.0005023597 0.0003413611 0.0001059228 0.006093164 0.0003653625 0.0001208473 0.0001022829 0.4320931 
+
+    $tab.pred
+                        Treated Synthetic Sample Mean
+    Swnet_tavg          160.013   154.321     154.269
+    Lwnet_tavg          -54.697   -54.317     -60.163
+    Qle_tavg             81.464    80.816      56.868
+    Qh_tavg              23.287    18.752      36.473
+    Qg_tavg               0.209     0.224       0.219
+    Snowf_tavg            0.000     0.000       0.000
+    Rainf_tavg            0.000     0.000       0.000
+    Evap_tavg             0.000     0.000       0.000
+    Qs_tavg               0.000     0.000       0.000
+    Qsb_tavg              0.000     0.000       0.000
+    Qsm_tavg              0.000     0.000       0.000
+    SnowT_tavg          289.515   289.574     290.854
+    AvgSurfT_tavg       289.515   289.574     290.854
+    SWE_tavg              0.024     0.021       0.345
+    SnowDepth_tavg        0.004     0.005       0.013
+    SoilMoist_S_tavg      6.536     6.280       5.217
+    SoilMoist_RZ_tavg   319.264   306.430     266.193
+    SoilMoist_P_tavg   1146.562  1143.669    1128.799
+    ECanop_tavg           0.000     0.000       0.000
+    TVeg_tavg             0.000     0.000       0.000
+    ESoil_tavg            0.000     0.000       0.000
+    CanopInt_tavg         0.013     0.016       0.011
+    EvapSnow_tavg         0.000     0.000       0.000
+    ACond_tavg            0.157     0.143       0.079
+    TWS_tavg           1146.599  1143.706    1129.154
+    GWS_tavg            827.298   837.239     862.606
+    Wind_f_tavg           3.025     3.032       3.481
+    Rainf_f_tavg          0.000     0.000       0.000
+    Tair_f_tavg         289.445   289.496     289.982
+    Qair_f_tavg           0.011     0.011       0.010
+    Psurf_f_tavg      98818.290 99104.446   97107.966
+    SWdown_f_tavg       177.960   177.576     187.493
+    LWdown_f_tavg       340.680   341.298     340.705
+
+    $tab.v
+                      v.weights
+    Swnet_tavg        0.011    
+    Lwnet_tavg        0.014    
+    Qle_tavg          0.043    
+    Qh_tavg           0.009    
+    Qg_tavg           0.013    
+    Snowf_tavg        0.021    
+    Rainf_tavg        0.013    
+    Evap_tavg         0.045    
+    Qs_tavg           0.022    
+    Qsb_tavg          0.01     
+    Qsm_tavg          0.012    
+    SnowT_tavg        0.034    
+    AvgSurfT_tavg     0.034    
+    SWE_tavg          0.015    
+    SnowDepth_tavg    0.032    
+    SoilMoist_S_tavg  0.015    
+    SoilMoist_RZ_tavg 0.004    
+    SoilMoist_P_tavg  0.039    
+    ECanop_tavg       0.055    
+    TVeg_tavg         0.07     
+    ESoil_tavg        0.054    
+    CanopInt_tavg     0.001    
+    EvapSnow_tavg     0.008    
+    ACond_tavg        0.091    
+    TWS_tavg          0.039    
+    GWS_tavg          0.103    
+    Wind_f_tavg       0.049    
+    Rainf_f_tavg      0.014    
+    Tair_f_tavg       0.035    
+    Qair_f_tavg       0.047    
+    Psurf_f_tavg      0        
+    SWdown_f_tavg     0.013    
+    LWdown_f_tavg     0.033    
+
+    $tab.w
+       w.weights         unit.names unit.numbers
+    1      0.000      Asheville, NC            1
+    2      0.000         Austin, TX            2
+    3      0.000       Beaumont, TX            3
+    4      0.000         Beloit, WI            4
+    5      0.001    Brownsville, TX            5
+    6      0.001     Charleston, SC            6
+    8      0.246       Columbia, SC            8
+    9      0.001 Corpus Christi, TX            9
+    10     0.000         Duluth, MN           10
+    11     0.000         Durham, NC           11
+    12     0.000     El Paso, TX-NM           12
+    13     0.033   Fayetteville, NC           13
+    14     0.002      Flagstaff, AZ           14
+    15     0.273     Greenville, SC           15
+    16     0.000         Laredo, TX           16
+    17     0.001     Lewisville, TX           17
+    18     0.001        Lubbock, TX           18
+    19     0.000         Odessa, TX           19
+    20     0.000      Rochester, MN           20
+    21     0.006    San Antonio, TX           21
+    22     0.000         Tucson, AZ           22
+    23     0.000           Waco, TX           23
+    24     0.000         Wausau, WI           24
+    25     0.432  Winston-Salem, NC           25
+
+    $tab.loss
+             Loss W   Loss V
+    [1,] 0.01531193 5.158154
+
+![](README_files/figure-commonmark/unnamed-chunk-12-1.png)
+
+![](README_files/figure-commonmark/unnamed-chunk-12-2.png)
 
 # References
 

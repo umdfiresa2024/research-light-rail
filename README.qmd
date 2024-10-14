@@ -404,7 +404,59 @@ summary(m2<-feols(log(pm25) ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tav
 
 ## Synthetic Control
 
-For each city, we minimized the sum of squared residuals for the time period from Jan 2000 to the beginning of light rail construction.
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library("Synth")
+library("gsynth")
+  
+
+dataprep.out <-
+  dataprep(
+    df,
+    predictors            = names(df[c(3:35)]),
+    dependent             = "pm25",
+    unit.variable         = "add_num", #city number
+    time.variable         = "time", 
+    unit.names.variable   = "Address",
+    treatment.identifier  = 7, #treatment city number
+    controls.identifier   = c(1:6, 8:25),
+    time.predictors.prior = c(0:1431),
+    time.optimize.ssr     = c(0:1300), 
+    time.plot             = c(1000:2500)
+  )
+
+synth.out <- synth(dataprep.out)
+
+print(synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+)
+
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Days"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = 1432,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Days"),
+          Ylim         = c(-10, 10),
+          Main         = ""
+)
+
+abline(v   = 1432,
+       lty = 2)
+```
 
 # References
 
