@@ -34,8 +34,10 @@ r <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2016_us_primaryroads/tl
 #change projection system to match roads
 pts_proj<-project(pts_buffer, crs(r))
 
+png(filename="maps/cntrl_roads.png")
 plot(pts_proj)
 lines(r, col="red")
+dev.off()
 
 #crop roads outside buffer areas
 r_inside<-terra::intersect(r, pts_proj)

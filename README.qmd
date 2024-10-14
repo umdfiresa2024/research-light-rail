@@ -6,7 +6,7 @@ format: gfm
 editor: visual
 ---
 
-# Introduction
+# 1. Introduction
 
 This research project aims to find if light rail openings result in an overall decrease in air pollution in U.S. urban areas? The answer to this question will help predict air pollution impacts of the Purple Line in Maryland that is scheduled to open in 2027.
 
@@ -22,37 +22,37 @@ Our study will differ from existing studies on light rail and air pollution in s
 
 As Park & Sener (2019) only included data two years before the light rail opening, and Fageda (2021) included data three years before the light rail openings, their findings can confound with the construction period of light rails. As shown in Figure 1, light rail construction usually happens around three years before light rail openings. There is also an increase in PM2.5 levels during the construction period. By including data only two to three years before light rail openings, existing studies can overestimate the degree of pollution reduction, as construction activities can contribute to the higher pollution levels before light rail openings. 
 
-## Treatment Criteria
+## 1.2. Treatment Criteria
 
 -   As Di et al. (2021) provides data from 2000 to 2016, candidate treatment cities must have light rails that opened from January 2004 to December 2012 in order to have four years of data before and after light rail opening.
 
 -   Treatment cities must have no increase heavy rail usage in the four years before and after opening window.
 
-+-----------------+---------------+------------------------+------------+-----------+
-| City            | Opening Month | Construction           | Eval Start | Eval Ends |
-+=================+===============+========================+============+===========+
-| Charlotte, NC   | Nov 2007      | Mar 2005 - Nov 2007,   | Nov 2003   | Nov 2011  |
-|                 |               |                        |            |           |
-|                 |               | Dec 2012 onwards       |            |           |
-+-----------------+---------------+------------------------+------------+-----------+
-| Houston, TX     | Jan 2004      | March 2001 - Jan 2004, | Jan 2000   | Jan 2008  |
-|                 |               |                        |            |           |
-|                 |               | Jan 2014 onwards       |            |           |
-+-----------------+---------------+------------------------+------------+-----------+
-| Twin Cities, MN | Jun 2004      | Feb 2001 - Jun 2004    | Jun 2000   | Jun 2008  |
-|                 |               |                        |            |           |
-|                 |               | Jan 2010 onwards       |            |           |
-+-----------------+---------------+------------------------+------------+-----------+
-| Phoenix, AZ     | Dec 2008      | July 2005 - Dec 2008   | Dec 2004   | Dec 2012  |
-|                 |               |                        |            |           |
-|                 |               | July 2012 onwards      |            |           |
-+-----------------+---------------+------------------------+------------+-----------+
++-----------------+---------------+------------------------+------------+------------+
+| City            | Opening Month | Construction           | Eval Start | Eval Ends  |
++=================+===============+========================+============+============+
+| Charlotte, NC   | Nov 2007      | Mar 2005 - Nov 2007,   | Nov 2003   | Nov 2011   |
+|                 |               |                        |            |            |
+|                 |               | Dec 2012 onwards       |            |            |
++-----------------+---------------+------------------------+------------+------------+
+| Houston, TX     | Jan 2004      | March 2001 - Jan 2004, | Jan 2000   | Jan 2008   |
+|                 |               |                        |            |            |
+|                 |               | Jan 2014 onwards       |            |            |
++-----------------+---------------+------------------------+------------+------------+
+| Twin Cities, MN | Jun 2004      | Feb 2001 - Jun 2004    | Jun 2000   | Jun 2008   |
+|                 |               |                        |            |            |
+|                 |               | Jan 2010 onwards       |            |            |
++-----------------+---------------+------------------------+------------+------------+
+| Phoenix, AZ     | Dec 2008      | July 2005 - Dec 2008   | Dec 2004   | Dec 2012   |
+|                 |               |                        |            |            |
+|                 |               | July 2012 onwards      |            |            |
++-----------------+---------------+------------------------+------------+------------+
 
-## Control cities
+## 1.3. Untreated Area for Each Treated Area
 
 The plot below shows number of trips for each mode of revenue-generating transportation in Charlotte.
 
-Because buses are the primary alternative transportation in the city, control cities for **Charlotte** are cities that primarily runs on buses in South Carolina and North Carolina with no rails and no light rails.
+Because buses are the primary alternative transportation in the city, control cities for **Charlotte** are cities that primarily runs on buses in South Carolina and North Carolina with no rails and no light rails. This includes, Asheville, NC, Charleston, SC, Columbia, SC, Durham, NC, Fayetteville, NC, Greenville, SC, Myrtle Beach, SC, Socastee, SC, Wilmington, NC, and Winston-Salem, NC.
 
 ```{r}
 #| echo: false
@@ -80,7 +80,7 @@ ggplot(data=charlotte)+
 
 The plot below shows number of trips for each mode of revenue-generating transportation in Houston.
 
-Control cities for **Houston** are other cities in Texas with no rails, no light rails, and less than 5% of other forms of other transportation in light rail opening year.
+Control cities for **Houston** are other cities in Texas with no rails, no light rails, and less than 5% of other forms of other transportation in light rail opening year. This includes Austin, TX, Beaumont, TX, Brownsville, TX, College Station, TX, Corpus Christi, TX, Lewisville, TX, El Paso, TX-NM, Laredo, TX, Lubbock, TX, Odessa, TX, San Antonio, TX, and Waco, TX.
 
 ```{r}
 #| echo: false
@@ -106,7 +106,7 @@ ggplot(data=houston)+
 
 The plot below shows number of trips for each mode of revenue-generating transportation in the Twin Cities
 
-Control cities for the **Twin Cities** are other cities in Minnesota and Wisconsin with no rails, no light rails, and less than 5% of other forms of other transportation in light rail opening year.
+Control cities for the **Twin Cities** are other cities in Minnesota and Wisconsin with no rails, no light rails, and less than 5% of other forms of other transportation in light rail opening year. This includes Beloit, WI, Duluth, MN, Rochester, MN, and Wausau, WI.
 
 ```{r}
 #| echo: false
@@ -132,7 +132,7 @@ ggplot(data=mn)+
 
 The plot below shows number of trips for each mode of revenue-generating transportation in the Phoenix-Mesa.
 
-Control cities for **Phoenix-Mesa** are cities in other Arizona metropolitan areas with no rails and no light rails.
+Control cities for **Phoenix-Mesa** are cities in other Arizona metropolitan areas with no rails and no light rails. This includes Flagstaff, AZ, Sierra Vista, AZ, and Tucson, AZ.
 
 ```{r}
 #| echo: false
@@ -165,68 +165,29 @@ ggplot(data=phoenix)+
   theme_bw()
 ```
 
-## Data
+# 2. Data
 
-### PM2.5
+## 2.1. PM2.5 in Treatment Cities
 
-As particulate matter is one of the most damaging air pollutants, we use ground-level PM2.5 concentrations to represent city-level air quality. PM2.5 data comes from Di et al. (2019), which provides daily PM2.5 concentrations in grid cells at a resolution of 1 km for the years 2000 to 2016. We then find the monthly average PM2.5 concentration within a 10 km buffer area around each city's population centroid for the three treatment cities: Charlotte, Houston, Texas, and Minneapolis-St. Paul. As the Valley Metro Rail connects two cities, Phoenix and Mesa, Arizona, we find the average PM2.5 concentration for the 10 km buffer areas around both cities' population centroid for each month.
+As particulate matter is one of the most damaging air pollutants, we use ground-level PM2.5 concentrations to represent city-level air quality. PM2.5 data comes from Di et al. (2019), which provides daily PM2.5 concentrations in grid cells at a resolution of 1 km for the years 2000 to 2016.
 
-The 10 km radius around the population centroid is the black line, and the 10 km buffer radius around the light rail centroid is the red line.
+For each treated city, we identified which highway light rails could potentially serve as a substitute, and we extracted daily levels of PM2.5 in areas within 1 km of those highways.
 
-```{r}
-#| message: false
+The black lines in the figure below shows the area we extracted daily PM2.5 data of the treated cities, Charlotte and the Twin Cities. The yellow line shows the light rail route of interest.
 
-library("maptiles")
-library("terra")
+![](maps/treat_charlotte.png)
 
-#city centroid
-cities<-read.csv("allcities_latlon.csv")
+![](maps/treat_twin_cities.png)
 
-df<-cities |>
-  filter(Address=="Charlotte, NC") |>
-  select(lon, lat)
-
-#converts df into a spatvector
-x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-
-#create a 10 km (10,000 meter) buffer (radius)
-pts_buffer<-buffer(x, width = 10000)
-  
-#light rail centroid
-char_lr <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
-
-#combines entire route into one line
-char_lr<-aggregate(char_lr, dissolve=TRUE)
-
-#change coordinate system to match points
-lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-
-#find centroid of light rail route
-lrc<-centroids(lr_project, inside=FALSE)
-
-#create 10 km buffer around light rail centroid
-pts_buffer1<-buffer(lrc, width = 10000)
-
-#approximate size of the background
-extent<-buffer(x, width = 10000)
-
-bg <- get_tiles(ext(extent))
-
-plot(bg)
-points(x)
-lines(lr_project, col="blue")
-lines(pts_buffer1, col="red")
-lines(pts_buffer)
-```
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
 
-df<-read.csv("pm25_allcities.csv") |>
-  filter(add=="Charlotte, NC") |>
-  mutate(date=as.Date(date))
+df<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  filter(Address=="Charlotte, NC")  |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
 ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
   ggtitle("Charlotte, NC")+
@@ -249,36 +210,9 @@ ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
 #| message: false
 #| warning: false
 
-df<-cities |>
-  filter(Address=="Houston, TX") |>
-  select(lon, lat)
-
-x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-pts_buffer<-buffer(x, width = 10000)
-  
-#light rail centroid
-Transit_Map_GEO <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
-trans <- subset(Transit_Map_GEO, Transit_Map_GEO$route_long == "METRORAIL RED LINE")
-char_lr<-aggregate(trans, dissolve=TRUE)
-lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-lrc<-centroids(lr_project, inside=FALSE)
-pts_buffer1<-buffer(lrc, width = 10000)
-
-bg <- get_tiles(ext(pts_buffer))
-plot(bg)
-lines(lr_project, col="blue")
-lines(pts_buffer1, col="red")
-lines(pts_buffer)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-df<-read.csv("pm25_allcities.csv") |>
-  filter(add=="Houston, TX") |>
-  mutate(date=as.Date(date))
+df<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  filter(Address=="Houston, TX")  |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
 ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
   ggtitle("Houston, TX")+
@@ -301,39 +235,9 @@ ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
 #| message: false
 #| warning: false
 
-df<-cities |>
-  filter(Address=="Minneapolis-St. Paul, MN") |>
-  select(lon, lat)
-
-x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-pts_buffer<-buffer(x, width = 10000)
-  
-#light rail centroid
-Transit_Map_GEO <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/National_Transit_Map_Routes/National_Transit_Map_Routes.shp")
-trans <- subset(
-  Transit_Map_GEO, 
-  Transit_Map_GEO$route_url == "https://www.metrotransit.org/route/blue" | 
-    Transit_Map_GEO$route_url == "https://www.metrotransit.org/route/green")
-char_lr<-aggregate(trans, dissolve=TRUE)
-lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-lrc<-centroids(lr_project, inside=FALSE)
-pts_buffer1<-buffer(lrc, width = 10000)
-
-bg <- get_tiles(ext(pts_buffer))
-plot(bg)
-lines(lr_project, col="blue")
-lines(pts_buffer1, col="red")
-lines(pts_buffer)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-df<-read.csv("pm25_allcities.csv") |>
-  filter(add=="Minneapolis-St. Paul, MN") |>
-  mutate(date=as.Date(date))
+df<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  filter(Address=="Minneapolis-St. Paul, MN")  |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
 ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
   ggtitle("Minneapolis-St. Paul, MN")+
@@ -355,38 +259,9 @@ ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
 #| message: false
 #| warning: false
 
-df<-cities |>
-  filter(joint_address=="Phoenix-Mesa, AZ") |>
-  select(lon, lat)
-
-x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-pts_buffer<-buffer(x, width = 10000)
-pmshape<-aggregate(pts_buffer)
-  
-#light rail centroid
-Transit_Map_GEO <- vect(
-  "G:/Shared drives/2024 FIRE Light Rail/DATA/Valley_Metro_Light_Rail/LightRailLine.shp")
-trans <- subset(Transit_Map_GEO, Transit_Map_GEO$SYMBOLOGY=="METRO")
-char_lr<-aggregate(trans, dissolve=TRUE)
-lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-lrc<-centroids(lr_project, inside=FALSE)
-pts_buffer1<-buffer(lrc, width = 10000)
-
-bg <- get_tiles(ext(pmshape))
-plot(bg)
-lines(lr_project, col="blue")
-lines(pts_buffer1, col="red")
-lines(pmshape)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-df<-read.csv("pm25_allcities.csv") |>
-  filter(add=="Phoenix-Mesa, AZ") |>
-  mutate(date=as.Date(date))
+df<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  filter(Address=="Phoenix-Mesa, AZ")  |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
 ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
   ggtitle("Phoenix, AZ")+
@@ -403,434 +278,133 @@ ggplot(data=df, aes(x=date, y=pm25))+geom_line()+
   scale_color_manual(values=c("#FFCD00", "#c8102e", "#eeeeee"))
 ```
 
-### Meteorology
+## 2.2. PM2.5 in Untreated Areas
 
-To take into account meteorological conditions, we include total precipitation, snowfall, humidity, air density, wind speed, and air temperature from NASA's Modern-Era Retrospective Analysis for Research and Applications version 2 (MERRA-2), which provides these meteorological values every day at a grid cell resolution of 0.625 degrees x 0.5 degrees. We then calculate the monthly average values for each meteorological variable within the 10 km buffer areas of treatment and control cities.
+For each untreated city identified in section 1.3., we draw a 30 km radius around each city's centroid, crop interstates segments that fall within that centroid, and draw 1 km radius around each cropped interstate. We then find the daily average PM2.5 levels within each 1 km radius around the cropped interstate area for each city.
+
+![](maps/cntrl_roads.png)
+
+## 2.3. Meteorology
+
+To take into account meteorological conditions, we include 48 land surface meteorological variables provided by NASA Global Land Data Assimilation System Version 2. The data set provides rasters with a raster of 0.25 x0.25 degree daily. We then calculate the daily averages for the treatment and control areas as described above.
+
+# 3. Estimation Methods
+
+## 3.1. Difference-in-Difference
+
+### Charlotte
+
+Trends between treat and untreated groups
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+trt_pm<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
+  select(-day)
+
+cntrl_pm<-read.csv("daily roads/pm25_daily_roads_cntrl.csv") |>
+  select(-city_num, -year, -month, -day) |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
+  mutate(month=month(date), year=year(date))
+
+pm<-rbind(trt_pm, cntrl_pm)
+
+cgroup<-c("Charlotte, NC", 
+          "Columbia, SC", 
+          "Winston-Salem, NC")
+
+pm_month<-pm |>
+  group_by(Address, month, year) |>
+  summarise(pm25=mean(pm25)) |>
+  filter(Address %in% cgroup) |>
+  mutate(date=as.Date(paste0(as.character(year),"-",
+                             as.character(month),"-",
+                             "01"), "%Y-%m-%d"))
+
+ggplot(data=pm_month, aes(y=pm25, x=date, col=Address)) + 
+  geom_line(size=1) + 
+  scale_color_manual(values=c("grey","black","#FFCD00", "#c8102e"))+
+  geom_vline(aes(xintercept=as.Date("2007-11-01"), col=" LR Opening"), linetype="dashed", size=1)+
+  theme_bw()
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+trt_pm<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
+
+cntrl_pm<-read.csv("daily roads/pm25_daily_roads_cntrl.csv") |>
+  select(-city_num, -year, -month, -day) |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) 
+
+trt_met<-read.csv("daily roads/met_charlotte.csv") |>
+  select(-X, -date) |>
+  rename(date=formatted_date) |>
+  mutate(Address="Charlotte, NC") |>
+  mutate(date=as.Date(date))
+
+cntrl_met<-read.csv("daily roads/met_daily_cntrls.csv") |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
+
+trt<-merge(trt_met, trt_pm, by=c("Address", "date"))
+
+cntrl<-merge(cntrl_pm, cntrl_met, by=c("Address", "date")) |>
+  filter(!is.na(TWS_tavg))
+
+rm(trt_met, trt_pm, cntrl_pm, cntrl_met)
+
+
+df<-bind_rows(trt,cntrl) |>
+  select(-city_num) |>
+  mutate(start=as.Date("01/12/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(end=as.Date("01/11/2011", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
+  mutate(treatcity=ifelse(Address=="Charlotte, NC",1,0)) |>
+  mutate(time=interval(start, date)/days(1)) |>
+  filter(Address!="Concord, NC") |>
+  mutate(add_num=factor(Address)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  filter(date>=start & date<=end) |>
+  mutate(dow=weekdays(date))
+
+df2<-df |>
+  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | Address=="Columbia, SC" |
+           Address=="Charlotte, NC") |>
+  mutate(trtcity=ifelse(Address=="Charlotte, NC", 1, 0))
+```
+
+```{r}
+#run difference-in-differences
+library("fixest")
+
+summary(m1<-feols(pm25 ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tavg+
+                   Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+
+                   Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+
+                   SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+
+                   ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+
+                   TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+
+                   Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg|
+                   dow + month + year + Address, cluster="Address", data=df2))
+
+summary(m2<-feols(log(pm25) ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tavg+
+                   Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+
+                   Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+
+                   SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+
+                   ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+
+                   TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+
+                   Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg|
+                   dow + month + year + Address, cluster="Address", data=df2))
+```
 
 ## Synthetic Control
 
 For each city, we minimized the sum of squared residuals for the time period from Jan 2000 to the beginning of light rail construction.
-
-We omitted results from Houston and the Twin Cities because the pre-construction number of observations is very low.
-
-### Charlotte
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-library("Synth")
-library("gsynth")
-
-p<-read.csv("pm25_allcities.csv")
-m<-read.csv("merra_allcities.csv")
-
-df<-merge(p, m, by=c("date", "add", "month", "year"))
-
-cgroup<-c("Charlotte, NC", "Asheville, NC", "Charleston-North Charleston, SC", 
-          "Columbia, SC", "Concord, NC", "Durham, NC", "Fayetteville, NC", 
-          "Greenville, SC", "Myrtle Beach-Socastee, SC-NC", "Wilmington, NC",
-          "Winston-Salem, NC")
-
-df2<-df |>
-  filter(add %in% cgroup) |>
-  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(add=="Charlotte, NC",1,0)) |>
-  mutate(time=interval(start, as.Date(date))/months(1)) |>
-  mutate(add_num=factor(add, levels=cgroup)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(time<=96) |>
-  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
-         SPEED2=SPEED^2, TLML2=TLML^2)
-
-dataprep.out <-
-  dataprep(
-    df2,
-    predictors            = c("PRECTOT", "PRECSNO", "QSH", "RHOA", "SPEED", 
-                              "TLML","PRECTOT2", "PRECSNO2", "QSH2", "RHOA2",
-                              "SPEED2", "TLML2"),
-    dependent             = "pm25",
-    unit.variable         = "add_num",
-    time.variable         = "time",
-    unit.names.variable   = "add",
-    treatment.identifier  = 1,
-    controls.identifier   = c(2:11),
-    time.predictors.prior = c(-46:48),
-    time.optimize.ssr     = c(-45:16), #before construction time
-    time.plot             = c(-45:96)
-  )
-
-synth.out <- synth(dataprep.out)
-
-print(synth.tables   <- synth.tab(
-  dataprep.res = dataprep.out,
-  synth.res    = synth.out)
-)
-
-path.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
-          Xlab         = c("Months"),
-          Legend       = c("Treated City","Synthetic City"),
-          Legend.position = c("topleft")
-)
-
-abline(v   = 48,
-       lty = 2)
-
-gaps.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Gap"),
-          Xlab         = c("Year"),
-          Ylim         = c(-5, 5),
-          Main         = ""
-)
-
-abline(v   = 48,
-       lty = 2)
-```
-
-### Phoenix-Mesa
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-cgroup<-c("Phoenix-Mesa, AZ", "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ")
-
-df2<-df |>
-  filter(add %in% cgroup) |>
-  mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(add=="Phoenix-Mesa, AZ",1,0)) |>
-  mutate(time=interval(start, as.Date(date))/months(1)) |>
-  mutate(add_num=factor(add, levels=cgroup)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(time<=96)|>
-  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
-         SPEED2=SPEED^2, TLML2=TLML^2)
-
-dataprep.out <-
-  dataprep(
-    df2,
-    predictors            = c("PRECTOT", "PRECSNO", "QSH", "RHOA", "SPEED", 
-                              "TLML","PRECTOT2", "PRECSNO2", "QSH2", "RHOA2",
-                              "SPEED2", "TLML2"),
-    dependent             = "pm25",
-    unit.variable         = "add_num",
-    time.variable         = "time",
-    unit.names.variable   = "add",
-    treatment.identifier  = 1,
-    controls.identifier   = c(2:4),
-    time.predictors.prior = c(-59:48),
-    time.optimize.ssr     = c(-59:7), #before construction time
-    time.plot             = c(1:96)
-  )
-
-synth.out <- synth(dataprep.out)
-
-print(synth.tables   <- synth.tab(
-  dataprep.res = dataprep.out,
-  synth.res    = synth.out)
-)
-
-path.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
-          Xlab         = c("Months"),
-          Legend       = c("Treated City","Synthetic City"),
-          Legend.position = c("topleft")
-)
-
-abline(v   = 48,
-       lty = 2)
-
-```
-
-## Regressions
-
-Regressions with Charlotte and its 13 control cities.
-
-Column 1 has month and year fixed effects.
-
-Column 2 has month, year, and city fixed effects.
-
-Column 1 has month and year fixed effects.
-
-For all regressions, we restrict data up to 4 years after light rail opening date.
-
-```{r}
-#| warning: false
-#| echo: false
-
-library("lfe")
-library("stargazer")
-
-p<-read.csv("pm25_allcities.csv")
-m<-read.csv("merra_allcities.csv")
-
-df<-merge(p, m, by=c("date", "add", "month", "year"))
-
-cgroup<-c("Charlotte, NC", "Asheville, NC", "Charleston-North Charleston, SC", 
-          "Columbia, SC", "Concord, NC", "Durham, NC", "Fayetteville, NC", 
-          "Greenville, SC", "Myrtle Beach-Socastee, SC-NC", "Wilmington, NC",
-          "Winston-Salem, NC")
-
-df1<-df |>
-  filter(add %in% cgroup) |>
-  mutate(start=as.Date("01/11/2003", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(add=="Charlotte, NC",1,0)) |>
-  mutate(time=interval(start, as.Date(date))/months(1)) |>
-  mutate(add_num=factor(add, levels=cgroup)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(time<=96) |>
-  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
-         SPEED2=SPEED^2, TLML2=TLML^2) |>
-  mutate(constime=ifelse(date>=as.Date("01/03/2005", format="%d/%m/%Y") &
-                                               date<=open, 1, 0)) |>
-  mutate(group=1)
-
-cm1<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df1)
-
-cm2<-felm(log(pm25) ~ opentime:treatcity + opentime + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            add + month + year, 
-          data=df1)
-
-cm3<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-            constime:treatcity + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df1)
-
-stargazer(cm1, cm2, cm3, type="text", dep.var.labels=c("ln(PM25)"))
-```
-
-Regressions with Charlotte and its 3 closely-matched cities from synthetic control.
-
-```{r}
-#| warning: false
-#| echo: false
-cgroup<-c("Charlotte, NC", "Concord, NC", "Winston-Salem, NC", "Columbia, SC")
-
-df2<-df1 |>
-  filter(add %in% cgroup)
-
-cm1<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df2)
-
-cm2<-felm(log(pm25) ~ opentime:treatcity + opentime + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            add + month + year, 
-          data=df2)
-
-cm3<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-            constime:treatcity + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df2)
-
-stargazer(cm1, cm2, cm3, type="text", dep.var.labels=c("ln(PM25)"))
-```
-
-Regressions with Houston and its 13 control cities.
-
-```{r}
-#| warning: false
-#| echo: false
-
-cgroup<-c("Houston, TX", "Austin, TX", "Beaumont, TX", "Brownsville, TX",
-          "College Station-Bryan, TX", "Corpus Christi, TX", 
-          "Denton-Lewisville, TX", 
-          "El Paso, TX-NM", "Laredo, TX", "Waco, TX",
-          "Lubbock, TX", "Odessa, TX", "San Antonio, TX")
-
-df2<-df |>
-  filter(add %in% cgroup) |>
-  mutate(start=as.Date("01/01/2000", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/01/2004", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(add=="Houston, TX",1,0)) |>
-  mutate(time=interval(start, as.Date(date))/months(1)) |>
-  mutate(add_num=factor(add, levels=cgroup)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(time<=96) |>
-  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
-         SPEED2=SPEED^2, TLML2=TLML^2)|>
-  mutate(constime=ifelse(date>=as.Date("01/03/2001", format="%d/%m/%Y") &
-                                               date<=open, 1, 0)) |>
-  mutate(group=2)
-
-#alltime periods
-cm1<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df2)
-
-cm2<-felm(log(pm25) ~ opentime:treatcity + opentime + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            add + month + year, 
-          data=df2)
-
-cm3<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-            constime:treatcity + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df2)
-
-stargazer(cm1, cm2, cm3, type="text", dep.var.labels=c("ln(PM25)"))
-```
-
-Regressions with the Twin Cities and its 13 control cities.
-
-```{r}
-#| warning: false
-#| echo: false
-
-cgroup<-c("Minneapolis-St. Paul, MN", "Beloit, WI-IL", "Duluth, MN-WI", 
-          "Janesville, WI",
-          "Rochester, MN", "Wausau, WI")
-
-df3<-df |>
-  filter(add %in% cgroup) |>
-  mutate(start=as.Date("01/06/2000", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/06/2004", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(add=="Minneapolis-St. Paul, MN",1,0)) |>
-  mutate(time=interval(start, as.Date(date))/months(1)) |>
-  mutate(add_num=factor(add, levels=cgroup)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(time<=96)|>
-  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
-         SPEED2=SPEED^2, TLML2=TLML^2)|>
-  mutate(constime=ifelse(date>=as.Date("01/02/2001", format="%d/%m/%Y") &
-                                               date<=open, 1, 0)) |>
-  mutate(group=3)
-
-#alltime periods
-cm1<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df3)
-
-cm2<-felm(log(pm25) ~ opentime:treatcity + opentime + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            add + month + year, 
-          data=df3)
-
-cm3<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-            constime:treatcity + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df3)
-
-stargazer(cm1, cm2, cm3, type="text", dep.var.labels=c("ln(PM25)"))
-```
-
-Regressions with Phoenix-Mesa, AZ
-
-```{r}
-#| warning: false
-#| echo: false
-
-cgroup<-c("Phoenix-Mesa, AZ", "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ")
-
-df4<-df |>
-  filter(add %in% cgroup) |>
-  mutate(start=as.Date("01/12/2004", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/12/2008", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(add=="Phoenix-Mesa, AZ",1,0)) |>
-  mutate(time=interval(start, as.Date(date))/months(1)) |>
-  mutate(add_num=factor(add, levels=cgroup)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(time<=96)|>
-  mutate(PRECTOT2=PRECTOT^2, PRECSNO2=PRECSNO^2, QSH2=QSH^2, RHOA2=RHOA^2, 
-         SPEED2=SPEED^2, TLML2=TLML^2) |>
-  mutate(constime=ifelse(date>=as.Date("01/07/2005", format="%d/%m/%Y") &
-                                               date<=open, 1, 0)) |>
-  mutate(group=4)
-
-#alltime periods
-cm1<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df4)
-
-cm2<-felm(log(pm25) ~ opentime:treatcity + opentime + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            add + month + year, 
-          data=df4)
-
-cm3<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-            constime:treatcity + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year, 
-          data=df4)
-
-stargazer(cm1, cm2, cm3, type="text", dep.var.labels=c("ln(PM25)"))
-```
-
-Regression with all treated and control cities.
-
-Column 1 and 3 have month, year, and city group fixed effects. Standard errors are clustered at the group level.
-
-Column 2 has month, year, and city fixed effects. Standard errors are clustered at the city level.
-
-```{r}
-#| warning: false
-#| echo: false
-
-dfall<-rbind(df1, df2, df3, df4)
-
-cm1<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year + group | 0 | group,
-          data=dfall)
-
-cm2<-felm(log(pm25) ~ opentime:treatcity + opentime + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year + add | 0 | add,
-          data=dfall)
-
-cm3<-felm(log(pm25) ~ opentime:treatcity + opentime + treatcity +
-            constime:treatcity + 
-                 PRECTOT + PRECSNO + QSH + RHOA + SPEED + TLML +
-                 PRECTOT2 + PRECSNO2 + QSH2 + RHOA2 + SPEED2 + TLML2 |
-            month + year + group | 0 | group, 
-          data=dfall)
-
-stargazer(cm1, cm2, cm3, type="text", dep.var.labels=c("ln(PM25)"))
-```
 
 # References
 

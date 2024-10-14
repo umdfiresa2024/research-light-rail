@@ -2,7 +2,7 @@
 FIRE Sustainability Analytics
 2024-09-10
 
-# Introduction
+# 1. Introduction
 
 This research project aims to find if light rail openings result in an
 overall decrease in air pollution in U.S. urban areas? The answer to
@@ -62,7 +62,7 @@ existing studies can overestimate the degree of pollution reduction, as
 construction activities can contribute to the higher pollution levels
 before light rail openings. 
 
-## Treatment Criteria
+## 1.2. Treatment Criteria
 
 - As Di et al. (2021) provides data from 2000 to 2016, candidate
   treatment cities must have light rails that opened from January 2004
@@ -125,7 +125,7 @@ before light rail openings. 
 </tbody>
 </table>
 
-## Control cities
+## 1.3. Untreated Area for Each Treated Area
 
 The plot below shows number of trips for each mode of revenue-generating
 transportation in Charlotte.
@@ -133,6 +133,9 @@ transportation in Charlotte.
 Because buses are the primary alternative transportation in the city,
 control cities for **Charlotte** are cities that primarily runs on buses
 in South Carolina and North Carolina with no rails and no light rails.
+This includes, Asheville, NC, Charleston, SC, Columbia, SC, Durham, NC,
+Fayetteville, NC, Greenville, SC, Myrtle Beach, SC, Socastee, SC,
+Wilmington, NC, and Winston-Salem, NC.
 
 ![](README_files/figure-commonmark/unnamed-chunk-1-1.png)
 
@@ -141,7 +144,10 @@ transportation in Houston.
 
 Control cities for **Houston** are other cities in Texas with no rails,
 no light rails, and less than 5% of other forms of other transportation
-in light rail opening year.
+in light rail opening year. This includes Austin, TX, Beaumont, TX,
+Brownsville, TX, College Station, TX, Corpus Christi, TX, Lewisville,
+TX, El Paso, TX-NM, Laredo, TX, Lubbock, TX, Odessa, TX, San Antonio,
+TX, and Waco, TX.
 
 ![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
 
@@ -150,7 +156,8 @@ transportation in the Twin Cities
 
 Control cities for the **Twin Cities** are other cities in Minnesota and
 Wisconsin with no rails, no light rails, and less than 5% of other forms
-of other transportation in light rail opening year.
+of other transportation in light rail opening year. This includes
+Beloit, WI, Duluth, MN, Rochester, MN, and Wausau, WI.
 
 ![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
 
@@ -158,71 +165,32 @@ The plot below shows number of trips for each mode of revenue-generating
 transportation in the Phoenix-Mesa.
 
 Control cities for **Phoenix-Mesa** are cities in other Arizona
-metropolitan areas with no rails and no light rails.
+metropolitan areas with no rails and no light rails. This includes
+Flagstaff, AZ, Sierra Vista, AZ, and Tucson, AZ.
 
 ![](README_files/figure-commonmark/unnamed-chunk-4-1.png)
 
-## Data
+# 2. Data
 
-### PM2.5
+## 2.1. PM2.5 in Treatment Cities
 
 As particulate matter is one of the most damaging air pollutants, we use
 ground-level PM2.5 concentrations to represent city-level air quality.
 PM2.5 data comes from Di et al. (2019), which provides daily PM2.5
 concentrations in grid cells at a resolution of 1 km for the years 2000
-to 2016. We then find the monthly average PM2.5 concentration within a
-10 km buffer area around each city’s population centroid for the three
-treatment cities: Charlotte, Houston, Texas, and Minneapolis-St. Paul.
-As the Valley Metro Rail connects two cities, Phoenix and Mesa, Arizona,
-we find the average PM2.5 concentration for the 10 km buffer areas
-around both cities’ population centroid for each month.
+to 2016.
 
-The 10 km radius around the population centroid is the black line, and
-the 10 km buffer radius around the light rail centroid is the red line.
+For each treated city, we identified which highway light rails could
+potentially serve as a substitute, and we extracted daily levels of
+PM2.5 in areas within 1 km of those highways.
 
-``` r
-library("maptiles")
-library("terra")
+The black lines in the figure below shows the area we extracted daily
+PM2.5 data of the treated cities, Charlotte and the Twin Cities. The
+yellow line shows the light rail route of interest.
 
-#city centroid
-cities<-read.csv("allcities_latlon.csv")
+![](maps/treat_charlotte.png)
 
-df<-cities |>
-  filter(Address=="Charlotte, NC") |>
-  select(lon, lat)
-
-#converts df into a spatvector
-x <- vect(df, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-
-#create a 10 km (10,000 meter) buffer (radius)
-pts_buffer<-buffer(x, width = 10000)
-  
-#light rail centroid
-char_lr <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/LYNX_Blue_Line_Route/LYNX_Blue_Line_Route.shp")
-
-#combines entire route into one line
-char_lr<-aggregate(char_lr, dissolve=TRUE)
-
-#change coordinate system to match points
-lr_project<-project(char_lr, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-
-#find centroid of light rail route
-lrc<-centroids(lr_project, inside=FALSE)
-
-#create 10 km buffer around light rail centroid
-pts_buffer1<-buffer(lrc, width = 10000)
-
-#approximate size of the background
-extent<-buffer(x, width = 10000)
-
-bg <- get_tiles(ext(extent))
-
-plot(bg)
-points(x)
-lines(lr_project, col="blue")
-lines(pts_buffer1, col="red")
-lines(pts_buffer)
-```
+![](maps/treat_twin_cities.png)
 
 ![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
 
@@ -232,577 +200,149 @@ lines(pts_buffer)
 
 ![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
 
+## 2.2. PM2.5 in Untreated Areas
+
+For each untreated city identified in section 1.3., we draw a 30 km
+radius around each city’s centroid, crop interstates segments that fall
+within that centroid, and draw 1 km radius around each cropped
+interstate. We then find the daily average PM2.5 levels within each 1 km
+radius around the cropped interstate area for each city.
+
+![](maps/cntrl_roads.png)
+
+## 2.3. Meteorology
+
+To take into account meteorological conditions, we include 48 land
+surface meteorological variables provided by NASA Global Land Data
+Assimilation System Version 2. The data set provides rasters with a
+raster of 0.25 x0.25 degree daily. We then calculate the daily averages
+for the treatment and control areas as described above.
+
+# 3. Estimation Methods
+
+## 3.1. Difference-in-Difference
+
+### Charlotte
+
+Trends between treat and untreated groups
+
 ![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
 
-![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
+``` r
+#run difference-in-differences
+library("fixest")
 
-![](README_files/figure-commonmark/unnamed-chunk-11-1.png)
+summary(m1<-feols(pm25 ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tavg+
+                   Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+
+                   Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+
+                   SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+
+                   ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+
+                   TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+
+                   Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg|
+                   dow + month + year + Address, cluster="Address", data=df2))
+```
 
-![](README_files/figure-commonmark/unnamed-chunk-12-1.png)
+    The variables 'Qsb_tavg', 'AvgSurfT_tavg' and three others have been removed because of collinearity (see $collin.var).
 
-### Meteorology
+    OLS estimation, Dep. Var.: pm25
+    Observations: 11,572 
+    Fixed-effects: dow: 7,  month: 12,  year: 9,  Address: 4
+    Standard-errors: Clustered (Address) 
+                           Estimate   Std. Error    t value  Pr(>|t|)    
+    opentime              -0.198677 4.258520e-01  -0.466541 0.6726186    
+    Swnet_tavg             0.030462 3.714600e-02   0.820052 0.4722747    
+    Lwnet_tavg            -0.644160 6.006800e-02 -10.723839 0.0017338 ** 
+    Qle_tavg              -0.066881 1.954500e-02  -3.421936 0.0417837 *  
+    Qh_tavg                0.086480 6.753700e-02   1.280473 0.2904049    
+    Qg_tavg                0.125419 7.147300e-02   1.754787 0.1775662    
+    Snowf_tavg         15425.621820 5.312629e+03   2.903576 0.0623208 .  
+    Rainf_tavg          -752.081928 1.178843e+03  -0.637983 0.5688465    
+    Evap_tavg         234737.107503 2.025732e+05   1.158777 0.3304083    
+    Qs_tavg            16881.284216 8.191730e+03   2.060772 0.1313987    
+    Qsm_tavg          -41229.310232 3.488551e+04  -1.181846 0.3224146    
+    SnowT_tavg            -6.979083 6.860500e-01 -10.172852 0.0020241 ** 
+    SWE_tavg            1154.283670 1.972428e+03   0.585210 0.5995143    
+    SnowDepth_tavg         7.945262 1.607680e+00   4.942068 0.0158916 *  
+    SoilMoist_S_tavg      -0.852542 3.531230e-01  -2.414289 0.0946522 .  
+    SoilMoist_RZ_tavg   1264.169872 2.087991e+03   0.605448 0.5876148    
+    SoilMoist_P_tavg    -110.027905 1.807158e+02  -0.608845 0.5856343    
+    ECanop_tavg       153982.270372 3.806939e+04   4.044779 0.0272031 *  
+    TVeg_tavg          87346.399078 5.242208e+04   1.666214 0.1942611    
+    CanopInt_tavg       1140.506087 1.974833e+03   0.577520 0.6040800    
+    ACond_tavg             1.565970 4.346502e+00   0.360283 0.7425081    
+    TWS_tavg           -1154.152993 1.972415e+03  -0.585147 0.5995513    
+    GWS_tavg            1264.189765 2.088010e+03   0.605452 0.5876124    
+    Wind_f_tavg           -1.467053 2.944300e-01  -4.982691 0.0155394 *  
+    Tair_f_tavg            4.196564 6.058920e-01   6.926258 0.0061703 ** 
+    Qair_f_tavg         -158.223651 3.426908e+01  -4.617097 0.0191199 *  
+    Psurf_f_tavg           0.000634 2.760000e-04   2.302190 0.1047778    
+    SWdown_f_tavg         -0.082299 4.732100e-02  -1.739177 0.1803859    
+    LWdown_f_tavg          0.572947 4.839100e-02  11.839974 0.0012953 ** 
+    opentime:trtcity      -0.188123 3.316570e-01  -0.567221 0.6102339    
+    ... 5 variables were removed because of collinearity (Qsb_tavg, AvgSurfT_tavg and 3 others [full set in $collin.var])
+    ---
+    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    RMSE: 4.97751     Adj. R2: 0.353233
+                    Within R2: 0.182373
 
-To take into account meteorological conditions, we include total
-precipitation, snowfall, humidity, air density, wind speed, and air
-temperature from NASA’s Modern-Era Retrospective Analysis for Research
-and Applications version 2 (MERRA-2), which provides these
-meteorological values every day at a grid cell resolution of 0.625
-degrees x 0.5 degrees. We then calculate the monthly average values for
-each meteorological variable within the 10 km buffer areas of treatment
-and control cities.
+``` r
+summary(m2<-feols(log(pm25) ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tavg+
+                   Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+
+                   Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+
+                   SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+
+                   ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+
+                   TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+
+                   Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg|
+                   dow + month + year + Address, cluster="Address", data=df2))
+```
+
+    The variables 'Qsb_tavg', 'AvgSurfT_tavg' and three others have been removed because of collinearity (see $collin.var).
+
+    OLS estimation, Dep. Var.: log(pm25)
+    Observations: 11,572 
+    Fixed-effects: dow: 7,  month: 12,  year: 9,  Address: 4
+    Standard-errors: Clustered (Address) 
+                          Estimate   Std. Error    t value  Pr(>|t|)    
+    opentime              0.029521     0.026241   1.125004 0.3424711    
+    Swnet_tavg            0.006342     0.003066   2.068762 0.1303966    
+    Lwnet_tavg           -0.049147     0.004960  -9.908840 0.0021863 ** 
+    Qle_tavg             -0.002571     0.002158  -1.191382 0.3191679    
+    Qh_tavg               0.003520     0.005790   0.607895 0.5861876    
+    Qg_tavg               0.008248     0.006003   1.373991 0.2631052    
+    Snowf_tavg         1481.124660   446.176661   3.319592 0.0450678 *  
+    Rainf_tavg         -183.408102   131.382294  -1.395988 0.2570887    
+    Evap_tavg          1695.554511 19069.887224   0.088913 0.9347544    
+    Qs_tavg             941.996084   877.596369   1.073382 0.3617580    
+    Qsm_tavg          -5970.622488  2939.895313  -2.030896 0.1352271    
+    SnowT_tavg           -0.577382     0.054551 -10.584190 0.0018018 ** 
+    SWE_tavg            114.018741   162.236183   0.702795 0.5328106    
+    SnowDepth_tavg        0.707261     0.109301   6.470779 0.0074897 ** 
+    SoilMoist_S_tavg     -0.022963     0.020373  -1.127141 0.3416948    
+    SoilMoist_RZ_tavg   108.109261   169.540182   0.637662 0.5690297    
+    SoilMoist_P_tavg      5.872698    13.095676   0.448446 0.6842420    
+    ECanop_tavg       14832.190665  3789.298398   3.914231 0.0296388 *  
+    TVeg_tavg         10178.215881  4771.991123   2.132908 0.1226731    
+    CanopInt_tavg       112.796370   162.344302   0.694797 0.5371589    
+    ACond_tavg            0.570015     0.214838   2.653225 0.0767818 .  
+    TWS_tavg           -113.985004   162.236494  -0.702585 0.5329241    
+    GWS_tavg            108.113428   169.541865   0.637680 0.5690193    
+    Wind_f_tavg          -0.164437     0.015363 -10.703573 0.0017434 ** 
+    Tair_f_tavg           0.344507     0.047053   7.321614 0.0052629 ** 
+    Qair_f_tavg          -6.885867     2.866769  -2.401961 0.0957056 .  
+    Psurf_f_tavg          0.000073     0.000021   3.503908 0.0393701 *  
+    SWdown_f_tavg        -0.007418     0.004046  -1.833412 0.1641108    
+    LWdown_f_tavg         0.046436     0.003783  12.276412 0.0011641 ** 
+    opentime:trtcity     -0.008383     0.022106  -0.379216 0.7297771    
+    ... 5 variables were removed because of collinearity (Qsb_tavg, AvgSurfT_tavg and 3 others [full set in $collin.var])
+    ---
+    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    RMSE: 0.394454     Adj. R2: 0.39586 
+                     Within R2: 0.250005
 
 ## Synthetic Control
 
 For each city, we minimized the sum of squared residuals for the time
 period from Jan 2000 to the beginning of light rail construction.
-
-We omitted results from Houston and the Twin Cities because the
-pre-construction number of observations is very low.
-
-### Charlotte
-
-
-    X1, X0, Z1, Z0 all come directly from dataprep object.
-
-
-    **************** 
-     searching for synthetic control unit  
-     
-
-    **************** 
-    **************** 
-    **************** 
-
-    MSPE (LOSS V): 0.4990884 
-
-    solution.v:
-     0.0002331608 0.1807033 0.01281216 0.06099616 0.0005176617 0.09566328 0.1516587 0.2424662 0.04420588 0.04742142 0.001435258 0.1618868 
-
-    solution.w:
-     0.01497714 0.004546717 0.08851375 0.7262575 0.02368774 0.01274948 0.01736156 0.007751335 0.003160997 0.1009938 
-
-    $tab.pred
-               Treated Synthetic Sample Mean
-    PRECTOT      0.000     0.000       0.000
-    PRECSNO      0.000     0.000       0.000
-    QSH          0.009     0.009       0.010
-    RHOA         1.191     1.192       1.192
-    SPEED        4.881     5.299       5.230
-    TLML       289.073   288.949     289.571
-    PRECTOT2     0.000     0.000       0.000
-    PRECSNO2     0.000     0.000       0.000
-    QSH2         0.000     0.000       0.000
-    RHOA2        1.419     1.422       1.422
-    SPEED2      24.328    28.748      28.121
-    TLML2    83624.007 83553.296   83909.254
-
-    $tab.v
-             v.weights
-    PRECTOT  0        
-    PRECSNO  0.181    
-    QSH      0.013    
-    RHOA     0.061    
-    SPEED    0.001    
-    TLML     0.096    
-    PRECTOT2 0.152    
-    PRECSNO2 0.242    
-    QSH2     0.044    
-    RHOA2    0.047    
-    SPEED2   0.001    
-    TLML2    0.162    
-
-    $tab.w
-       w.weights                      unit.names unit.numbers
-    2      0.015                   Asheville, NC            2
-    3      0.005 Charleston-North Charleston, SC            3
-    4      0.089                    Columbia, SC            4
-    5      0.726                     Concord, NC            5
-    6      0.024                      Durham, NC            6
-    7      0.013                Fayetteville, NC            7
-    8      0.017                  Greenville, SC            8
-    9      0.008    Myrtle Beach-Socastee, SC-NC            9
-    10     0.003                  Wilmington, NC           10
-    11     0.101               Winston-Salem, NC           11
-
-    $tab.loss
-              Loss W    Loss V
-    [1,] 0.005410736 0.4990884
-
-![](README_files/figure-commonmark/unnamed-chunk-13-1.png)
-
-![](README_files/figure-commonmark/unnamed-chunk-13-2.png)
-
-### Phoenix-Mesa
-
-
-    X1, X0, Z1, Z0 all come directly from dataprep object.
-
-
-    **************** 
-     searching for synthetic control unit  
-     
-
-    **************** 
-    **************** 
-    **************** 
-
-    MSPE (LOSS V): 17.55961 
-
-    solution.v:
-     0.09007563 0.01064422 0.0004542988 0.164535 0.1501265 0.000399553 0.08557806 0.004826011 0.01675006 0.2821431 0.1489733 0.04549433 
-
-    solution.w:
-     2.808e-07 3.501e-07 0.9999994 
-
-    $tab.pred
-               Treated Synthetic Sample Mean
-    PRECTOT      0.000     0.000       0.000
-    PRECSNO      0.000     0.000       0.000
-    QSH          0.006     0.006       0.006
-    RHOA         1.123     1.067       1.029
-    SPEED        4.756     5.126       5.454
-    TLML       295.949   292.686     289.489
-    PRECTOT2     0.000     0.000       0.000
-    PRECSNO2     0.000     0.000       0.000
-    QSH2         0.000     0.000       0.000
-    RHOA2        1.263     1.139       1.061
-    SPEED2      22.828    26.759      30.427
-    TLML2    87645.447 85716.409   83867.320
-
-    $tab.v
-             v.weights
-    PRECTOT  0.09     
-    PRECSNO  0.011    
-    QSH      0        
-    RHOA     0.165    
-    SPEED    0.15     
-    TLML     0        
-    PRECTOT2 0.086    
-    PRECSNO2 0.005    
-    QSH2     0.017    
-    RHOA2    0.282    
-    SPEED2   0.149    
-    TLML2    0.045    
-
-    $tab.w
-      w.weights       unit.names unit.numbers
-    2         0    Flagstaff, AZ            2
-    3         0 Sierra Vista, AZ            3
-    4         1       Tucson, AZ            4
-
-    $tab.loss
-            Loss W   Loss V
-    [1,] 0.8397809 17.55961
-
-![](README_files/figure-commonmark/unnamed-chunk-14-1.png)
-
-## Regressions
-
-Regressions with Charlotte and its 13 control cities.
-
-Column 1 has month and year fixed effects.
-
-Column 2 has month, year, and city fixed effects.
-
-Column 1 has month and year fixed effects.
-
-For all regressions, we restrict data up to 4 years after light rail
-opening date.
-
-
-    =========================================================================
-                                         Dependent variable:                 
-                        -----------------------------------------------------
-                                              ln(PM25)                       
-                               (1)               (2)               (3)       
-    -------------------------------------------------------------------------
-    opentime                 0.109**           0.080*            0.107**     
-                             (0.053)           (0.044)           (0.053)     
-                                                                             
-    treatcity               0.066***                            0.077***     
-                             (0.017)                             (0.021)     
-                                                                             
-    PRECTOT               -1,667.143***     -1,228.535***     -1,667.272***  
-                            (233.798)         (204.808)         (233.803)    
-                                                                             
-    PRECSNO                                                                  
-                                                                             
-                                                                             
-    QSH                    -44.141***        -29.350***        -44.190***    
-                             (3.709)           (4.289)           (3.710)     
-                                                                             
-    RHOA                     -9.409          -30.043***          -9.413      
-                             (6.586)           (7.766)           (6.586)     
-                                                                             
-    SPEED                   -0.286***         -0.249***         -0.287***    
-                             (0.057)           (0.049)           (0.057)     
-                                                                             
-    TLML                    -0.335***         -0.407***         -0.336***    
-                             (0.084)           (0.070)           (0.084)     
-                                                                             
-    PRECTOT2                                                                 
-                                                                             
-                                                                             
-    PRECSNO2                                                                 
-                                                                             
-                                                                             
-    QSH2                                                                     
-                                                                             
-                                                                             
-    RHOA2                     4.090           13.038***           4.092      
-                             (2.765)           (2.861)           (2.765)     
-                                                                             
-    SPEED2                  0.021***           0.011**          0.021***     
-                             (0.005)           (0.004)           (0.005)     
-                                                                             
-    TLML2                   0.001***          0.001***          0.001***     
-                            (0.0001)          (0.0001)          (0.0001)     
-                                                                             
-    opentime:treatcity       -0.029            -0.031            -0.041      
-                             (0.029)           (0.024)           (0.032)     
-                                                                             
-    treatcity:constime                                           -0.034      
-                                                                 (0.035)     
-                                                                             
-    -------------------------------------------------------------------------
-    Observations              1,573             1,573             1,573      
-    R2                        0.683             0.786             0.683      
-    Adjusted R2               0.676             0.780             0.676      
-    Residual Std. Error 0.157 (df = 1539) 0.130 (df = 1530) 0.157 (df = 1538)
-    =========================================================================
-    Note:                                         *p<0.1; **p<0.05; ***p<0.01
-
-Regressions with Charlotte and its 3 closely-matched cities from
-synthetic control.
-
-
-    ======================================================================
-                                       Dependent variable:                
-                        --------------------------------------------------
-                                             ln(PM25)                     
-                              (1)              (2)              (3)       
-    ----------------------------------------------------------------------
-    opentime                 0.070            0.084            0.065      
-                            (0.066)          (0.065)          (0.066)     
-                                                                          
-    treatcity               -0.040**                           -0.029     
-                            (0.016)                           (0.019)     
-                                                                          
-    PRECTOT                                                               
-                                                                          
-                                                                          
-    PRECSNO                                                               
-                                                                          
-                                                                          
-    QSH                    -33.161***       -28.640***       -33.218***   
-                            (6.098)          (6.182)          (6.098)     
-                                                                          
-    RHOA                  -113.656***       -86.710***      -114.206***   
-                            (22.392)         (23.228)         (22.396)    
-                                                                          
-    SPEED                   -0.248**        -0.263***         -0.249**    
-                            (0.098)          (0.096)          (0.098)     
-                                                                          
-    TLML                    -0.282**        -0.304***         -0.283**    
-                            (0.116)          (0.114)          (0.116)     
-                                                                          
-    PRECTOT2                                                              
-                                                                          
-                                                                          
-    PRECSNO2                                                              
-                                                                          
-                                                                          
-    QSH2                                                                  
-                                                                          
-                                                                          
-    RHOA2                  47.558***        39.967***        47.788***    
-                            (9.320)          (9.404)          (9.321)     
-                                                                          
-    SPEED2                   0.010            0.012            0.010      
-                            (0.009)          (0.009)          (0.009)     
-                                                                          
-    TLML2                   0.001***         0.001***         0.001***    
-                            (0.0002)         (0.0002)         (0.0002)    
-                                                                          
-    opentime:treatcity       -0.015           -0.015           -0.025     
-                            (0.024)          (0.023)          (0.026)     
-                                                                          
-    treatcity:constime                                         -0.030     
-                                                              (0.029)     
-                                                                          
-    ----------------------------------------------------------------------
-    Observations              572              572              572       
-    R2                       0.810            0.816            0.810      
-    Adjusted R2              0.798            0.805            0.798      
-    Residual Std. Error 0.116 (df = 539) 0.114 (df = 537) 0.116 (df = 538)
-    ======================================================================
-    Note:                                      *p<0.1; **p<0.05; ***p<0.01
-
-Regressions with Houston and its 13 control cities.
-
-
-    =========================================================================
-                                         Dependent variable:                 
-                        -----------------------------------------------------
-                                              ln(PM25)                       
-                               (1)               (2)               (3)       
-    -------------------------------------------------------------------------
-    opentime                -0.141***         -0.155***         -0.137**     
-                             (0.054)           (0.048)           (0.054)     
-                                                                             
-    treatcity               0.330***                            0.256***     
-                             (0.027)                             (0.049)     
-                                                                             
-    PRECTOT                -612.465**       -1,136.482***      -614.493**    
-                            (281.018)         (254.271)         (280.758)    
-                                                                             
-    PRECSNO                                                                  
-                                                                             
-                                                                             
-    QSH                      -5.762            -4.635            -5.490      
-                             (9.871)           (9.119)           (9.863)     
-                                                                             
-    RHOA                    25.145***         20.949**          25.165***    
-                             (3.919)           (9.544)           (3.915)     
-                                                                             
-    SPEED                   -0.262***          -0.062           -0.259***    
-                             (0.057)           (0.053)           (0.057)     
-                                                                             
-    TLML                     -0.011           -0.232**           -0.013      
-                             (0.110)           (0.098)           (0.110)     
-                                                                             
-    PRECTOT2                                                                 
-                                                                             
-                                                                             
-    PRECSNO2                                                                 
-                                                                             
-                                                                             
-    QSH2                   -972.610***         437.260         -986.514***   
-                            (341.044)         (330.674)         (340.811)    
-                                                                             
-    RHOA2                   -9.739***         -6.056**          -9.748***    
-                             (1.719)           (3.008)           (1.717)     
-                                                                             
-    SPEED2                  0.015***            0.003           0.014***     
-                             (0.004)           (0.004)           (0.004)     
-                                                                             
-    TLML2                    0.00002          0.0005***          0.00003     
-                            (0.0002)          (0.0002)          (0.0002)     
-                                                                             
-    opentime:treatcity       -0.003            0.0001             0.071      
-                             (0.037)           (0.032)           (0.055)     
-                                                                             
-    treatcity:constime                                           0.104*      
-                                                                 (0.057)     
-                                                                             
-    -------------------------------------------------------------------------
-    Observations              1,261             1,261             1,261      
-    R2                        0.569             0.675             0.570      
-    Adjusted R2               0.558             0.664             0.559      
-    Residual Std. Error 0.175 (df = 1229) 0.152 (df = 1218) 0.174 (df = 1228)
-    =========================================================================
-    Note:                                         *p<0.1; **p<0.05; ***p<0.01
-
-Regressions with the Twin Cities and its 13 control cities.
-
-
-    ======================================================================
-                                       Dependent variable:                
-                        --------------------------------------------------
-                                             ln(PM25)                     
-                              (1)              (2)              (3)       
-    ----------------------------------------------------------------------
-    opentime                 0.058           0.081**           0.055      
-                            (0.052)          (0.039)          (0.052)     
-                                                                          
-    treatcity                -0.038                            0.011      
-                            (0.033)                           (0.063)     
-                                                                          
-    PRECTOT                 664.640         737.209**         645.639     
-                           (478.161)        (356.431)        (478.666)    
-                                                                          
-    PRECSNO                                                               
-                                                                          
-                                                                          
-    QSH                    45.348***        -22.547**        46.039***    
-                            (13.090)         (10.550)         (13.114)    
-                                                                          
-    RHOA                   -80.702***       -50.385**        -80.189***   
-                            (25.666)         (22.644)         (25.676)    
-                                                                          
-    SPEED                    -0.232           -0.112           -0.229     
-                            (0.177)          (0.131)          (0.177)     
-                                                                          
-    TLML                     -0.082           -0.091           -0.080     
-                            (0.136)          (0.101)          (0.136)     
-                                                                          
-    PRECTOT2                                                              
-                                                                          
-                                                                          
-    PRECSNO2                                                              
-                                                                          
-                                                                          
-    QSH2                                                                  
-                                                                          
-                                                                          
-    RHOA2                  35.573***        25.094***        35.368***    
-                            (10.410)         (8.633)          (10.414)    
-                                                                          
-    SPEED2                   0.011            -0.002           0.010      
-                            (0.012)          (0.009)          (0.012)     
-                                                                          
-    TLML2                    0.0003          0.0003*           0.0003     
-                            (0.0002)         (0.0002)         (0.0002)    
-                                                                          
-    opentime:treatcity       -0.010           -0.021           -0.059     
-                            (0.044)          (0.033)          (0.069)     
-                                                                          
-    treatcity:constime                                         -0.065     
-                                                              (0.070)     
-                                                                          
-    ----------------------------------------------------------------------
-    Observations              612              612              612       
-    R2                       0.527            0.742            0.528      
-    Adjusted R2              0.503            0.727            0.503      
-    Residual Std. Error 0.203 (df = 581) 0.150 (df = 577) 0.203 (df = 580)
-    ======================================================================
-    Note:                                      *p<0.1; **p<0.05; ***p<0.01
-
-Regressions with Phoenix-Mesa, AZ
-
-
-    ======================================================================
-                                       Dependent variable:                
-                        --------------------------------------------------
-                                             ln(PM25)                     
-                              (1)              (2)              (3)       
-    ----------------------------------------------------------------------
-    opentime                                                              
-                                                                          
-                                                                          
-    treatcity                -0.085                            -0.072     
-                            (0.057)                           (0.059)     
-                                                                          
-    PRECTOT                                                               
-                                                                          
-                                                                          
-    PRECSNO                                                               
-                                                                          
-                                                                          
-    QSH                    -32.305***       -36.915***       -32.998***   
-                            (8.161)          (9.082)          (8.197)     
-                                                                          
-    RHOA                  -104.592***      -125.495***      -104.608***   
-                            (10.229)         (21.883)         (10.231)    
-                                                                          
-    SPEED                  -0.507***        -0.515***        -0.516***    
-                            (0.120)          (0.123)          (0.121)     
-                                                                          
-    TLML                     -0.006           -0.087           -0.006     
-                            (0.136)          (0.159)          (0.136)     
-                                                                          
-    PRECTOT2                                                              
-                                                                          
-                                                                          
-    PRECSNO2                                                              
-                                                                          
-                                                                          
-    QSH2                                                                  
-                                                                          
-                                                                          
-    RHOA2                  50.452***        57.609***        50.459***    
-                            (4.860)          (7.798)          (4.860)     
-                                                                          
-    SPEED2                  0.046***         0.047***         0.047***    
-                            (0.010)          (0.011)          (0.010)     
-                                                                          
-    TLML2                    0.0001           0.0002           0.0001     
-                            (0.0002)         (0.0003)         (0.0002)    
-                                                                          
-    opentime:treatcity       -0.051           -0.051          -0.066*     
-                            (0.036)          (0.036)          (0.040)     
-                                                                          
-    treatcity:constime                                         -0.037     
-                                                              (0.041)     
-                                                                          
-    ----------------------------------------------------------------------
-    Observations              624              624              624       
-    R2                       0.765            0.766            0.765      
-    Adjusted R2              0.752            0.752            0.752      
-    Residual Std. Error 0.181 (df = 591) 0.181 (df = 589) 0.181 (df = 590)
-    ======================================================================
-    Note:                                      *p<0.1; **p<0.05; ***p<0.01
-
-Regression with all treated and control cities.
-
-Column 1 and 3 have month, year, and city group fixed effects. Standard
-errors are clustered at the group level.
-
-Column 2 has month, year, and city fixed effects. Standard errors are
-clustered at the city level.
-
-
-    =========================================================================
-                                         Dependent variable:                 
-                        -----------------------------------------------------
-                                              ln(PM25)                       
-                               (1)               (2)               (3)       
-    -------------------------------------------------------------------------
-    opentime                  0.039            0.033*             0.041      
-                             (0.019)           (0.018)           (0.023)     
-                                                                             
-    treatcity                 0.133                               0.125      
-                             (0.063)                             (0.054)     
-                                                                             
-    PRECTOT                -1,277.768*      -1,839.200***      -1,277.434*   
-                            (451.653)         (354.919)         (452.910)    
-                                                                             
-    PRECSNO                                                                  
-                             (0.000)           (0.000)           (0.000)     
-                                                                             
-    QSH                      -34.728          -45.550**          -34.722     
-                            (45.553)          (17.510)          (45.517)     
-                                                                             
-    RHOA                      1.877            -8.542             1.932      
-                            (12.676)          (15.289)          (12.822)     
-                                                                             
-    SPEED                   -0.434**          -0.280***         -0.434**     
-                             (0.102)           (0.080)           (0.102)     
-                                                                             
-    TLML                     -0.050            -0.028            -0.051      
-                             (0.301)           (0.181)           (0.302)     
-                                                                             
-    PRECTOT2                                                                 
-                             (0.000)           (0.000)           (0.000)     
-                                                                             
-    PRECSNO2                                                                 
-                             (0.000)           (0.000)           (0.000)     
-                                                                             
-    QSH2                     946.608        2,401.849***         943.627     
-                           (1,908.163)        (876.298)        (1,915.182)   
-                                                                             
-    RHOA2                     0.218             6.383             0.195      
-                             (5.614)           (6.082)           (5.674)     
-                                                                             
-    SPEED2                   0.029**          0.017***           0.029**     
-                             (0.008)           (0.006)           (0.008)     
-                                                                             
-    TLML2                    0.0001            0.0001            0.0001      
-                             (0.001)          (0.0003)           (0.001)     
-                                                                             
-    opentime:treatcity        0.004            -0.002             0.012      
-                             (0.023)           (0.045)           (0.055)     
-                                                                             
-    treatcity:constime                                            0.015      
-                                                                 (0.064)     
-                                                                             
-    -------------------------------------------------------------------------
-    Observations              4,070             4,070             4,070      
-    R2                        0.613             0.732             0.613      
-    Adjusted R2               0.610             0.728             0.610      
-    Residual Std. Error 0.224 (df = 4031) 0.187 (df = 4002) 0.224 (df = 4030)
-    =========================================================================
-    Note:                                         *p<0.1; **p<0.05; ***p<0.01
 
 # References
 
