@@ -222,251 +222,82 @@ for the treatment and control areas as described above.
 
 ## 3.1. Difference-in-Difference
 
+For each treatment city, we use data from untreated city with similar
+public pre-light-rail transportation profiles as controls. Our main
+regression specification is:
+
+$$
+P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta +\mu_i + \eta_t + \epsilon_{it}
+$$
+
+where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day
+$t$.
+
+$D_i$ is a dummy variable that is equal to one when city $i$ is the city
+with a light rail system.
+
+$Open_t$ is a dummy variable that is equal to one when the light rail
+system in the treated city is in operation.
+
+$W_{it}$ includes 48 meteorological control variables in its linear,
+square, and cubic form for each city and day.
+
+$\mu_i$ are city fixed effects.
+
+$\eta_t$ is time fixed effects, which is a combination of day of week
+fixed effects, month fixed effects, year fixed effects, or day fixed
+effects, depending on the specific regression.
+
 ### Charlotte
 
-Trends between treat and untreated groups
+Trends between treat and untreated groups. Area in the grey box
+(construction years) are dropped from our main results.
 
 ![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
 
-``` r
-#run difference-in-differences
-library("fixest")
+| Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                               |
+|---------:|-----------:|--------:|------------:|:-------------------------------------------------------|
+|    -0.21 |       0.47 |   -0.44 |        0.69 | Linear Weather Vars, Day of Week FE, Month FE          |
+|    -0.57 |       0.27 |   -2.11 |        0.13 | Linear Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.66 |       0.56 |   -1.19 |        0.32 | Linear Weather Vars, Day of Week FE, Date FE           |
+|    -0.69 |       0.66 |   -1.05 |        0.37 | Cublic Weather Vars, Day of Week FE, Month FE          |
+|    -0.73 |       0.45 |   -1.61 |        0.21 | Cublic Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.72 |    6661.94 |    0.00 |        1.00 | Cublic Weather Vars, Day of Week FE, Date FE           |
 
-summary(m1<-feols(pm25 ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tavg+
-                   Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+
-                   Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+
-                   SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+
-                   ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+
-                   TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+
-                   Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg|
-                   dow + month + year + Address, cluster="Address", data=df2))
-```
+Log-linear results
 
-    The variables 'Qsb_tavg', 'AvgSurfT_tavg' and three others have been removed because of collinearity (see $collin.var).
+| Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                               |
+|---------:|-----------:|--------:|------------:|:-------------------------------------------------------|
+|    -0.04 |       0.02 |   -1.99 |        0.14 | Linear Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.05 |       0.04 |   -1.25 |        0.30 | Linear Weather Vars, Day of Week FE, Date FE           |
+|    -0.06 |       0.02 |   -2.50 |        0.09 | Cublic Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.05 |     403.77 |    0.00 |        1.00 | Cublic Weather Vars, Day of Week FE, Date FE           |
 
-    OLS estimation, Dep. Var.: pm25
-    Observations: 11,572 
-    Fixed-effects: dow: 7,  month: 12,  year: 9,  Address: 4
-    Standard-errors: Clustered (Address) 
-                           Estimate   Std. Error    t value  Pr(>|t|)    
-    opentime              -0.198677 4.258520e-01  -0.466541 0.6726186    
-    Swnet_tavg             0.030462 3.714600e-02   0.820052 0.4722747    
-    Lwnet_tavg            -0.644160 6.006800e-02 -10.723839 0.0017338 ** 
-    Qle_tavg              -0.066881 1.954500e-02  -3.421936 0.0417837 *  
-    Qh_tavg                0.086480 6.753700e-02   1.280473 0.2904049    
-    Qg_tavg                0.125419 7.147300e-02   1.754787 0.1775662    
-    Snowf_tavg         15425.621820 5.312629e+03   2.903576 0.0623208 .  
-    Rainf_tavg          -752.081928 1.178843e+03  -0.637983 0.5688465    
-    Evap_tavg         234737.107503 2.025732e+05   1.158777 0.3304083    
-    Qs_tavg            16881.284216 8.191730e+03   2.060772 0.1313987    
-    Qsm_tavg          -41229.310232 3.488551e+04  -1.181846 0.3224146    
-    SnowT_tavg            -6.979083 6.860500e-01 -10.172852 0.0020241 ** 
-    SWE_tavg            1154.283670 1.972428e+03   0.585210 0.5995143    
-    SnowDepth_tavg         7.945262 1.607680e+00   4.942068 0.0158916 *  
-    SoilMoist_S_tavg      -0.852542 3.531230e-01  -2.414289 0.0946522 .  
-    SoilMoist_RZ_tavg   1264.169872 2.087991e+03   0.605448 0.5876148    
-    SoilMoist_P_tavg    -110.027905 1.807158e+02  -0.608845 0.5856343    
-    ECanop_tavg       153982.270372 3.806939e+04   4.044779 0.0272031 *  
-    TVeg_tavg          87346.399078 5.242208e+04   1.666214 0.1942611    
-    CanopInt_tavg       1140.506087 1.974833e+03   0.577520 0.6040800    
-    ACond_tavg             1.565970 4.346502e+00   0.360283 0.7425081    
-    TWS_tavg           -1154.152993 1.972415e+03  -0.585147 0.5995513    
-    GWS_tavg            1264.189765 2.088010e+03   0.605452 0.5876124    
-    Wind_f_tavg           -1.467053 2.944300e-01  -4.982691 0.0155394 *  
-    Tair_f_tavg            4.196564 6.058920e-01   6.926258 0.0061703 ** 
-    Qair_f_tavg         -158.223651 3.426908e+01  -4.617097 0.0191199 *  
-    Psurf_f_tavg           0.000634 2.760000e-04   2.302190 0.1047778    
-    SWdown_f_tavg         -0.082299 4.732100e-02  -1.739177 0.1803859    
-    LWdown_f_tavg          0.572947 4.839100e-02  11.839974 0.0012953 ** 
-    opentime:trtcity      -0.188123 3.316570e-01  -0.567221 0.6102339    
-    ... 5 variables were removed because of collinearity (Qsb_tavg, AvgSurfT_tavg and 3 others [full set in $collin.var])
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    RMSE: 4.97751     Adj. R2: 0.353233
-                    Within R2: 0.182373
+Day of week heterogeneous treatment effects, with log-linear results
 
-``` r
-summary(m2<-feols(log(pm25) ~ opentime:trtcity + opentime + Swnet_tavg+Lwnet_tavg+
-                   Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+
-                   Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+
-                   SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+
-                   ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+
-                   TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+
-                   Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg|
-                   dow + month + year + Address, cluster="Address", data=df2))
-```
+|                               | Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                              |
+|:------------------------------|---------:|-----------:|--------:|------------:|:------------------------------------------------------|
+| opentime:trtcity:dowFriday    |    -0.36 |       0.52 |   -0.69 |        0.54 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowMonday    |     0.09 |       0.48 |    0.19 |        0.86 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowSaturday  |    -0.23 |       0.50 |   -0.47 |        0.67 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowSunday    |    -0.04 |       0.49 |   -0.08 |        0.94 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowThursday  |    -0.67 |       0.45 |   -1.47 |        0.24 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowTuesday   |     0.14 |       0.40 |    0.35 |        0.75 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowWednesday |    -0.40 |       0.47 |   -0.85 |        0.46 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
 
-    The variables 'Qsb_tavg', 'AvgSurfT_tavg' and three others have been removed because of collinearity (see $collin.var).
+Factors that can confound Charlotte treatment effects:
 
-    OLS estimation, Dep. Var.: log(pm25)
-    Observations: 11,572 
-    Fixed-effects: dow: 7,  month: 12,  year: 9,  Address: 4
-    Standard-errors: Clustered (Address) 
-                          Estimate   Std. Error    t value  Pr(>|t|)    
-    opentime              0.029521     0.026241   1.125004 0.3424711    
-    Swnet_tavg            0.006342     0.003066   2.068762 0.1303966    
-    Lwnet_tavg           -0.049147     0.004960  -9.908840 0.0021863 ** 
-    Qle_tavg             -0.002571     0.002158  -1.191382 0.3191679    
-    Qh_tavg               0.003520     0.005790   0.607895 0.5861876    
-    Qg_tavg               0.008248     0.006003   1.373991 0.2631052    
-    Snowf_tavg         1481.124660   446.176661   3.319592 0.0450678 *  
-    Rainf_tavg         -183.408102   131.382294  -1.395988 0.2570887    
-    Evap_tavg          1695.554511 19069.887224   0.088913 0.9347544    
-    Qs_tavg             941.996084   877.596369   1.073382 0.3617580    
-    Qsm_tavg          -5970.622488  2939.895313  -2.030896 0.1352271    
-    SnowT_tavg           -0.577382     0.054551 -10.584190 0.0018018 ** 
-    SWE_tavg            114.018741   162.236183   0.702795 0.5328106    
-    SnowDepth_tavg        0.707261     0.109301   6.470779 0.0074897 ** 
-    SoilMoist_S_tavg     -0.022963     0.020373  -1.127141 0.3416948    
-    SoilMoist_RZ_tavg   108.109261   169.540182   0.637662 0.5690297    
-    SoilMoist_P_tavg      5.872698    13.095676   0.448446 0.6842420    
-    ECanop_tavg       14832.190665  3789.298398   3.914231 0.0296388 *  
-    TVeg_tavg         10178.215881  4771.991123   2.132908 0.1226731    
-    CanopInt_tavg       112.796370   162.344302   0.694797 0.5371589    
-    ACond_tavg            0.570015     0.214838   2.653225 0.0767818 .  
-    TWS_tavg           -113.985004   162.236494  -0.702585 0.5329241    
-    GWS_tavg            108.113428   169.541865   0.637680 0.5690193    
-    Wind_f_tavg          -0.164437     0.015363 -10.703573 0.0017434 ** 
-    Tair_f_tavg           0.344507     0.047053   7.321614 0.0052629 ** 
-    Qair_f_tavg          -6.885867     2.866769  -2.401961 0.0957056 .  
-    Psurf_f_tavg          0.000073     0.000021   3.503908 0.0393701 *  
-    SWdown_f_tavg        -0.007418     0.004046  -1.833412 0.1641108    
-    LWdown_f_tavg         0.046436     0.003783  12.276412 0.0011641 ** 
-    opentime:trtcity     -0.008383     0.022106  -0.379216 0.7297771    
-    ... 5 variables were removed because of collinearity (Qsb_tavg, AvgSurfT_tavg and 3 others [full set in $collin.var])
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    RMSE: 0.394454     Adj. R2: 0.39586 
-                     Within R2: 0.250005
+- Concord, NC is located on the outskirts of the Charlotte, NC metro
+  area. There can be a substitution effect as people move from Concord,
+  NC to Charlotte because of the light rail.
 
-## Synthetic Control
+- Charlotte,NC was within the non-attainment area for Ozone from 2008
+  to 2015. We are looking at the effect of light rail opening from 2008
+  to 2011. However, Concord,NC was in the same non-attainment area as
+  well.
 
-
-    X1, X0, Z1, Z0 all come directly from dataprep object.
-
-
-    **************** 
-     searching for synthetic control unit  
-     
-
-    **************** 
-    **************** 
-    **************** 
-
-    MSPE (LOSS V): 5.158154 
-
-    solution.v:
-     0.01062854 0.01419594 0.04264389 0.009123115 0.01263764 0.02086563 0.01341452 0.04493691 0.02220258 0.01017181 0.01169262 0.03439953 0.03439953 0.01478028 0.03221641 0.01524299 0.00440868 0.03906898 0.0554048 0.06964083 0.05396198 0.000514235 0.007512782 0.09126827 0.03904326 0.1034188 0.04886467 0.01440768 0.03468609 0.04739696 0.0002931576 0.01323661 0.03332029 
-
-    solution.w:
-     8.08457e-05 0.000182984 0.0001052532 0.0002775784 0.0008232795 0.001338086 0.2464958 0.0005569238 0.0003369966 7.04291e-05 0.000207468 0.03348701 0.00203856 0.2733088 0.0001541224 0.000811482 0.0005023597 0.0003413611 0.0001059228 0.006093164 0.0003653625 0.0001208473 0.0001022829 0.4320931 
-
-    $tab.pred
-                        Treated Synthetic Sample Mean
-    Swnet_tavg          160.013   154.321     154.269
-    Lwnet_tavg          -54.697   -54.317     -60.163
-    Qle_tavg             81.464    80.816      56.868
-    Qh_tavg              23.287    18.752      36.473
-    Qg_tavg               0.209     0.224       0.219
-    Snowf_tavg            0.000     0.000       0.000
-    Rainf_tavg            0.000     0.000       0.000
-    Evap_tavg             0.000     0.000       0.000
-    Qs_tavg               0.000     0.000       0.000
-    Qsb_tavg              0.000     0.000       0.000
-    Qsm_tavg              0.000     0.000       0.000
-    SnowT_tavg          289.515   289.574     290.854
-    AvgSurfT_tavg       289.515   289.574     290.854
-    SWE_tavg              0.024     0.021       0.345
-    SnowDepth_tavg        0.004     0.005       0.013
-    SoilMoist_S_tavg      6.536     6.280       5.217
-    SoilMoist_RZ_tavg   319.264   306.430     266.193
-    SoilMoist_P_tavg   1146.562  1143.669    1128.799
-    ECanop_tavg           0.000     0.000       0.000
-    TVeg_tavg             0.000     0.000       0.000
-    ESoil_tavg            0.000     0.000       0.000
-    CanopInt_tavg         0.013     0.016       0.011
-    EvapSnow_tavg         0.000     0.000       0.000
-    ACond_tavg            0.157     0.143       0.079
-    TWS_tavg           1146.599  1143.706    1129.154
-    GWS_tavg            827.298   837.239     862.606
-    Wind_f_tavg           3.025     3.032       3.481
-    Rainf_f_tavg          0.000     0.000       0.000
-    Tair_f_tavg         289.445   289.496     289.982
-    Qair_f_tavg           0.011     0.011       0.010
-    Psurf_f_tavg      98818.290 99104.446   97107.966
-    SWdown_f_tavg       177.960   177.576     187.493
-    LWdown_f_tavg       340.680   341.298     340.705
-
-    $tab.v
-                      v.weights
-    Swnet_tavg        0.011    
-    Lwnet_tavg        0.014    
-    Qle_tavg          0.043    
-    Qh_tavg           0.009    
-    Qg_tavg           0.013    
-    Snowf_tavg        0.021    
-    Rainf_tavg        0.013    
-    Evap_tavg         0.045    
-    Qs_tavg           0.022    
-    Qsb_tavg          0.01     
-    Qsm_tavg          0.012    
-    SnowT_tavg        0.034    
-    AvgSurfT_tavg     0.034    
-    SWE_tavg          0.015    
-    SnowDepth_tavg    0.032    
-    SoilMoist_S_tavg  0.015    
-    SoilMoist_RZ_tavg 0.004    
-    SoilMoist_P_tavg  0.039    
-    ECanop_tavg       0.055    
-    TVeg_tavg         0.07     
-    ESoil_tavg        0.054    
-    CanopInt_tavg     0.001    
-    EvapSnow_tavg     0.008    
-    ACond_tavg        0.091    
-    TWS_tavg          0.039    
-    GWS_tavg          0.103    
-    Wind_f_tavg       0.049    
-    Rainf_f_tavg      0.014    
-    Tair_f_tavg       0.035    
-    Qair_f_tavg       0.047    
-    Psurf_f_tavg      0        
-    SWdown_f_tavg     0.013    
-    LWdown_f_tavg     0.033    
-
-    $tab.w
-       w.weights         unit.names unit.numbers
-    1      0.000      Asheville, NC            1
-    2      0.000         Austin, TX            2
-    3      0.000       Beaumont, TX            3
-    4      0.000         Beloit, WI            4
-    5      0.001    Brownsville, TX            5
-    6      0.001     Charleston, SC            6
-    8      0.246       Columbia, SC            8
-    9      0.001 Corpus Christi, TX            9
-    10     0.000         Duluth, MN           10
-    11     0.000         Durham, NC           11
-    12     0.000     El Paso, TX-NM           12
-    13     0.033   Fayetteville, NC           13
-    14     0.002      Flagstaff, AZ           14
-    15     0.273     Greenville, SC           15
-    16     0.000         Laredo, TX           16
-    17     0.001     Lewisville, TX           17
-    18     0.001        Lubbock, TX           18
-    19     0.000         Odessa, TX           19
-    20     0.000      Rochester, MN           20
-    21     0.006    San Antonio, TX           21
-    22     0.000         Tucson, AZ           22
-    23     0.000           Waco, TX           23
-    24     0.000         Wausau, WI           24
-    25     0.432  Winston-Salem, NC           25
-
-    $tab.loss
-             Loss W   Loss V
-    [1,] 0.01531193 5.158154
-
-![](README_files/figure-commonmark/unnamed-chunk-12-1.png)
-
-![](README_files/figure-commonmark/unnamed-chunk-12-2.png)
+- Charlotte City Council set a goal in 2011 that by 2050, 50% of the
+  city will be covered by tree canopy.
 
 # References
 
