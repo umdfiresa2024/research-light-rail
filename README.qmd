@@ -355,6 +355,8 @@ ggplot(data=pm_month, aes(y=pm25, x=date, col=Address)) +
 #| echo: false
 #| message: false
 #| warning: false
+
+#start dif-in-dif data analysis
 trt_pm<-read.csv("daily roads/pm25_daily_roads.csv") |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
@@ -597,7 +599,7 @@ Day of week heterogeneous treatment effects, with log-linear results
 #| message: false
 #| warning: false
 f<-as.formula(paste("pm25 ~ opentime:trtcity:dow + opentime +", 
-                    wcontrols, mfe))
+                    wcontrols, myfe))
 m4 <- feols(f, cluster = "Address", data = df2)
 
 res<-as.data.frame(
@@ -612,7 +614,7 @@ Factors that can confound Charlotte treatment effects:
 
 -   Concord, NC is located on the outskirts of the Charlotte, NC metro area. There can be a substitution effect as people move from Concord, NC to Charlotte because of the light rail.
 
--   Charlotte,NC was within the non-attainment area for Ozone from 2008 to 2015. We are looking at the effect of light rail opening from 2008 to 2011. However, Concord,NC was in the same non-attainment area as well.
+-   Charlotte,NC was within the non-attainment area for Ozone from 2008 to 2015. We are looking at the effect of light rail opening from 2008 to 2012. However, Concord,NC was in the same non-attainment area as well.
 
 -   Charlotte City Council set a goal in 2011 that by 2050, 50% of the city will be covered by tree canopy.
 
