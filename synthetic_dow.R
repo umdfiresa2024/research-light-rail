@@ -27,67 +27,63 @@ rm(trt_met, trt_pm, cntrl_pm, cntrl_met)
 df<-bind_rows(trt,cntrl) |>
   select(-city_num) |>
   mutate(date=as.Date(date)) |>
-  mutate(start=as.Date("01/12/2003", format="%d/%m/%Y")) |>
   mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(date>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Charlotte, NC",1,0)) |>
-  mutate(time=interval(start, date)/days(1)) |>
+  mutate(construction=as.Date("01/03/2005", format="%d/%m/%Y")) |>
+  mutate(expansion=as.Date("01/12/2012", format="%d/%m/%Y")) |>
+  
+  #convert address to numeric
+  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
+           Address=="Columbia, SC" | Address=="Concord, NC" |
+           Address=="Charlotte, NC") |>
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
+  
   #remove construction years
-  filter(year!=2005 & year!=2007 & year!=2006 & year<2013) |> 
-  mutate(dow=weekdays(date)) |>
-  mutate(dow_month=paste0(dow, "-", as.character(month))) |>
-  mutate(dow_my=paste0(dow, "-", as.character(month), "-", as.character(year)))
-
-df2<-df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Concord, NC" |
-           Address=="Charlotte, NC") |>
-  mutate(trtcity=ifelse(Address=="Charlotte, NC", 1, 0))
-
-####clean data for each day of the week###############################
-
-df3<-df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Concord, NC" |
-           Address=="Charlotte, NC") |>
-  #create number representing each city
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  mutate(trtcity=ifelse(Address=="Charlotte, NC", 1, 0)) |>
-  filter(year!=2005 & year!=2007 & year!=2006 & year<2013) |> 
-  mutate(date=as.Date(date)) |>
+  filter(date<construction | date>open) |>
+  filter(date<expansion) |>
+  
+  #get day of the week
   mutate(dow=weekdays(date)) |>
   filter(dow=="Thursday") |>
   ungroup() |>
-  group_by(month, Address, add_num, trtcity, year) |>
-  reframe(pm25=mean(pm25), Rainf_tavg=mean(Rainf_tavg)) |>
+  
+  #find average data for Thursdays in all months
+  group_by(month, year, Address, add_num) |>
+  reframe(pm25=mean(pm25), Rainf_tavg=mean(Rainf_tavg), Evap_tavg=mean(Evap_tavg)) |>
   #create time index
   mutate(date=as.Date(paste0(as.character(year), "-", as.character(month), "-01"))) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) 
+  mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
+  arrange(add_num, time) |>
+  filter(time>=46 & time<=142) |>
+  mutate(time=ifelse(time>=94, time-32, time))
 
-  #open time is 96
+  #open time is 94
 
-library("Synth")
-library("gsynth")
+class(df)
+df2<-as.data.frame(df)
+class(df2)
+
+table(df2$time)
+
+#library("Synth")
+#library("gsynth")
 
 dataprep.out <-
   dataprep(
-    df3,
-    predictors            = c("year"), #add linear, square, cubic weather
+    df2,
+    predictors            = c("Rainf_tavg", "Evap_tavg"), #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
-    unit.names.variable   = "add",
+    unit.names.variable   = "Address",
     treatment.identifier  = 1 , #value in add_num column
     controls.identifier   = c(2:5), #value of other control cities
-    time.predictors.prior = c(1:95),
-    time.optimize.ssr     = c(1:95),
-    time.plot             = c(1:155)
+    time.predictors.prior = c(46:94),
+    time.optimize.ssr     = c(46:95),
+    time.plot             = c(46:110)
   )
 
-is.data.frame(df3)
+
 synth.out <- synth(dataprep.out)
 
 print(synth.tables   <- synth.tab(
@@ -103,5 +99,16 @@ path.plot(synth.res    = synth.out,
           Legend.position = c("topleft")
 )
 
-abline(v   = 48,
+abline(v   = 62,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = 62,
        lty = 2)
