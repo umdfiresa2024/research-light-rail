@@ -109,6 +109,29 @@ p_met2<-merge(p_met, cgroup, by="city_num")
 
 write.csv(p_met2, "daily roads/met_daily_cntrls.csv", row.names=F)
 
+######met#########################################################
+
+f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/trt_met_data")
+
+p_indv<-c()
+for (i in 1:length(f)) {
+  print(f[i])
+  pdf<-read.csv(paste0("G:/Shared drives/2024 FIRE Light Rail/DATA/trt_met_data/",f[i])) |>
+    mutate(year=substr(date, 1, 4)) |>
+    mutate(month=substr(date, 5, 6)) |>
+    mutate(day=substr(date, 7,8))
+  
+  p_indv<-rbind(p_indv, pdf)
+}
+p_met<-p_indv |>
+  rename(city_num=ID) |>
+  mutate(Address=ifelse(city_num==1, "Charlotte, NC", NA)) |>
+  mutate(Address=ifelse(city_num==2, "Minneapolis-St. Paul, MN", Address)) |>
+  mutate(Address=ifelse(city_num==3, "Houston, TX", Address)) |>
+  mutate(Address=ifelse(city_num==4, "Phoenix-Mesa, AZ", Address))
+
+write.csv(p_met, "daily roads/met_daily_trt.csv", row.names=F)
+
 ##########combine everything#####################################################
 library("tidyverse")
 
@@ -119,21 +142,22 @@ cntrl_pm<-read.csv("daily roads/pm25_daily_roads_cntrl.csv") |>
   select(-city_num, -year, -month, -day) |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) 
 
-trt_met<-read.csv("daily roads/met_charlotte.csv") |>
-  select(-X, -date) |>
-  rename(date=formatted_date) |>
-  mutate(Address="Charlotte, NC") |>
-  mutate(date=as.Date(date))
+trt_met<-read.csv("daily roads/met_daily_trt.csv") |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
+  select(-c(year, month, day))
 
 cntrl_met<-read.csv("daily roads/met_daily_cntrls.csv") |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
 trt<-merge(trt_met, trt_pm, by=c("Address", "date"))
 
-
 cntrl<-merge(cntrl_pm, cntrl_met, by=c("Address", "date")) |>
   filter(!is.na(TWS_tavg))
 
+df<-bind_rows(trt,cntrl) 
+write.csv(df, "daily roads/panel.csv", row.names=FALSE)
+  
+###################################################################################
 rm(trt_met, trt_pm, cntrl_pm, cntrl_met)
 
 
@@ -200,38 +224,3 @@ abline(v   = 1432,
        lty = 2)
   
 synth_control = dataprep.out$Y0plot %*% synth.out$solution.w
-#####################################################
-
-#make plots comparing treated city with cntrl city
-df2<-df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | Address=="Columbia, SC" |
-           Address=="Charlotte, NC") |>
-  mutate(trtcity=ifelse(Address=="Charlotte, NC", 1, 0))
-
-ggplot(df2, aes(x=time, y=pm25, color=Address))+geom_line()
-
-
-#run difference-in-differences
-library("lfe")
-
-summary(m1<-felm(pm25 ~ opentime:trtcity + opentime + trtcity + TWS_tavg + GWS_tavg 
-                 | dow + month + year, data=df2))
-
-summary(m1<-felm(log(pm25) ~ opentime:trtcity + opentime + trtcity + TWS_tavg + GWS_tavg 
-                 | dow + month + year, data=df2))
-
-
-
-met2<-read.csv("daily roads/met_houston.csv") |>
-  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
-  mutate(Address="Houston, TX")
-
-met3<-read.csv("daily roads/met_phoenix_mesa.csv") |>
-  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
-  mutate(Address="Phoenix-Mesa, AZ")
-
-met4<-read.csv("daily roads/met_twin_cities.csv") |>
-  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
-  mutate(Address="Minneapolis-St. Paul, MN") |>
-  select(-X)
-  
