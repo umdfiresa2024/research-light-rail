@@ -27,6 +27,9 @@ open<-as.Date("2007-11-01")
 #| echo: false
 #| message: false
 #| warnings: false
+
+opentime<-62
+
 df<-read.csv("daily roads/panel.csv") 
 
 df3 <- df |>
