@@ -226,7 +226,9 @@ For each treatment city, we use data from untreated city with similar
 public pre-light-rail transportation profiles as controls. Our main
 regression specification is:
 
-\$ P\_{it}=(D_i Open_t) + W’\_{it} +\_i + *t + *{it} \$
+$$
+P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta +\mu_i + \eta_t + \epsilon_{it}
+$$
 
 where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day
 $t$.
@@ -253,35 +255,35 @@ Trends between treat and untreated groups. Area in the grey box
 
 ![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
 
-The table below show estimation results for $\gamma$.
+| Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                               |
+|---------:|-----------:|--------:|------------:|:-------------------------------------------------------|
+|    -0.21 |       0.47 |   -0.44 |        0.69 | Linear Weather Vars, Day of Week FE, Month FE          |
+|    -0.57 |       0.27 |   -2.11 |        0.13 | Linear Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.66 |       0.56 |   -1.19 |        0.32 | Linear Weather Vars, Day of Week FE, Date FE           |
+|    -0.69 |       0.66 |   -1.05 |        0.37 | Cublic Weather Vars, Day of Week FE, Month FE          |
+|    -0.73 |       0.45 |   -1.61 |        0.21 | Cublic Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.72 |    6661.94 |    0.00 |        1.00 | Cublic Weather Vars, Day of Week FE, Date FE           |
 
-| Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                                    |
-|---------:|-----------:|--------:|------------:|:------------------------------------------------------------|
-|    -0.51 |       0.32 |   -1.62 |        0.15 | Linear Weather Vars, City FE, Day of Week-Month FE          |
-|    -0.54 |       0.31 |   -1.72 |        0.13 | Linear Weather Vars, City FE, Day of Week-Month-Year FE     |
-|    -0.52 | 1198608.71 |    0.00 |        1.00 | Polynomial Weather Vars, City FE, Day of Week-Month FE      |
-|    -0.57 |       0.28 |   -2.04 |        0.08 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
+Log-linear results
 
-The table below show log-linear estimation results for $\gamma$.
+| Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                               |
+|---------:|-----------:|--------:|------------:|:-------------------------------------------------------|
+|    -0.04 |       0.02 |   -1.99 |        0.14 | Linear Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.05 |       0.04 |   -1.25 |        0.30 | Linear Weather Vars, Day of Week FE, Date FE           |
+|    -0.06 |       0.02 |   -2.50 |        0.09 | Cublic Weather Vars, Day of Week FE, Month FE, Year FE |
+|    -0.05 |     403.77 |    0.00 |        1.00 | Cublic Weather Vars, Day of Week FE, Date FE           |
 
-| Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                                    |
-|---------:|-----------:|--------:|------------:|:------------------------------------------------------------|
-|    -0.03 |       0.02 |   -1.20 |        0.27 | Linear Weather Vars, City FE, Day of Week-Month FE          |
-|    -0.03 |       0.02 |   -1.23 |        0.26 | Linear Weather Vars, City FE, Day of Week-Month-Year FE     |
-|    -0.03 |   75125.50 |    0.00 |        1.00 | Polynomial Weather Vars, City FE, Day of Week-Month FE      |
-|    -0.03 |       0.02 |   -1.53 |        0.17 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
+Day of week heterogeneous treatment effects, with log-linear results
 
-The table below show log-linear estimation results for $\gamma$.
-
-|                                  | Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                                    |
-|:---------------------------------|---------:|-----------:|--------:|------------:|:------------------------------------------------------------|
-| operating:treatcity:dowFriday    |    -0.48 |       0.27 |   -1.78 |        0.12 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
-| operating:treatcity:dowMonday    |    -0.57 |       0.33 |   -1.73 |        0.13 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
-| operating:treatcity:dowSaturday  |    -0.53 |       0.35 |   -1.52 |        0.17 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
-| operating:treatcity:dowSunday    |    -0.50 |       0.31 |   -1.64 |        0.15 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
-| operating:treatcity:dowThursday  |    -0.78 |       0.25 |   -3.14 |        0.02 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
-| operating:treatcity:dowTuesday   |    -0.56 |       0.25 |   -2.26 |        0.06 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
-| operating:treatcity:dowWednesday |    -0.61 |       0.25 |   -2.47 |        0.04 | Polynomial Weather Vars, City FE, Day of Week-Month-Year FE |
+|                               | Estimate | Std. Error | t value | Pr(\>\|t\|) | controls                                              |
+|:------------------------------|---------:|-----------:|--------:|------------:|:------------------------------------------------------|
+| opentime:trtcity:dowFriday    |    -0.36 |       0.52 |   -0.69 |        0.54 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowMonday    |     0.09 |       0.48 |    0.19 |        0.86 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowSaturday  |    -0.23 |       0.50 |   -0.47 |        0.67 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowSunday    |    -0.04 |       0.49 |   -0.08 |        0.94 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowThursday  |    -0.67 |       0.45 |   -1.47 |        0.24 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowTuesday   |     0.14 |       0.40 |    0.35 |        0.75 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
+| opentime:trtcity:dowWednesday |    -0.40 |       0.47 |   -0.85 |        0.46 | Cubic Weather Vars, Day of Week FE, Month FE, Year FE |
 
 Factors that can confound Charlotte treatment effects:
 
@@ -291,54 +293,11 @@ Factors that can confound Charlotte treatment effects:
 
 - Charlotte,NC was within the non-attainment area for Ozone from 2008
   to 2015. We are looking at the effect of light rail opening from 2008
-  to 2012. However, Concord,NC was in the same non-attainment area as
+  to 2011. However, Concord,NC was in the same non-attainment area as
   well.
 
 - Charlotte City Council set a goal in 2011 that by 2050, 50% of the
   city will be covered by tree canopy.
-
-## 3.2. Synthetic Control
-
-### Comparing Monthly Averages for Thursdays in Charlotte Relative to Monthly Averages for Thursdays in Control Cities
-
-    Warning: package 'Synth' was built under R version 4.3.2
-
-    Warning: package 'gsynth' was built under R version 4.3.2
-
-
-    X1, X0, Z1, Z0 all come directly from dataprep object.
-
-
-    **************** 
-     searching for synthetic control unit  
-     
-
-    **************** 
-    **************** 
-    **************** 
-
-    MSPE (LOSS V): 1.388229 
-
-    solution.v:
-     0.09075676 0.0320727 0.04793782 0.05207644 2.00919e-05 9.36621e-05 1.2988e-05 0.0455154 0.0005577458 0.001973308 0.02657281 0.004846634 0.03542893 2.30014e-05 0.003844424 0.02316716 0.000386489 0.01429067 0.03996599 0.01942917 0.007496542 0.003511321 0.001899989 0.002279869 0.003511321 0.001899989 0.002279868 0.03548769 0.0363225 0.01786529 0.0005400479 0.002548688 0.003548805 0.0001376915 9.77859e-05 1.21351e-05 6.57136e-05 3.07842e-05 0.0004403538 0.0005601587 0.008885151 0.0004530323 0.1075048 0.06333226 0.04254323 9.1465e-06 4.5426e-06 6.43015e-05 0.00953914 0.0164491 0.0257632 0.0002327195 0.0007425096 0.1343357 0.0005260965 0.008991466 0.0004201231 8.64725e-05 0.0004297306 3.22798e-05 0.005611657 0.0006289188 0.0002184626 0.006040114 0.003120466 0.004164488 5.13239e-05 0.0002983711 1.25071e-05 
-
-    solution.w:
-     8.5051e-06 3.6907e-06 0.1804892 3.9355e-06 0.2577141 0.3584167 0.2033638 
-
-``` r
-gaps.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Gap"),
-          Xlab         = c("Year"),
-          Ylim         = c(-5, 5),
-          Main         = ""
-)
-
-abline(v   = opentime,
-       lty = 2)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-17-1.png)
 
 # References
 
