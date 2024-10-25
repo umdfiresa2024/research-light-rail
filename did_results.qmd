@@ -5,38 +5,55 @@ editor: visual
 ---
 
 ```{r}
-library(tidyverse)
-```
-
-```{r}
 #| echo: false
 #| message: false
 #| warning: false
-
-construction<-as.Date("2005-03-01")
-expansion<-as.Date("2012-12-01")
-open<-as.Date("2007-11-01")
 
 #start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Asheville, NC" |
-           Address=="Charleston, SC" | Address=="Durham, NC" |
-           Address=="Fayetteville, NC" | Address=="Greenville, SC" |
-           Address=="Charlotte, NC") |>
-  #create number representing each city
+trt_pm<-read.csv("daily roads/pm25_daily_roads.csv") |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
+
+cntrl_pm<-read.csv("daily roads/pm25_daily_roads_cntrl.csv") |>
+  select(-city_num, -year, -month, -day) |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) 
+
+trt_met<-read.csv("daily roads/met_charlotte.csv") |>
+  select(-X, -date) |>
+  rename(date=formatted_date) |>
+  mutate(Address="Charlotte, NC") |>
+  mutate(date=as.Date(date))
+
+cntrl_met<-read.csv("daily roads/met_daily_cntrls.csv") |>
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
+
+trt<-merge(trt_met, trt_pm, by=c("Address", "date"))
+
+cntrl<-merge(cntrl_pm, cntrl_met, by=c("Address", "date")) |>
+  filter(!is.na(TWS_tavg))
+
+rm(trt_met, trt_pm, cntrl_pm, cntrl_met)
+
+df<-bind_rows(trt,cntrl) |>
+  select(-city_num) |>
+  mutate(date=as.Date(date)) |>
+  mutate(start=as.Date("01/12/2003", format="%d/%m/%Y")) |>
+  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
+  mutate(opentime=ifelse(date>open,1,0)) |>
+  mutate(treatcity=ifelse(Address=="Charlotte, NC",1,0)) |>
+  mutate(time=interval(start, date)/days(1)) |>
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
-  #remove unwanted years
-  mutate(date=as.Date(date)) |>
-  filter(date<construction | date>open) |> 
-  filter(date<expansion) |>
-  mutate(operating=ifelse(date>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Charlotte, NC",1,0)) |>
-  filter(Address!="Concord, NC") |>
+  #remove construction years
+  filter(year!=2005 & year!=2007 & year!=2006 & year<2013) |> 
   mutate(dow=weekdays(date)) |>
-  mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year))
+  mutate(dow_month=paste0(dow, "-", as.character(month))) |>
+  mutate(dow_my=paste0(dow, "-", as.character(month), "-", as.character(year)))
+
+df2<-df |>
+  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
+           Address=="Columbia, SC" | Address=="Concord, NC" |
+           Address=="Charlotte, NC") |>
+  mutate(trtcity=ifelse(Address=="Charlotte, NC", 1, 0))
 ```
 
 ```{r}
@@ -44,104 +61,104 @@ df<-read.csv("daily roads/panel.csv") |>
 #| message: false
 #| warning: false
 
-df$Swnet_tavg_sq <- df$Swnet_tavg^2
-df$Swnet_tavg_cu <- df$Swnet_tavg^3
+df2$Swnet_tavg_sq <- df2$Swnet_tavg^2
+df2$Swnet_tavg_cu <- df2$Swnet_tavg^3
 
-df$Lwnet_tavg_sq <- df$Lwnet_tavg^2
-df$Lwnet_tavg_cu <- df$Lwnet_tavg^3
+df2$Lwnet_tavg_sq <- df2$Lwnet_tavg^2
+df2$Lwnet_tavg_cu <- df2$Lwnet_tavg^3
 
-df$Qle_tavg_sq <- df$Qle_tavg^2
-df$Qle_tavg_cu <- df$Qle_tavg^3
+df2$Qle_tavg_sq <- df2$Qle_tavg^2
+df2$Qle_tavg_cu <- df2$Qle_tavg^3
 
-df$Qh_tavg_sq <- df$Qh_tavg^2
-df$Qh_tavg_cu <- df$Qh_tavg^3
+df2$Qh_tavg_sq <- df2$Qh_tavg^2
+df2$Qh_tavg_cu <- df2$Qh_tavg^3
 
-df$Qg_tavg_sq <- df$Qg_tavg^2
-df$Qg_tavg_cu <- df$Qg_tavg^3
+df2$Qg_tavg_sq <- df2$Qg_tavg^2
+df2$Qg_tavg_cu <- df2$Qg_tavg^3
 
-df$Snowf_tavg_sq <- df$Snowf_tavg^2
-df$Snowf_tavg_cu <- df$Snowf_tavg^3
+df2$Snowf_tavg_sq <- df2$Snowf_tavg^2
+df2$Snowf_tavg_cu <- df2$Snowf_tavg^3
 
-df$Rainf_tavg_sq <- df$Rainf_tavg^2
-df$Rainf_tavg_cu <- df$Rainf_tavg^3
+df2$Rainf_tavg_sq <- df2$Rainf_tavg^2
+df2$Rainf_tavg_cu <- df2$Rainf_tavg^3
 
-df$Evap_tavg_sq <- df$Evap_tavg^2
-df$Evap_tavg_cu <- df$Evap_tavg^3
+df2$Evap_tavg_sq <- df2$Evap_tavg^2
+df2$Evap_tavg_cu <- df2$Evap_tavg^3
 
-df$Qs_tavg_sq <- df$Qs_tavg^2
-df$Qs_tavg_cu <- df$Qs_tavg^3
+df2$Qs_tavg_sq <- df2$Qs_tavg^2
+df2$Qs_tavg_cu <- df2$Qs_tavg^3
 
-df$Qsb_tavg_sq <- df$Qsb_tavg^2
-df$Qsb_tavg_cu <- df$Qsb_tavg^3
+df2$Qsb_tavg_sq <- df2$Qsb_tavg^2
+df2$Qsb_tavg_cu <- df2$Qsb_tavg^3
 
-df$Qsm_tavg_sq <- df$Qsm_tavg^2
-df$Qsm_tavg_cu <- df$Qsm_tavg^3
+df2$Qsm_tavg_sq <- df2$Qsm_tavg^2
+df2$Qsm_tavg_cu <- df2$Qsm_tavg^3
 
-df$SnowT_tavg_sq <- df$SnowT_tavg^2
-df$SnowT_tavg_cu <- df$SnowT_tavg^3
+df2$SnowT_tavg_sq <- df2$SnowT_tavg^2
+df2$SnowT_tavg_cu <- df2$SnowT_tavg^3
 
-df$AvgSurfT_tavg_sq <- df$AvgSurfT_tavg^2
-df$AvgSurfT_tavg_cu <- df$AvgSurfT_tavg^3
+df2$AvgSurfT_tavg_sq <- df2$AvgSurfT_tavg^2
+df2$AvgSurfT_tavg_cu <- df2$AvgSurfT_tavg^3
 
-df$SWE_tavg_sq <- df$SWE_tavg^2
-df$SWE_tavg_cu <- df$SWE_tavg^3
+df2$SWE_tavg_sq <- df2$SWE_tavg^2
+df2$SWE_tavg_cu <- df2$SWE_tavg^3
 
-df$SnowDepth_tavg_sq <- df$SnowDepth_tavg^2
-df$SnowDepth_tavg_cu <- df$SnowDepth_tavg^3
+df2$SnowDepth_tavg_sq <- df2$SnowDepth_tavg^2
+df2$SnowDepth_tavg_cu <- df2$SnowDepth_tavg^3
 
-df$SoilMoist_S_tavg_sq <- df$SoilMoist_S_tavg^2
-df$SoilMoist_S_tavg_cu <- df$SoilMoist_S_tavg^3
+df2$SoilMoist_S_tavg_sq <- df2$SoilMoist_S_tavg^2
+df2$SoilMoist_S_tavg_cu <- df2$SoilMoist_S_tavg^3
 
-df$SoilMoist_RZ_tavg_sq <- df$SoilMoist_RZ_tavg^2
-df$SoilMoist_RZ_tavg_cu <- df$SoilMoist_RZ_tavg^3
+df2$SoilMoist_RZ_tavg_sq <- df2$SoilMoist_RZ_tavg^2
+df2$SoilMoist_RZ_tavg_cu <- df2$SoilMoist_RZ_tavg^3
 
-df$SoilMoist_P_tavg_sq <- df$SoilMoist_P_tavg^2
-df$SoilMoist_P_tavg_cu <- df$SoilMoist_P_tavg^3
+df2$SoilMoist_P_tavg_sq <- df2$SoilMoist_P_tavg^2
+df2$SoilMoist_P_tavg_cu <- df2$SoilMoist_P_tavg^3
 
-df$ECanop_tavg_sq <- df$ECanop_tavg^2
-df$ECanop_tavg_cu <- df$ECanop_tavg^3
+df2$ECanop_tavg_sq <- df2$ECanop_tavg^2
+df2$ECanop_tavg_cu <- df2$ECanop_tavg^3
 
-df$TVeg_tavg_sq <- df$TVeg_tavg^2
-df$TVeg_tavg_cu <- df$TVeg_tavg^3
+df2$TVeg_tavg_sq <- df2$TVeg_tavg^2
+df2$TVeg_tavg_cu <- df2$TVeg_tavg^3
 
-df$ESoil_tavg_sq <- df$ESoil_tavg^2
-df$ESoil_tavg_cu <- df$ESoil_tavg^3
+df2$ESoil_tavg_sq <- df2$ESoil_tavg^2
+df2$ESoil_tavg_cu <- df2$ESoil_tavg^3
 
-df$CanopInt_tavg_sq <- df$CanopInt_tavg^2
-df$CanopInt_tavg_cu <- df$CanopInt_tavg^3
+df2$CanopInt_tavg_sq <- df2$CanopInt_tavg^2
+df2$CanopInt_tavg_cu <- df2$CanopInt_tavg^3
 
-df$EvapSnow_tavg_sq <- df$EvapSnow_tavg^2
-df$EvapSnow_tavg_cu <- df$EvapSnow_tavg^3
+df2$EvapSnow_tavg_sq <- df2$EvapSnow_tavg^2
+df2$EvapSnow_tavg_cu <- df2$EvapSnow_tavg^3
 
-df$ACond_tavg_sq <- df$ACond_tavg^2
-df$ACond_tavg_cu <- df$ACond_tavg^3
+df2$ACond_tavg_sq <- df2$ACond_tavg^2
+df2$ACond_tavg_cu <- df2$ACond_tavg^3
 
-df$TWS_tavg_sq <- df$TWS_tavg^2
-df$TWS_tavg_cu <- df$TWS_tavg^3
+df2$TWS_tavg_sq <- df2$TWS_tavg^2
+df2$TWS_tavg_cu <- df2$TWS_tavg^3
 
-df$GWS_tavg_sq <- df$GWS_tavg^2
-df$GWS_tavg_cu <- df$GWS_tavg^3
+df2$GWS_tavg_sq <- df2$GWS_tavg^2
+df2$GWS_tavg_cu <- df2$GWS_tavg^3
 
-df$Wind_f_tavg_sq <- df$Wind_f_tavg^2
-df$Wind_f_tavg_cu <- df$Wind_f_tavg^3
+df2$Wind_f_tavg_sq <- df2$Wind_f_tavg^2
+df2$Wind_f_tavg_cu <- df2$Wind_f_tavg^3
 
-df$Rainf_f_tavg_sq <- df$Rainf_f_tavg^2
-df$Rainf_f_tavg_cu <- df$Rainf_f_tavg^3
+df2$Rainf_f_tavg_sq <- df2$Rainf_f_tavg^2
+df2$Rainf_f_tavg_cu <- df2$Rainf_f_tavg^3
 
-df$Tair_f_tavg_sq <- df$Tair_f_tavg^2
-df$Tair_f_tavg_cu <- df$Tair_f_tavg^3
+df2$Tair_f_tavg_sq <- df2$Tair_f_tavg^2
+df2$Tair_f_tavg_cu <- df2$Tair_f_tavg^3
 
-df$Qair_f_tavg_sq <- df$Qair_f_tavg^2
-df$Qair_f_tavg_cu <- df$Qair_f_tavg^3
+df2$Qair_f_tavg_sq <- df2$Qair_f_tavg^2
+df2$Qair_f_tavg_cu <- df2$Qair_f_tavg^3
 
-df$Psurf_f_tavg_sq <- df$Psurf_f_tavg^2
-df$Psurf_f_tavg_cu <- df$Psurf_f_tavg^3
+df2$Psurf_f_tavg_sq <- df2$Psurf_f_tavg^2
+df2$Psurf_f_tavg_cu <- df2$Psurf_f_tavg^3
 
-df$SWdown_f_tavg_sq <- df$SWdown_f_tavg^2
-df$SWdown_f_tavg_cu <- df$SWdown_f_tavg^3
+df2$SWdown_f_tavg_sq <- df2$SWdown_f_tavg^2
+df2$SWdown_f_tavg_cu <- df2$SWdown_f_tavg^3
 
-df$LWdown_f_tavg_sq <- df$LWdown_f_tavg^2
-df$LWdown_f_tavg_cu <- df$LWdown_f_tavg^3
+df2$LWdown_f_tavg_sq <- df2$LWdown_f_tavg^2
+df2$LWdown_f_tavg_cu <- df2$LWdown_f_tavg^3
 
 ```
 
@@ -156,645 +173,68 @@ library("kableExtra")
 wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg"
 
 wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg_sq+ Lwnet_tavg_cu +Qle_tavg + Qle_tavg_sq + Qle_tavg_cu +Qh_tavg + Qh_tavg_sq + Qh_tavg_cu +Qg_tavg + Qg_tavg_sq + Qg_tavg_cu +Snowf_tavg + Snowf_tavg_sq + Snowf_tavg_cu +Rainf_tavg + Rainf_tavg_sq + Rainf_tavg_cu +Evap_tavg + Evap_tavg_sq + Evap_tavg_cu +Qs_tavg + Qs_tavg_sq + Qs_tavg_cu +Qsb_tavg + Qsb_tavg_sq + Qsb_tavg_cu +Qsm_tavg + Qsm_tavg_sq + Qsm_tavg_cu +SnowT_tavg + SnowT_tavg_sq + SnowT_tavg_cu +AvgSurfT_tavg + AvgSurfT_tavg_sq + AvgSurfT_tavg_cu +SWE_tavg + SWE_tavg_sq + SWE_tavg_cu +SnowDepth_tavg + SnowDepth_tavg_sq + SnowDepth_tavg_cu +SoilMoist_S_tavg + SoilMoist_S_tavg_sq + SoilMoist_S_tavg_cu +SoilMoist_RZ_tavg + SoilMoist_RZ_tavg_sq +SoilMoist_RZ_tavg_cu +SoilMoist_P_tavg + SoilMoist_P_tavg_sq + SoilMoist_P_tavg_cu +ECanop_tavg + ECanop_tavg_sq + ECanop_tavg_cu +TVeg_tavg + TVeg_tavg_sq + TVeg_tavg_cu +ESoil_tavg + ESoil_tavg_sq + ESoil_tavg_cu +CanopInt_tavg + CanopInt_tavg_sq + CanopInt_tavg_cu +EvapSnow_tavg + EvapSnow_tavg_sq + EvapSnow_tavg_cu +ACond_tavg + ACond_tavg_sq + ACond_tavg_cu +TWS_tavg + TWS_tavg_sq + TWS_tavg_cu +GWS_tavg + GWS_tavg_sq + GWS_tavg_cu +Wind_f_tavg + Wind_f_tavg_sq + Wind_f_tavg_cu +Rainf_f_tavg + Rainf_f_tavg_sq + Rainf_f_tavg_cu +Tair_f_tavg + Tair_f_tavg_sq + Tair_f_tavg_cu +Qair_f_tavg + Qair_f_tavg_sq + Qair_f_tavg_cu +Psurf_f_tavg + Psurf_f_tavg_sq + Psurf_f_tavg_cu + SWdown_f_tavg + SWdown_f_tavg_sq + SWdown_f_tavg_cu + LWdown_f_tavg + LWdown_f_tavg_sq + LWdown_f_tavg_cu"
-```
 
-```{r}
-mfe<-"| dow_m + Address"
+
+mfe<-"| dow_month + Address"
 myfe<-"| dow_my + Address"
+dfe<-"| dow + date + Address"
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols, mfe))
-m1 <- feols(f, cluster = "Address", data = df)
+f<-as.formula(paste("pm25 ~ opentime:trtcity + opentime +", wcontrols, mfe))
+m1 <- feols(f, cluster = "Address", data = df2)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, myfe))
-m2 <- feols(f, cluster = "Address", data = df)
+f<-as.formula(paste("pm25 ~ opentime:trtcity + opentime +", wcontrols, myfe))
+m2 <- feols(f, cluster = "Address", data = df2)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols3, mfe))
-m3 <- feols(f, cluster = "Address", data = df)
+f<-as.formula(paste("pm25 ~ opentime:trtcity +", wcontrols, dfe))
+m3 <- feols(f, cluster = "Address", data = df2)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
+f<-as.formula(paste("pm25 ~ opentime:trtcity + opentime +", wcontrols3, mfe))
+m4 <- feols(f, cluster = "Address", data = df2)
+
+f<-as.formula(paste("pm25 ~ opentime:trtcity +", wcontrols3, myfe))
+m5 <- feols(f, cluster = "Address", data = df2)
+
+f<-as.formula(paste("pm25 ~ opentime:trtcity +", wcontrols3, dfe))
+m6 <- feols(f, cluster = "Address", data = df2)
 
 res<-as.data.frame(rbind(coeftable(m1)[nrow(coeftable(m1)),],
        coeftable(m2)[nrow(coeftable(m2)),],
        coeftable(m3)[nrow(coeftable(m3)),],
-       coeftable(m4)[nrow(coeftable(m4)),]))
+       coeftable(m4)[nrow(coeftable(m4)),],
+       coeftable(m5)[nrow(coeftable(m5)),],
+       coeftable(m6)[nrow(coeftable(m6)),]))
 
-res$controls<-c("Linear Weather Vars, City FE, Day of Week-Month FE",
-                "Linear Weather Vars, City FE, Day of Week-Month-Year FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
+#fix fix effects to make sure that it is consistent
+res$controls<-c("Linear Weather Vars, Day of Week-Month FE, City FE",
+                "Linear Weather Vars, Day of Week-Month-Year FE, City FE",
+          "Linear Weather Vars, Day of Week FE, Date FE",
+          "Cublic Weather Vars, Day of Week FE, Month FE",
+          "Cublic Weather Vars, Day of Week FE, Month FE, Year FE",
+          "Cublic Weather Vars, Day of Week FE, Date FE")
 
 kable(res, digits=2)
 ```
 
-Day of week heterogeneous treatment effects.
+Day of week heterogeneous treatment effects. Do this with dow_month FE
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
+f<-as.formula(paste("pm25 ~ opentime:trtcity:dow + opentime:trtcity +", 
+                    wcontrols, myfe))
+m4 <- feols(f, cluster = "Address", data = df2)
 
 res<-as.data.frame(
        coeftable(m4)[(nrow(coeftable(m4))-6):nrow(coeftable(m4)),])
 
-res$controls<-c("Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
+res$controls<-c("Cubic Weather Vars, Day of Week FE, Month FE, Year FE")
 
 kable(res, digits=2)
 ```
 
-Do the same task for the Twin Cities, Phoenix-Mesa, and Houston.
+Day of week heterogeneous treatment effects. Do this with dow_my FE
 
 Check policy documentation to see if there are possible confounders.
 
 <https://docs.google.com/document/d/1nAZGmyn-9E6KLMhhuHBZk20owC7ycSaH_hM3Qj7JbVY/edit?tab=t.0>
-
-# Houston
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-construction<-as.Date("2001-03-13")
-expansion<-as.Date("2012-12-01")
-open<-as.Date("2004-01-01")
-
-#start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
-  filter(Address=="Austin, TX" | Address=="Beaumont, TX" | 
-           Address=="Brownsville, TX" | Address=="Corpus Christi, TX" |
-           Address=="Laredo, TX" | Address=="El Paso, TX-NM" |
-           Address=="Lewisville, TX" | Address=="Lubbock, TX" |
-           Address=="Odessa, TX" | Address=="San Antonio, TX" | Address=="Waco, TX" | 
-           Address=="Houston, TX") |>
-  #create number representing each city
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  #remove unwanted years
-  mutate(date=as.Date(date)) |>
-  filter(date<construction | date>open) |> 
-  filter(date<expansion) |>
-  mutate(operating=ifelse(date>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Houston, TX",1,0)) |>
-  mutate(dow=weekdays(date)) |>
-  mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year))
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-df$Swnet_tavg_sq <- df$Swnet_tavg^2
-df$Swnet_tavg_cu <- df$Swnet_tavg^3
-
-df$Lwnet_tavg_sq <- df$Lwnet_tavg^2
-df$Lwnet_tavg_cu <- df$Lwnet_tavg^3
-
-df$Qle_tavg_sq <- df$Qle_tavg^2
-df$Qle_tavg_cu <- df$Qle_tavg^3
-
-df$Qh_tavg_sq <- df$Qh_tavg^2
-df$Qh_tavg_cu <- df$Qh_tavg^3
-
-df$Qg_tavg_sq <- df$Qg_tavg^2
-df$Qg_tavg_cu <- df$Qg_tavg^3
-
-df$Snowf_tavg_sq <- df$Snowf_tavg^2
-df$Snowf_tavg_cu <- df$Snowf_tavg^3
-
-df$Rainf_tavg_sq <- df$Rainf_tavg^2
-df$Rainf_tavg_cu <- df$Rainf_tavg^3
-
-df$Evap_tavg_sq <- df$Evap_tavg^2
-df$Evap_tavg_cu <- df$Evap_tavg^3
-
-df$Qs_tavg_sq <- df$Qs_tavg^2
-df$Qs_tavg_cu <- df$Qs_tavg^3
-
-df$Qsb_tavg_sq <- df$Qsb_tavg^2
-df$Qsb_tavg_cu <- df$Qsb_tavg^3
-
-df$Qsm_tavg_sq <- df$Qsm_tavg^2
-df$Qsm_tavg_cu <- df$Qsm_tavg^3
-
-df$SnowT_tavg_sq <- df$SnowT_tavg^2
-df$SnowT_tavg_cu <- df$SnowT_tavg^3
-
-df$AvgSurfT_tavg_sq <- df$AvgSurfT_tavg^2
-df$AvgSurfT_tavg_cu <- df$AvgSurfT_tavg^3
-
-df$SWE_tavg_sq <- df$SWE_tavg^2
-df$SWE_tavg_cu <- df$SWE_tavg^3
-
-df$SnowDepth_tavg_sq <- df$SnowDepth_tavg^2
-df$SnowDepth_tavg_cu <- df$SnowDepth_tavg^3
-
-df$SoilMoist_S_tavg_sq <- df$SoilMoist_S_tavg^2
-df$SoilMoist_S_tavg_cu <- df$SoilMoist_S_tavg^3
-
-df$SoilMoist_RZ_tavg_sq <- df$SoilMoist_RZ_tavg^2
-df$SoilMoist_RZ_tavg_cu <- df$SoilMoist_RZ_tavg^3
-
-df$SoilMoist_P_tavg_sq <- df$SoilMoist_P_tavg^2
-df$SoilMoist_P_tavg_cu <- df$SoilMoist_P_tavg^3
-
-df$ECanop_tavg_sq <- df$ECanop_tavg^2
-df$ECanop_tavg_cu <- df$ECanop_tavg^3
-
-df$TVeg_tavg_sq <- df$TVeg_tavg^2
-df$TVeg_tavg_cu <- df$TVeg_tavg^3
-
-df$ESoil_tavg_sq <- df$ESoil_tavg^2
-df$ESoil_tavg_cu <- df$ESoil_tavg^3
-
-df$CanopInt_tavg_sq <- df$CanopInt_tavg^2
-df$CanopInt_tavg_cu <- df$CanopInt_tavg^3
-
-df$EvapSnow_tavg_sq <- df$EvapSnow_tavg^2
-df$EvapSnow_tavg_cu <- df$EvapSnow_tavg^3
-
-df$ACond_tavg_sq <- df$ACond_tavg^2
-df$ACond_tavg_cu <- df$ACond_tavg^3
-
-df$TWS_tavg_sq <- df$TWS_tavg^2
-df$TWS_tavg_cu <- df$TWS_tavg^3
-
-df$GWS_tavg_sq <- df$GWS_tavg^2
-df$GWS_tavg_cu <- df$GWS_tavg^3
-
-df$Wind_f_tavg_sq <- df$Wind_f_tavg^2
-df$Wind_f_tavg_cu <- df$Wind_f_tavg^3
-
-df$Rainf_f_tavg_sq <- df$Rainf_f_tavg^2
-df$Rainf_f_tavg_cu <- df$Rainf_f_tavg^3
-
-df$Tair_f_tavg_sq <- df$Tair_f_tavg^2
-df$Tair_f_tavg_cu <- df$Tair_f_tavg^3
-
-df$Qair_f_tavg_sq <- df$Qair_f_tavg^2
-df$Qair_f_tavg_cu <- df$Qair_f_tavg^3
-
-df$Psurf_f_tavg_sq <- df$Psurf_f_tavg^2
-df$Psurf_f_tavg_cu <- df$Psurf_f_tavg^3
-
-df$SWdown_f_tavg_sq <- df$SWdown_f_tavg^2
-df$SWdown_f_tavg_cu <- df$SWdown_f_tavg^3
-
-df$LWdown_f_tavg_sq <- df$LWdown_f_tavg^2
-df$LWdown_f_tavg_cu <- df$LWdown_f_tavg^3
-
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#run difference-in-differences
-library("fixest")
-library("kableExtra")
-
-wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg"
-
-wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg_sq+ Lwnet_tavg_cu +Qle_tavg + Qle_tavg_sq + Qle_tavg_cu +Qh_tavg + Qh_tavg_sq + Qh_tavg_cu +Qg_tavg + Qg_tavg_sq + Qg_tavg_cu +Snowf_tavg + Snowf_tavg_sq + Snowf_tavg_cu +Rainf_tavg + Rainf_tavg_sq + Rainf_tavg_cu +Evap_tavg + Evap_tavg_sq + Evap_tavg_cu +Qs_tavg + Qs_tavg_sq + Qs_tavg_cu +Qsb_tavg + Qsb_tavg_sq + Qsb_tavg_cu +Qsm_tavg + Qsm_tavg_sq + Qsm_tavg_cu +SnowT_tavg + SnowT_tavg_sq + SnowT_tavg_cu +AvgSurfT_tavg + AvgSurfT_tavg_sq + AvgSurfT_tavg_cu +SWE_tavg + SWE_tavg_sq + SWE_tavg_cu +SnowDepth_tavg + SnowDepth_tavg_sq + SnowDepth_tavg_cu +SoilMoist_S_tavg + SoilMoist_S_tavg_sq + SoilMoist_S_tavg_cu +SoilMoist_RZ_tavg + SoilMoist_RZ_tavg_sq +SoilMoist_RZ_tavg_cu +SoilMoist_P_tavg + SoilMoist_P_tavg_sq + SoilMoist_P_tavg_cu +ECanop_tavg + ECanop_tavg_sq + ECanop_tavg_cu +TVeg_tavg + TVeg_tavg_sq + TVeg_tavg_cu +ESoil_tavg + ESoil_tavg_sq + ESoil_tavg_cu +CanopInt_tavg + CanopInt_tavg_sq + CanopInt_tavg_cu +EvapSnow_tavg + EvapSnow_tavg_sq + EvapSnow_tavg_cu +ACond_tavg + ACond_tavg_sq + ACond_tavg_cu +TWS_tavg + TWS_tavg_sq + TWS_tavg_cu +GWS_tavg + GWS_tavg_sq + GWS_tavg_cu +Wind_f_tavg + Wind_f_tavg_sq + Wind_f_tavg_cu +Rainf_f_tavg + Rainf_f_tavg_sq + Rainf_f_tavg_cu +Tair_f_tavg + Tair_f_tavg_sq + Tair_f_tavg_cu +Qair_f_tavg + Qair_f_tavg_sq + Qair_f_tavg_cu +Psurf_f_tavg + Psurf_f_tavg_sq + Psurf_f_tavg_cu + SWdown_f_tavg + SWdown_f_tavg_sq + SWdown_f_tavg_cu + LWdown_f_tavg + LWdown_f_tavg_sq + LWdown_f_tavg_cu"
-```
-
-```{r}
-mfe<-"| dow_m + Address"
-myfe<-"| dow_my + Address"
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols, mfe))
-m1 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, myfe))
-m2 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols3, mfe))
-m3 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
-
-res<-as.data.frame(rbind(coeftable(m1)[nrow(coeftable(m1)),],
-       coeftable(m2)[nrow(coeftable(m2)),],
-       coeftable(m3)[nrow(coeftable(m3)),],
-       coeftable(m4)[nrow(coeftable(m4)),]))
-
-res$controls<-c("Linear Weather Vars, City FE, Day of Week-Month FE",
-                "Linear Weather Vars, City FE, Day of Week-Month-Year FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
-
-res<-as.data.frame(
-       coeftable(m4)[(nrow(coeftable(m4))-6):nrow(coeftable(m4)),])
-
-res$controls<-c("Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
-```
-
-# Phoenix
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-construction<-as.Date("2005-03-01")
-expansion<-as.Date("2012-07-01")
-open<-as.Date("2008-12-27")
-
-#start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
-  filter(Address=="Flagstaff, AZ" | Address=="Phoenix-Mesa, AZ" | 
-           Address=="Tucson, AZ") |>
-  #create number representing each city
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  #remove unwanted years
-  mutate(date=as.Date(date)) |>
-  filter(date<construction | date>open) |> 
-  filter(date<expansion) |>
-  mutate(operating=ifelse(date>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Phoenix-Mesa, AZ",1,0)) |>
-  mutate(dow=weekdays(date)) |>
-  mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year))
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-df$Swnet_tavg_sq <- df$Swnet_tavg^2
-df$Swnet_tavg_cu <- df$Swnet_tavg^3
-
-df$Lwnet_tavg_sq <- df$Lwnet_tavg^2
-df$Lwnet_tavg_cu <- df$Lwnet_tavg^3
-
-df$Qle_tavg_sq <- df$Qle_tavg^2
-df$Qle_tavg_cu <- df$Qle_tavg^3
-
-df$Qh_tavg_sq <- df$Qh_tavg^2
-df$Qh_tavg_cu <- df$Qh_tavg^3
-
-df$Qg_tavg_sq <- df$Qg_tavg^2
-df$Qg_tavg_cu <- df$Qg_tavg^3
-
-df$Snowf_tavg_sq <- df$Snowf_tavg^2
-df$Snowf_tavg_cu <- df$Snowf_tavg^3
-
-df$Rainf_tavg_sq <- df$Rainf_tavg^2
-df$Rainf_tavg_cu <- df$Rainf_tavg^3
-
-df$Evap_tavg_sq <- df$Evap_tavg^2
-df$Evap_tavg_cu <- df$Evap_tavg^3
-
-df$Qs_tavg_sq <- df$Qs_tavg^2
-df$Qs_tavg_cu <- df$Qs_tavg^3
-
-df$Qsb_tavg_sq <- df$Qsb_tavg^2
-df$Qsb_tavg_cu <- df$Qsb_tavg^3
-
-df$Qsm_tavg_sq <- df$Qsm_tavg^2
-df$Qsm_tavg_cu <- df$Qsm_tavg^3
-
-df$SnowT_tavg_sq <- df$SnowT_tavg^2
-df$SnowT_tavg_cu <- df$SnowT_tavg^3
-
-df$AvgSurfT_tavg_sq <- df$AvgSurfT_tavg^2
-df$AvgSurfT_tavg_cu <- df$AvgSurfT_tavg^3
-
-df$SWE_tavg_sq <- df$SWE_tavg^2
-df$SWE_tavg_cu <- df$SWE_tavg^3
-
-df$SnowDepth_tavg_sq <- df$SnowDepth_tavg^2
-df$SnowDepth_tavg_cu <- df$SnowDepth_tavg^3
-
-df$SoilMoist_S_tavg_sq <- df$SoilMoist_S_tavg^2
-df$SoilMoist_S_tavg_cu <- df$SoilMoist_S_tavg^3
-
-df$SoilMoist_RZ_tavg_sq <- df$SoilMoist_RZ_tavg^2
-df$SoilMoist_RZ_tavg_cu <- df$SoilMoist_RZ_tavg^3
-
-df$SoilMoist_P_tavg_sq <- df$SoilMoist_P_tavg^2
-df$SoilMoist_P_tavg_cu <- df$SoilMoist_P_tavg^3
-
-df$ECanop_tavg_sq <- df$ECanop_tavg^2
-df$ECanop_tavg_cu <- df$ECanop_tavg^3
-
-df$TVeg_tavg_sq <- df$TVeg_tavg^2
-df$TVeg_tavg_cu <- df$TVeg_tavg^3
-
-df$ESoil_tavg_sq <- df$ESoil_tavg^2
-df$ESoil_tavg_cu <- df$ESoil_tavg^3
-
-df$CanopInt_tavg_sq <- df$CanopInt_tavg^2
-df$CanopInt_tavg_cu <- df$CanopInt_tavg^3
-
-df$EvapSnow_tavg_sq <- df$EvapSnow_tavg^2
-df$EvapSnow_tavg_cu <- df$EvapSnow_tavg^3
-
-df$ACond_tavg_sq <- df$ACond_tavg^2
-df$ACond_tavg_cu <- df$ACond_tavg^3
-
-df$TWS_tavg_sq <- df$TWS_tavg^2
-df$TWS_tavg_cu <- df$TWS_tavg^3
-
-df$GWS_tavg_sq <- df$GWS_tavg^2
-df$GWS_tavg_cu <- df$GWS_tavg^3
-
-df$Wind_f_tavg_sq <- df$Wind_f_tavg^2
-df$Wind_f_tavg_cu <- df$Wind_f_tavg^3
-
-df$Rainf_f_tavg_sq <- df$Rainf_f_tavg^2
-df$Rainf_f_tavg_cu <- df$Rainf_f_tavg^3
-
-df$Tair_f_tavg_sq <- df$Tair_f_tavg^2
-df$Tair_f_tavg_cu <- df$Tair_f_tavg^3
-
-df$Qair_f_tavg_sq <- df$Qair_f_tavg^2
-df$Qair_f_tavg_cu <- df$Qair_f_tavg^3
-
-df$Psurf_f_tavg_sq <- df$Psurf_f_tavg^2
-df$Psurf_f_tavg_cu <- df$Psurf_f_tavg^3
-
-df$SWdown_f_tavg_sq <- df$SWdown_f_tavg^2
-df$SWdown_f_tavg_cu <- df$SWdown_f_tavg^3
-
-df$LWdown_f_tavg_sq <- df$LWdown_f_tavg^2
-df$LWdown_f_tavg_cu <- df$LWdown_f_tavg^3
-
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#run difference-in-differences
-library("fixest")
-library("kableExtra")
-
-wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg"
-
-wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg_sq+ Lwnet_tavg_cu +Qle_tavg + Qle_tavg_sq + Qle_tavg_cu +Qh_tavg + Qh_tavg_sq + Qh_tavg_cu +Qg_tavg + Qg_tavg_sq + Qg_tavg_cu +Snowf_tavg + Snowf_tavg_sq + Snowf_tavg_cu +Rainf_tavg + Rainf_tavg_sq + Rainf_tavg_cu +Evap_tavg + Evap_tavg_sq + Evap_tavg_cu +Qs_tavg + Qs_tavg_sq + Qs_tavg_cu +Qsb_tavg + Qsb_tavg_sq + Qsb_tavg_cu +Qsm_tavg + Qsm_tavg_sq + Qsm_tavg_cu +SnowT_tavg + SnowT_tavg_sq + SnowT_tavg_cu +AvgSurfT_tavg + AvgSurfT_tavg_sq + AvgSurfT_tavg_cu +SWE_tavg + SWE_tavg_sq + SWE_tavg_cu +SnowDepth_tavg + SnowDepth_tavg_sq + SnowDepth_tavg_cu +SoilMoist_S_tavg + SoilMoist_S_tavg_sq + SoilMoist_S_tavg_cu +SoilMoist_RZ_tavg + SoilMoist_RZ_tavg_sq +SoilMoist_RZ_tavg_cu +SoilMoist_P_tavg + SoilMoist_P_tavg_sq + SoilMoist_P_tavg_cu +ECanop_tavg + ECanop_tavg_sq + ECanop_tavg_cu +TVeg_tavg + TVeg_tavg_sq + TVeg_tavg_cu +ESoil_tavg + ESoil_tavg_sq + ESoil_tavg_cu +CanopInt_tavg + CanopInt_tavg_sq + CanopInt_tavg_cu +EvapSnow_tavg + EvapSnow_tavg_sq + EvapSnow_tavg_cu +ACond_tavg + ACond_tavg_sq + ACond_tavg_cu +TWS_tavg + TWS_tavg_sq + TWS_tavg_cu +GWS_tavg + GWS_tavg_sq + GWS_tavg_cu +Wind_f_tavg + Wind_f_tavg_sq + Wind_f_tavg_cu +Rainf_f_tavg + Rainf_f_tavg_sq + Rainf_f_tavg_cu +Tair_f_tavg + Tair_f_tavg_sq + Tair_f_tavg_cu +Qair_f_tavg + Qair_f_tavg_sq + Qair_f_tavg_cu +Psurf_f_tavg + Psurf_f_tavg_sq + Psurf_f_tavg_cu + SWdown_f_tavg + SWdown_f_tavg_sq + SWdown_f_tavg_cu + LWdown_f_tavg + LWdown_f_tavg_sq + LWdown_f_tavg_cu"
-```
-
-```{r}
-mfe<-"| dow_m + Address"
-myfe<-"| dow_my + Address"
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols, mfe))
-m1 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, myfe))
-m2 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols3, mfe))
-m3 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
-
-res<-as.data.frame(rbind(coeftable(m1)[nrow(coeftable(m1)),],
-       coeftable(m2)[nrow(coeftable(m2)),],
-       coeftable(m3)[nrow(coeftable(m3)),],
-       coeftable(m4)[nrow(coeftable(m4)),]))
-
-res$controls<-c("Linear Weather Vars, City FE, Day of Week-Month FE",
-                "Linear Weather Vars, City FE, Day of Week-Month-Year FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
-
-res<-as.data.frame(
-       coeftable(m4)[(nrow(coeftable(m4))-6):nrow(coeftable(m4)),])
-
-res$controls<-c("Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
-```
-
-# Twin Cities
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-construction<-as.Date("2001-01-17")
-expansion<-as.Date("2010-01-01")
-open<-as.Date("2004-06-24")
-
-#start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
-  filter(Address=="Beloit, WI" | Address=="Duluth, MN" | 
-           Address=="Minneapolis-St. Paul, MN" | Address=="Rochester, MN" | 
-           Address=="Wausau, WI") |>
-  #create number representing each city
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  #remove unwanted years
-  mutate(date=as.Date(date)) |>
-  filter(date<construction | date>open) |> 
-  filter(date<expansion) |>
-  mutate(operating=ifelse(date>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Minneapolis-St. Paul, MN",1,0)) |>
-  mutate(dow=weekdays(date)) |>
-  mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year))
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-df$Swnet_tavg_sq <- df$Swnet_tavg^2
-df$Swnet_tavg_cu <- df$Swnet_tavg^3
-
-df$Lwnet_tavg_sq <- df$Lwnet_tavg^2
-df$Lwnet_tavg_cu <- df$Lwnet_tavg^3
-
-df$Qle_tavg_sq <- df$Qle_tavg^2
-df$Qle_tavg_cu <- df$Qle_tavg^3
-
-df$Qh_tavg_sq <- df$Qh_tavg^2
-df$Qh_tavg_cu <- df$Qh_tavg^3
-
-df$Qg_tavg_sq <- df$Qg_tavg^2
-df$Qg_tavg_cu <- df$Qg_tavg^3
-
-df$Snowf_tavg_sq <- df$Snowf_tavg^2
-df$Snowf_tavg_cu <- df$Snowf_tavg^3
-
-df$Rainf_tavg_sq <- df$Rainf_tavg^2
-df$Rainf_tavg_cu <- df$Rainf_tavg^3
-
-df$Evap_tavg_sq <- df$Evap_tavg^2
-df$Evap_tavg_cu <- df$Evap_tavg^3
-
-df$Qs_tavg_sq <- df$Qs_tavg^2
-df$Qs_tavg_cu <- df$Qs_tavg^3
-
-df$Qsb_tavg_sq <- df$Qsb_tavg^2
-df$Qsb_tavg_cu <- df$Qsb_tavg^3
-
-df$Qsm_tavg_sq <- df$Qsm_tavg^2
-df$Qsm_tavg_cu <- df$Qsm_tavg^3
-
-df$SnowT_tavg_sq <- df$SnowT_tavg^2
-df$SnowT_tavg_cu <- df$SnowT_tavg^3
-
-df$AvgSurfT_tavg_sq <- df$AvgSurfT_tavg^2
-df$AvgSurfT_tavg_cu <- df$AvgSurfT_tavg^3
-
-df$SWE_tavg_sq <- df$SWE_tavg^2
-df$SWE_tavg_cu <- df$SWE_tavg^3
-
-df$SnowDepth_tavg_sq <- df$SnowDepth_tavg^2
-df$SnowDepth_tavg_cu <- df$SnowDepth_tavg^3
-
-df$SoilMoist_S_tavg_sq <- df$SoilMoist_S_tavg^2
-df$SoilMoist_S_tavg_cu <- df$SoilMoist_S_tavg^3
-
-df$SoilMoist_RZ_tavg_sq <- df$SoilMoist_RZ_tavg^2
-df$SoilMoist_RZ_tavg_cu <- df$SoilMoist_RZ_tavg^3
-
-df$SoilMoist_P_tavg_sq <- df$SoilMoist_P_tavg^2
-df$SoilMoist_P_tavg_cu <- df$SoilMoist_P_tavg^3
-
-df$ECanop_tavg_sq <- df$ECanop_tavg^2
-df$ECanop_tavg_cu <- df$ECanop_tavg^3
-
-df$TVeg_tavg_sq <- df$TVeg_tavg^2
-df$TVeg_tavg_cu <- df$TVeg_tavg^3
-
-df$ESoil_tavg_sq <- df$ESoil_tavg^2
-df$ESoil_tavg_cu <- df$ESoil_tavg^3
-
-df$CanopInt_tavg_sq <- df$CanopInt_tavg^2
-df$CanopInt_tavg_cu <- df$CanopInt_tavg^3
-
-df$EvapSnow_tavg_sq <- df$EvapSnow_tavg^2
-df$EvapSnow_tavg_cu <- df$EvapSnow_tavg^3
-
-df$ACond_tavg_sq <- df$ACond_tavg^2
-df$ACond_tavg_cu <- df$ACond_tavg^3
-
-df$TWS_tavg_sq <- df$TWS_tavg^2
-df$TWS_tavg_cu <- df$TWS_tavg^3
-
-df$GWS_tavg_sq <- df$GWS_tavg^2
-df$GWS_tavg_cu <- df$GWS_tavg^3
-
-df$Wind_f_tavg_sq <- df$Wind_f_tavg^2
-df$Wind_f_tavg_cu <- df$Wind_f_tavg^3
-
-df$Rainf_f_tavg_sq <- df$Rainf_f_tavg^2
-df$Rainf_f_tavg_cu <- df$Rainf_f_tavg^3
-
-df$Tair_f_tavg_sq <- df$Tair_f_tavg^2
-df$Tair_f_tavg_cu <- df$Tair_f_tavg^3
-
-df$Qair_f_tavg_sq <- df$Qair_f_tavg^2
-df$Qair_f_tavg_cu <- df$Qair_f_tavg^3
-
-df$Psurf_f_tavg_sq <- df$Psurf_f_tavg^2
-df$Psurf_f_tavg_cu <- df$Psurf_f_tavg^3
-
-df$SWdown_f_tavg_sq <- df$SWdown_f_tavg^2
-df$SWdown_f_tavg_cu <- df$SWdown_f_tavg^3
-
-df$LWdown_f_tavg_sq <- df$LWdown_f_tavg^2
-df$LWdown_f_tavg_cu <- df$LWdown_f_tavg^3
-
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#run difference-in-differences
-library("fixest")
-library("kableExtra")
-
-wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg"
-
-wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg_sq+ Lwnet_tavg_cu +Qle_tavg + Qle_tavg_sq + Qle_tavg_cu +Qh_tavg + Qh_tavg_sq + Qh_tavg_cu +Qg_tavg + Qg_tavg_sq + Qg_tavg_cu +Snowf_tavg + Snowf_tavg_sq + Snowf_tavg_cu +Rainf_tavg + Rainf_tavg_sq + Rainf_tavg_cu +Evap_tavg + Evap_tavg_sq + Evap_tavg_cu +Qs_tavg + Qs_tavg_sq + Qs_tavg_cu +Qsb_tavg + Qsb_tavg_sq + Qsb_tavg_cu +Qsm_tavg + Qsm_tavg_sq + Qsm_tavg_cu +SnowT_tavg + SnowT_tavg_sq + SnowT_tavg_cu +AvgSurfT_tavg + AvgSurfT_tavg_sq + AvgSurfT_tavg_cu +SWE_tavg + SWE_tavg_sq + SWE_tavg_cu +SnowDepth_tavg + SnowDepth_tavg_sq + SnowDepth_tavg_cu +SoilMoist_S_tavg + SoilMoist_S_tavg_sq + SoilMoist_S_tavg_cu +SoilMoist_RZ_tavg + SoilMoist_RZ_tavg_sq +SoilMoist_RZ_tavg_cu +SoilMoist_P_tavg + SoilMoist_P_tavg_sq + SoilMoist_P_tavg_cu +ECanop_tavg + ECanop_tavg_sq + ECanop_tavg_cu +TVeg_tavg + TVeg_tavg_sq + TVeg_tavg_cu +ESoil_tavg + ESoil_tavg_sq + ESoil_tavg_cu +CanopInt_tavg + CanopInt_tavg_sq + CanopInt_tavg_cu +EvapSnow_tavg + EvapSnow_tavg_sq + EvapSnow_tavg_cu +ACond_tavg + ACond_tavg_sq + ACond_tavg_cu +TWS_tavg + TWS_tavg_sq + TWS_tavg_cu +GWS_tavg + GWS_tavg_sq + GWS_tavg_cu +Wind_f_tavg + Wind_f_tavg_sq + Wind_f_tavg_cu +Rainf_f_tavg + Rainf_f_tavg_sq + Rainf_f_tavg_cu +Tair_f_tavg + Tair_f_tavg_sq + Tair_f_tavg_cu +Qair_f_tavg + Qair_f_tavg_sq + Qair_f_tavg_cu +Psurf_f_tavg + Psurf_f_tavg_sq + Psurf_f_tavg_cu + SWdown_f_tavg + SWdown_f_tavg_sq + SWdown_f_tavg_cu + LWdown_f_tavg + LWdown_f_tavg_sq + LWdown_f_tavg_cu"
-```
-
-```{r}
-mfe<-"| dow_m + Address"
-myfe<-"| dow_my + Address"
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols, mfe))
-m1 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, myfe))
-m2 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols3, mfe))
-m3 <- feols(f, cluster = "Address", data = df)
-
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
-
-res<-as.data.frame(rbind(coeftable(m1)[nrow(coeftable(m1)),],
-       coeftable(m2)[nrow(coeftable(m2)),],
-       coeftable(m3)[nrow(coeftable(m3)),],
-       coeftable(m4)[nrow(coeftable(m4)),]))
-
-res$controls<-c("Linear Weather Vars, City FE, Day of Week-Month FE",
-                "Linear Weather Vars, City FE, Day of Week-Month-Year FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
-
-res<-as.data.frame(
-       coeftable(m4)[(nrow(coeftable(m4))-6):nrow(coeftable(m4)),])
-
-res$controls<-c("Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
-```
