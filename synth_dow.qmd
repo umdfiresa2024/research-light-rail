@@ -863,7 +863,7 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==10) |>
   mutate(time=interval(as.Date("2000-10-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>4, time-3, time))
 
 opentime<-8
 end<-max(df5$time)
