@@ -566,7 +566,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:61], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -617,7 +617,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:61], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -658,8 +658,9 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==6) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=interval(as.Date("2000-06-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>4, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-8
 end<-max(df5$time)
@@ -667,7 +668,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -709,7 +710,8 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==7) |>
   mutate(time=interval(as.Date("2000-07-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>4, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-8
 end<-max(df5$time)
@@ -717,7 +719,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -759,7 +761,8 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==8) |>
   mutate(time=interval(as.Date("2000-08-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>4, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-8
 end<-max(df5$time)
@@ -767,7 +770,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -809,7 +812,8 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==9) |>
   mutate(time=interval(as.Date("2000-09-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>4, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-8
 end<-max(df5$time)
@@ -817,7 +821,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -909,7 +913,8 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==11) |>
   mutate(time=interval(as.Date("2000-11-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>5, time-2, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-8
 end<-max(df5$time)
@@ -959,9 +964,10 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==12) |>
   mutate(time=interval(as.Date("2000-12-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>4, time-2, time)) |>
+  select(where(~ any(. != 0)))
 
-opentime<-8
+opentime<-4
 end<-max(df5$time)
 
 dataprep.out <-
