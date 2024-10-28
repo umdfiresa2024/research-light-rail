@@ -406,7 +406,7 @@ df5<-df4 |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
-opentime<-8
+opentime<-6
 end<-max(df5$time)
 
 dataprep.out <-
@@ -456,7 +456,7 @@ df5<-df4 |>
   mutate(time=interval(as.Date("2000-02-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
-opentime<-8
+opentime<-6
 end<-max(df5$time)
 
 dataprep.out <-
@@ -504,9 +504,9 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==3) |>
   mutate(time=interval(as.Date("2000-03-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>5, time-3, time))
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
@@ -551,18 +551,22 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
+library("dplyr")
+
 df5<-df4 |>
   filter(month==4) |>
   mutate(time=interval(as.Date("2000-04-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
+
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:61], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -603,16 +607,17 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==5) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-2, time))
+  mutate(time=interval(as.Date("2000-05-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:61], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
