@@ -349,7 +349,7 @@ df4<-as.data.frame(df3)
 dataprep.out <-
   dataprep(
     df4,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df4)[6:74], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -453,7 +453,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==2) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-02-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -503,7 +503,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==3) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-03-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -553,7 +553,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==4) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-04-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -703,7 +703,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==7) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-07-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -753,7 +753,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==8) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-08-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -803,7 +803,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==9) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-09-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -853,7 +853,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==10) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-10-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -903,7 +903,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==11) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-11-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -953,7 +953,7 @@ abline(v   = opentime,
 
 df5<-df4 |>
   filter(month==12) |>
-  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=interval(as.Date("2000-12-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time))
 
 opentime<-8
@@ -1018,6 +1018,9 @@ open<-as.Date("2004-06-01")
 #| echo: false
 #| message: false
 #| warnings: false
+
+opentime<-52
+
 df<-read.csv("daily roads/panel.csv") 
 
 df3 <- df |>
@@ -1133,16 +1136,16 @@ df3 <- df |>
                              "-", as.character(month), "-01"))) |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
   #make sure that time index is continuous 
-  mutate(time=ifelse(time>opentime-1, time-32, time))
+  mutate(time=ifelse(time>opentime-1, time-40, time))
 
-#opening time=62
+#opening time=52
 ```
 
 ```{r}
 #| echo: false
 #| message: false
 #| warnings: false
-opentime<-62
+opentime<-52
 end<-max(df3$time)
 
 df4<-as.data.frame(df3)
@@ -1156,7 +1159,7 @@ dataprep.out <-
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1:2, 4:5), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -1218,6 +1221,9 @@ open<-as.Date("2004-01-01")
 #| echo: false
 #| message: false
 #| warnings: false
+
+opentime<-47
+ 
 df<-read.csv("daily roads/panel.csv") 
 
 df3 <- df |>
@@ -1337,16 +1343,16 @@ df3 <- df |>
                              "-", as.character(month), "-01"))) |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
   #make sure that time index is continuous 
-  mutate(time=ifelse(time>opentime-1, time-32, time))
+  mutate(time=ifelse(time>opentime-1, time-34, time))
 
-#opening time=62
+#opening time=47
 ```
 
 ```{r}
 #| echo: false
 #| message: false
 #| warnings: false
-opentime<-62
+opentime<-47
 end<-max(df3$time)
 
 df4<-as.data.frame(df3)
@@ -1354,13 +1360,13 @@ df4<-as.data.frame(df3)
 dataprep.out <-
   dataprep(
     df4,
-    predictors            = colnames(df3)[6:70], #add linear, square, cubic weather
+    predictors            = colnames(df4)[6:70], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -1422,12 +1428,15 @@ open<-as.Date("2008-12-01")
 #| echo: false
 #| message: false
 #| warnings: false
-df<-read.csv("daily roads/panel.csv") 
+
+opentime<-106
+
+df<-read.csv("daily roads/panel.csv")
 
 df3 <- df |>
-  filter(Address=="Flagstaff, AZ" | Address=="Sierra Vista, AZ" | 
+  filter(Address=="Flagstaff, AZ" | 
            Address=="Tucson, AZ" |
-           Address=="Phoenix, AZ") |>
+           Address=="Phoenix-Mesa, AZ") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -1537,16 +1546,16 @@ df3 <- df |>
                              "-", as.character(month), "-01"))) |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
   #make sure that time index is continuous 
-  mutate(time=ifelse(time>opentime-1, time-32, time))
+  mutate(time=ifelse(time>opentime-1, time-41, time))
 
-#opening time=62
+#opening time=106
 ```
 
 ```{r}
 #| echo: false
 #| message: false
 #| warnings: false
-opentime<-62
+opentime<-106
 end<-max(df3$time)
 
 df4<-as.data.frame(df3)
@@ -1559,8 +1568,8 @@ dataprep.out <-
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
