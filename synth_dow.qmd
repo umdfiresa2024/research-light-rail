@@ -400,7 +400,8 @@ abline(v   = opentime,
 #| echo: false
 #| message: false
 #| warnings: false
-
+#| error: false 
+#| include: false
 df5<-df4 |>
   filter(month==1) |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
@@ -409,10 +410,14 @@ df5<-df4 |>
 opentime<-6
 end<-max(df5$time)
 
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -438,6 +443,17 @@ path.plot(synth.res    = synth.out,
           Xlab         = c("Months"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
 )
 
 abline(v   = opentime,
@@ -459,10 +475,14 @@ df5<-df4 |>
 opentime<-6
 end<-max(df5$time)
 
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -492,6 +512,17 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
 ```
 
 ## March averages for Thursdays
@@ -509,10 +540,14 @@ df5<-df4 |>
 opentime<-5
 end<-max(df5$time)
 
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -538,6 +573,17 @@ path.plot(synth.res    = synth.out,
           Xlab         = c("Months"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
 )
 
 abline(v   = opentime,
@@ -562,11 +608,15 @@ df5<-df4 |>
 opentime<-5
 end<-max(df5$time)
 
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[6:23], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -592,6 +642,17 @@ path.plot(synth.res    = synth.out,
           Xlab         = c("Months"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
 )
 
 abline(v   = opentime,
@@ -614,10 +675,15 @@ df5<-df4 |>
 opentime<-5
 end<-max(df5$time)
 
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[6:23], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -647,6 +713,17 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
 ```
 
 ## June averages for Thursdays
@@ -660,15 +737,17 @@ df5<-df4 |>
   filter(month==6) |>
   mutate(time=interval(as.Date("2000-06-01"), date)/months(12)) |>
   mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0)))
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -711,15 +790,17 @@ df5<-df4 |>
   filter(month==7) |>
   mutate(time=interval(as.Date("2000-07-01"), date)/months(12)) |>
   mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0)))
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -762,15 +843,17 @@ df5<-df4 |>
   filter(month==8) |>
   mutate(time=interval(as.Date("2000-08-01"), date)/months(12)) |>
   mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0)))
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -813,15 +896,17 @@ df5<-df4 |>
   filter(month==9) |>
   mutate(time=interval(as.Date("2000-09-01"), date)/months(12)) |>
   mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0)))
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:59], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -863,15 +948,21 @@ abline(v   = opentime,
 df5<-df4 |>
   filter(month==10) |>
   mutate(time=interval(as.Date("2000-10-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-3, time))
+  mutate(time=ifelse(time>4, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) |>
+  select_at(vars(-contains("Snow"))) |>
+  select_at(vars(-contains("Qsm"))) |>
+  select_at(vars(-contains("SWE")))
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:22], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -914,15 +1005,17 @@ df5<-df4 |>
   filter(month==11) |>
   mutate(time=interval(as.Date("2000-11-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time)) |>
-  select(where(~ any(. != 0)))
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
 
-opentime<-8
+opentime<-5
 end<-max(df5$time)
 
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -965,7 +1058,9 @@ df5<-df4 |>
   filter(month==12) |>
   mutate(time=interval(as.Date("2000-12-01"), date)/months(12)) |>
   mutate(time=ifelse(time>4, time-2, time)) |>
-  select(where(~ any(. != 0)))
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
 
 opentime<-4
 end<-max(df5$time)
@@ -973,7 +1068,7 @@ end<-max(df5$time)
 dataprep.out <-
   dataprep(
     df5,
-    predictors            = colnames(df5)[6:74], #add linear, square, cubic weather
+    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -1214,15 +1309,6 @@ abline(v   = opentime,
 ## Monthly averages for all days of the week
 
 ```{r}
-#| echo: false
-#| message: false
-#| warnings: false
-library("tidyverse")
-library("Synth")
-library("gsynth")
-```
-
-```{r}
 construction<-as.Date("2001-03-01")
 expansion<-as.Date("2014-01-01")
 open<-as.Date("2004-01-01")
@@ -1419,15 +1505,6 @@ abline(v   = opentime,
 # Phoenix-Mesa
 
 ## Monthly averages for all days of the week
-
-```{r}
-#| echo: false
-#| message: false
-#| warnings: false
-library("tidyverse")
-library("Synth")
-library("gsynth")
-```
 
 ```{r}
 construction<-as.Date("2005-07-01")
