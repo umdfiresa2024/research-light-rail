@@ -51,6 +51,8 @@ u<-aggregate(rbind(sint, iint), dissolve=TRUE)
 
 #make a buffer around major roads but take out areas that overlap with the light rail
 u_buffer<-terra::buffer(u, width = 1000)
+
+#writeVector(u_buffer, "houston_lr_buff_new", overwrite=TRUE)
 ```
 
 ```{r}
@@ -58,6 +60,11 @@ bg <- get_tiles(ext(lr_buffer), provider = "Esri.WorldGrayCanvas")
 plot(bg)
 lines(lr_project, col="yellow", lwd = 3)
 lines(u_buffer, col = "black", lwd = 3)
+legend("top", 
+       legend = c("Light Rail Line", "Substitute Road Buffer"),  
+       col = c("yellow", "black"),    
+       lwd = 2,
+       bty = "n")
 ```
 
 ```{r}
@@ -96,6 +103,8 @@ u<-aggregate(rbind(sint, iint), dissolve=TRUE)
 
 #make a buffer around major roads but take out areas that overlap with the light rail
 u_buffer<-terra::buffer(u, width = 1000)
+
+#writeVector(u_buffer, "phoenix_lr_buff_new", overwrite=TRUE)
 ```
 
 ```{r}
@@ -103,6 +112,11 @@ bg <- get_tiles(ext(lr_buffer), provider = "Esri.WorldGrayCanvas")
 plot(bg)
 lines(lr_project, col="yellow", lwd = 3)
 lines(u_buffer, col = "black", lwd = 3)
+legend("top", 
+       legend = c("Light Rail Line", "Substitute Road Buffer"),  
+       col = c("yellow", "black"),    
+       lwd = 2,
+       bty = "n")
 ```
 
 ```{r}
@@ -153,6 +167,11 @@ bg <- get_tiles(ext(lrc_buff), provider = "Esri.WorldGrayCanvas")
 plot(bg, main="Treated Area in Charlotte, NC")
 lines(lr_project, col="yellow", lwd = 3)
 lines(u_buffer, col = "black", lwd = 3)
+legend("top", 
+       legend = c("Light Rail Line", "Substitute Road Buffer"),  
+       col = c("yellow", "black"),    
+       lwd = 2,
+       bty = "n")
 dev.off()
 ```
 
@@ -217,5 +236,10 @@ bg <- get_tiles(ext(lr_buffer), provider = "Esri.WorldGrayCanvas")
 plot(bg, main="Treated Area in the Twin Cities, MN")
 lines(lr_project, col="yellow", lwd = 3)
 lines(u_buffer, col = "black", lwd = 3)
+legend("top", 
+       legend = c("Light Rail Line", "Substitute Road Buffer"),  
+       col = c("yellow", "black"),    
+       lwd = 2,
+       bty = "n")
 dev.off()
 ```
