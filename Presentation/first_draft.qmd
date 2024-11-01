@@ -1,23 +1,79 @@
 ---
-title: "SEA Conference"
+title: "Can Light Rails Provide the Track to Cleaner Air?"
+author: Thanicha Ruangmas, Landon Thomas, Rygel Yance, Geoffrey Zhang
 format: beamer
 editor: visual
 ---
 
-## Quarto
+## Intro
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+-   Air pollution is an urgent issue harming human health.
 
-## Bullets
+    -   90% of the world population is exposed to harmful pollution levels each year.
 
-When you click the **Render** button a document will be generated that includes:
+-   Has been exacerbated by traffic congestion in urban areas.
 
--   Content authored with markdown
--   Output from executable code
+-   Cities are looking to build mass transit to reduce air pollution.
 
-## Code
+**So, does opening a light rail system improve air quality?**
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Literature Review {.smaller}
+
+-   Previous public transit and air pollution studies indicate that building public transit will generally decrease air pollution in urban centers. Few studies, however, focus on light rails and their ability to impact air pollution.
+
+-   *Gendron-Carrier et al., 2022* found that the opening of subways decreased PM2.5 and PM10 in a 10 km radius around urban centers that had high air pollution prior to a system opening.
+
+-   *Xie et al., 2019*, which looked at subway openings in 15 cities in China, found an average reduction of PM2.5 of 19 percent after a system was opened . This same study, however, found that ozone levels rose about 12 percent after a system was opened.
+
+## Literature Review {.smaller}
+
+-   *Park & Sener, 2019* notably focuses on a light rail system in Houston, Texas, and found that carbon monoxide levels decreased by 24 percent two years after Houston's light rail system opened.
+
+-   *Fageda, 2021* looks at the opening of light rails across 98 mid-sized European cities, and found that air pollution was reduced by an average of 3 percent after a light rail system opened.
+
+-   Our study contributes an important look at light rails and air pollution within the context of the United States, where a car-centric culture dictates urban planing.
+
+## Why Light Rail? {.smaller}
+
+-   Light rail is a form of rail public transit with trains that combine features from buses and subways.
+
+-   Compared to buses:
+
+    -   Higher capacity, more frequent operation
+
+    -   Lower maintenance
+
+    -   More environmentally friendly (electric instead of gas!)
+
+    -   Can have exclusive right-of-way
+
+-   Compared to subways:
+
+    -   Cheaper to construct a new system (no tunnels needed!)
+
+    -   Can reach more residents and stop at more locations
+
+## Why Light Rail? {.smaller}
+
+-   Light rail systems in the United States can be divided into two categories: first-generation legacy systems, and second-generation modern systems
+
+    -   First generation: evolved from older streetcars and trolleys, built mainly in the early 1900s and converted to light rail in the 1980s
+
+    -   Second generation: designed from the ground up for systems that can travel longer distances and carry more passengers, built mainly in the 1990s and 2000s.
+
+## Data: Light Rail Routes {.smaller}
+
+-   We focus on second-generation light rail systems in our study opened after the 2000s (our PM2.5 dataset has data from 2000 to 2018).
+
+-   We picked systems in cities where light rail was the primary mode of rail transit, allowing us to isolate air pollution effects resulting from the opening of a light rail.
+
+-   Cities with a population of at least 1 million residents were picked to ensure light rails were in urban cities.
+
+-   After considering these criteria, our panel of cities was narrowed down to four systems:
+
+    **Charlotte, NC's LYNX system, Houston, TX's METRORail system, Minneapolis-St. Paul, MN's METRO system, and Phoenix, AZ's Valley Metro Rail system.**
+
+## Data: PM2.5 {.smaller}
 
 ```{r}
 1 + 1

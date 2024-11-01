@@ -1,0 +1,288 @@
+---
+title: "Light Rails and Air Pollution"
+author: Lillian Hsu, Terence Lo, Thanicha Ruangmas, Jillian Wimbush, Geoffrey Zhang
+format: 
+  revealjs: 
+    theme: simple
+    slide-number: true
+    smaller: false
+execute:
+  echo: false
+  warning: false
+editor: visual
+---
+
+## Intro
+
+:::::: columns
+::: {.column width="58%"}
+-   Air pollution is an urgent issue harming human health.
+
+    -   90% of the world population is exposed to harmful pollution levels each year.
+
+-   Has been exacerbated by traffic congestion in urban areas.
+
+-   Cities are looking to build mass transit to reduce air pollution.
+:::
+
+::: {.column width="2%"}
+:::
+
+::: {.column width="40%"}
+![](images/traffic-01.png){.r-stretch .absolute bottom="50"}
+:::
+::::::
+
+# **So, does opening a light rail system improve air quality?**
+
+## Literature Review {.smaller}
+
+::: {.column width="55%"}
+-   Previous public transit and air pollution studies indicate that building public transit will generally decrease air pollution in urban centers. Few studies, however, focus on light rails and their ability to impact air pollution.
+
+-   *Gendron-Carrier et al., 2022* found that the opening of subways decreased PM2.5 and PM10 in a 10 km radius around urban centers that had high air pollution prior to a system opening.
+
+-   *Xie et al., 2019*, which looked at subway openings in 15 cities in China, found an average reduction of PM2.5 of 19 percent after a system was opened . This same study, however, found that ozone levels rose about 12 percent after a system was opened.
+:::
+
+## Literature Review {.smaller}
+
+::: {.column width="55%"}
+-   *Park & Sener, 2019* notably focuses on a light rail system in Houston, Texas, and found that carbon monoxide levels decreased by 24 percent two years after Houston's light rail system opened.
+
+-   *Fageda, 2021* looks at the opening of light rails across 98 mid-sized European cities, and found that air pollution was reduced by an average of 3 percent after a light rail system opened.
+
+-   Our study contributes an important look at light rails and air pollution within the context of the United States, where a car-centric culture dictates urban planing.
+:::
+
+## Why Light Rail? {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+-   Light rail is a form of rail public transit with trains that combine features from buses and subways.
+
+-   Compared to buses:
+
+    -   Higher capacity, more frequent operation
+
+    -   Lower maintenance
+
+    -   More environmentally friendly (electric instead of gas!)
+
+    -   Can have exclusive right-of-way
+
+-   Compared to subways:
+
+    -   Cheaper to construct a new system (no tunnels needed!)
+
+    -   Can reach more residents and stop at more locations
+:::
+
+::: {.column width="50%"}
+:::
+:::::
+
+## Why Light Rail? {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+-   Light rail systems in the United States can be divided into two categories: first-generation legacy systems, and second-generation modern systems
+
+    -   First generation: evolved from older streetcars and trolleys, built mainly in the early 1900s and converted to light rail in the 1980s
+
+    -   Second generation: designed from the ground up for systems that can travel longer distances and carry more passengers, built mainly in the 1990s and 2000s.
+:::
+
+::: {.column width="50%"}
+:::
+:::::
+
+## Data: Light Rail Routes {.smaller}
+
+:::::: columns
+::: {.column .r-fit-text width="56%"}
+-   We focus on second-generation light rail systems in our study opened after the 2000s (our PM2.5 dataset has data from 2000 to 2018).
+
+-   We picked systems in cities where light rail was the primary mode of rail transit, allowing us to isolate air pollution effects resulting from the opening of a light rail.
+
+-   Cities with a population of at least 1 million residents were picked to ensure light rails were in urban cities.
+
+-   After considering these criteria, our panel of cities was narrowed down to four systems:
+
+    **Charlotte, NC's LYNX system, Houston, TX's METRORail system, Minneapolis-St. Paul, MN's METRO system, and Phoenix, AZ's Valley Metro Rail system.**
+:::
+
+::: {.column width="1%"}
+:::
+
+::: {.column width="43%"}
+![](images/METRORail_7-02.jpg){fig-align="right"}
+:::
+::::::
+
+## Data: PM2.5 {.smaller}
+
+::::: columns
+::: {.column .r-fit-text width="55%"}
+-   To calculate PM2.5, we use the North America Regional Estimates of Chemical Composition of Fine Particulate Matter (V4.NA.03) dataset from Washington University in St. Louis that estimates ground-level PM2.5 from 2000 to 2018.
+
+-   This dataset estimates PM2.5 by combining Aerosol Optical Depth (AOD) data from NASA's MODIS, MISR, and SeaWIFS instruments, providing us with air pollution data across the United States at a gridded resolution of 0.01°.
+
+-   We use this data to calculate the monthly mean PM2.5 before and after the opening of a light rail system for a 10km buffer around each of our control cities' city centers.
+
+-   City center coordinates were found by using the Google Maps Geocoding API.
+:::
+
+::: {.column width="45%"}
+![](images/images_large_es-2018-06392k_0001.jpeg){.absolute right="0" top="15"}
+:::
+:::::
+
+## Monthly Average PM2.5 {.smaller}
+
+For each city, we draw a 10 km buffer around the original light rail line, and find the monthly average of all data points within the buffer area.
+
++----------------------------------------------+-------------------------------------------+
+| Charlotte-Concord-Gastonia metropolitan area | PM2.5 data points within the 10 km buffer |
+|                                              |                                           |
+| ![](map1_charlotte.png){width="364"}         | ![](map2_charlotte.png){width="304"}      |
++----------------------------------------------+-------------------------------------------+
+
+## Summary Statistics {.smaller}
+
+Our period of study is in four cities from January 2001 to December 2011, before any light rail expansion occurred.
+
+ 
+
+```{r}
+
+library("tidyverse")
+library("kableExtra")
+
+df<-read.csv("G:/Shared drives/2022 FIRE-SA/ARCHIVED - SUMMER INTERNSHIP/CODE/combined.csv")
+
+ss<-df %>%
+  ungroup() %>%
+  filter(year<=2011) %>%
+  dplyr::group_by(city, lr_op) %>%
+  dplyr::summarise(avgpm25=mean(meanpm25),
+                   sdpm25=sd(meanpm25), 
+                   maxpm25=max(meanpm25),
+                   obs=n(),
+                   .groups = 'keep')
+
+op<-c("Nov 2007","", "Jan 2004", "","Jun 2004","", "Dec 2008","")
+cit<-c("Charlotte", "","Houston","", "Minneapolis", "","Phoenix","")
+
+op2<-as.data.frame(cbind(cit,op,ss[,2:6]))
+  
+op2 %>%
+  kbl(digits=1, col.names = c("City", 
+                              "Opening Date",
+                              "Opening Status",
+                              "Avg PM2.5",
+                              "SD PM2.5",
+                              "Max PM2.5",
+                              "Obs")) %>%
+  kable_styling()
+```
+
+## Summary Statistics {.smaller .r-fit-text}
+
+-   According to the EPA NAAQs standard, annual mean PM2.5, averaged across three years should not exceed $12 \mu g / m^3$.
+
+-   None of the counties we are studying had non-attainment status for PM2.5, but Maricopa County in Arizona has partial non-attainment status for PM10.
+
+```{r}
+
+op2 %>%
+  kbl(digits=1, col.names = c("City", 
+                              "Opening Date",
+                              "Opening Status",
+                              "Avg PM2.5",
+                              "SD PM2.5",
+                              "Max PM2.5",
+                              "Obs")) %>%
+  kable_styling()
+
+```
+
+## Average Effect Empirical Strategy {.smaller}
+
+-   Similar to Gendron-Carrier et al. (2022) we examine the changes in ground-level PM2.5 alongside the sharp opening dates of light rails.
+
+-   We compare PM2.5 levels before and after light rail openings with the regression:
+
+$$
+P_{it} = \beta_i + \alpha_1 D_{it} + \gamma' X_{it} + \epsilon_{it}
+$$
+
+where $D_{it}=1$ when light rail in city $i$ in month $t$ has opened, and $D_{it}=0$ otherwise.
+
+-   Other controls include city fixed effects, year fixed effects, city-month of year fixed effects to capture city-level pollution trends.
+
+-   We also include linear and quadratic climate variables such as cloud cover percentage, frost day frequency, mean temperature, precipitation, and vapor pressure.
+
+## Average Effect Results {.smaller}
+
+|                 |              |         |            |         |            |
+|:----------------|:------------:|:-------:|:----------:|:-------:|:----------:|
+|                 |    \(1\)     |  \(2\)  |   \(3\)    |  \(4\)  |   \(5\)    |
+| Post            | -0.862\*\*\* | -0.566  | -0.915\*\* | -0.192  |   -0.148   |
+|                 |   (0.213)    | (0.371) |  (0.387)   | (0.854) |  (0.839)   |
+| Post $\times$ t |              |         |            |         | -0.221\*\* |
+|                 |              |         |            |         |  (0.095)   |
+| Year FE         |      N       |    Y    |     N      |    Y    |     Y      |
+| Observations    |     528      |   528   |    148     |   148   |    148     |
+| Adjusted R2     |    0.437     |  0.452  |   0.488    |  0.503  |    0.52    |
+
+-   Note: \*p\<0.1; \*\*p\<0.05; \*\*\*p\<0.01
+
+-   \(1\) and (2) show results when all observations from year 2001 to 2011 are included.
+
+-   \(3\) to (5) include observations 18 months before and 18 months after opening.
+
+-   All regressions include city FE, city-month FE, linear and quadratic climate controls.
+
+## City Effect Results {.smaller}
+
+|                           |    \(1\)     | \(2\)  |
+|---------------------------|:------------:|:------:|
+| Post $\times$ Charlotte   | -1.471\*\*\* | -0.806 |
+| Post $\times$ Houston     |    -0.067    | -1.307 |
+| Post $\times$ Minneapolis |    -0.46     | -0.476 |
+| Post $\times$ Phoenix     |    -0.017    |  1.73  |
+| Observations              |     528      |  148   |
+| Adjusted R2               |    0.457     | 0.504  |
+
+-   Note: \*p\<0.1; \*\*p\<0.05; \*\*\*p\<0.01
+
+-   \(1\) show results when all observations from year 2001 to 2011 are included.
+
+-   \(2\) include observations 18 months before and 18 months after opening.
+
+-   All regressions include year FE, city FE, city-month FE, linear and quadratic climate controls.
+
+## Event Study Empirical Strategy {.smaller}
+
+-   In an event study, we compare PM2.5 levels each month, 18 months before and after light rail openings. Our regression specification is:
+
+$$
+P_{it}=\beta_i + \sum_{j = -18,..18} \alpha_j D_{it} (j) + \gamma' X_{it} + \epsilon_{it}
+$$
+
+-   Let $D_{it} (j)$ represent dummy variables that is equal to 1 when our observation is $j$ months since the light rail opened in city $i$ at month $t$.
+
+-   $\alpha_j$ represents the impact of light rail opening in month $j$ after opening.
+
+-   We ran the regression for two time periods; from 2001 to 2011 across all cities, and the 18 months before and 18 months after light rail opening in each city.
+
+-   Other controls include city fixed effects, year fixed effects, city-month fixed effects, linear and quadratic climate variables, and the number of PM2.5 data points.
+
+## Event Study Results {.smaller}
+
+-   In other regression, we restrict our data to include only the 18 month period before and after light rail openings in each city.
+
+-   The graph below shows the values of $\hat{\alpha_j}$ from the regression equation $P_{it}=\beta_i + \sum_{j} \alpha_j D_{it} (j) + \gamma' X_{it} + \epsilon_{it}$
+
+## ![](images/event.png){width="416" height="277"}
