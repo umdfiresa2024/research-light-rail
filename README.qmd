@@ -293,7 +293,7 @@ To take into account meteorological conditions, we include 48 land surface meteo
 
 For each treatment city, we use data from untreated city with similar public pre-light-rail transportation profiles as controls. Our main regression specification is:
 
-\$ P\_{it}=\gamma (D_i \times Open_t) + W'\_{it} \beta +\mu\_i + \eta*t +* \epsilon{it} \$
+\$ P\_{it}=\gamma (D_i \times Open_t) + W'\_{it} \beta +\mu\_i + \eta*t +\* \epsilon{it} \$
 
 where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day $t$.
 
