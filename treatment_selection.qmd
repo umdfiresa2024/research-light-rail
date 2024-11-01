@@ -366,7 +366,7 @@ df2<-df |>
   mutate(mode_group=ifelse(Mode %in% car_types, "cars", mode_group)) |>
   mutate(mode_group=ifelse(Mode=="LR", "LR", mode_group)) |>
   mutate(ID=ifelse(ID=="", NA, ID)) |>
-  fill(ID, .direction = "up") |>
+  fill(ID, .direction = "down")|>
   group_by(mode_group, ID) |>
   summarize(UPT=sum(UPT))
 
@@ -397,7 +397,7 @@ df2<-df |>
   mutate(mode_group=ifelse(Mode %in% car_types, "cars", mode_group)) |>
   mutate(mode_group=ifelse(Mode=="LR", "LR", mode_group)) |>
   mutate(ID=ifelse(ID=="", NA, ID)) |>
-  fill(ID, .direction = "up") |>
+  fill(ID, .direction = "down") |>
   group_by(mode_group, ID) |>
   summarize(UPT=sum(UPT))
 
