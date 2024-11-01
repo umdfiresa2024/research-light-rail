@@ -39,10 +39,10 @@ library("tidyverse")
 
 df <- read.csv("NTD/2013_Operating_Stats.csv")
 
-bus_types<-c("MB", "RB", "CB", "TB")
-oth_types<-c("CC", "FB", "IP", "TR", "DR")
-rail_types<-c("CR", "HR", "YR", "MG", "SR")
-car_types<-c("DT", "VP", "JT")
+bus_types<-c("MB", "MBp", "RB", "RBp", "CB","CBp", "TB")
+oth_types<-c("CC", "FB","FBp", "IP","IPp", "TR", "DR","DRp")
+rail_types<-c("CR","CRp", "HR", "YR", "MG", "SR")
+car_types<-c("DT", "VP","VPp", "JT")
 
 df2<-df |>
   select(ID, State, Urbanized.Area, Mode, Unlinked.Passenger.Trips) |>
@@ -347,6 +347,165 @@ df_y12<-df3 |>
 az_y12<-df3 |>
   filter(ID %in% id_az)|>
   mutate(year=2012)
+```
+
+## 2000 Statistics
+
+```{r}
+df <- read.csv("NTD/2000_Operating_Stats.csv")
+
+df2<-df |>
+  rename(ID=Org) |>
+  rename(Unlinked.Passenger.Trips=`Annual.Unlinked.Passenger.Trips`) |>
+  select(ID, Mode, Unlinked.Passenger.Trips) |>
+  mutate(UPT=str_remove_all(Unlinked.Passenger.Trips, ",")) |>
+  mutate(UPT=as.numeric(UPT)) |>
+  mutate(mode_group=ifelse(Mode %in% bus_types, "bus", NA)) |>
+  mutate(mode_group=ifelse(Mode %in% oth_types, "oth", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% rail_types, "rail", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% car_types, "cars", mode_group)) |>
+  mutate(mode_group=ifelse(Mode=="LR", "LR", mode_group)) |>
+  mutate(ID=ifelse(ID=="", NA, ID)) |>
+  fill(ID, .direction = "up") |>
+  group_by(mode_group, ID) |>
+  summarize(UPT=sum(UPT))
+
+df3<-pivot_wider(df2, 
+                 names_from = "mode_group", 
+                 values_from = "UPT",
+                 values_fill=0) |>
+  mutate(total=LR+bus+cars+oth+rail) |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
+
+df_y00<-df3 |>
+  mutate(year=2000)
+```
+
+## 2001 Statistics
+
+```{r}
+df <- read.csv("NTD/2001_Operating_Stats.csv")
+
+df2<-df |>
+  rename(Unlinked.Passenger.Trips=Annual.Unlinked.Passenger.Trips) |>
+  select(ID, Mode, Unlinked.Passenger.Trips) |>
+  mutate(UPT=str_remove_all(Unlinked.Passenger.Trips, ",")) |>
+  mutate(UPT=as.numeric(UPT)) |>
+  mutate(mode_group=ifelse(Mode %in% bus_types, "bus", NA)) |>
+  mutate(mode_group=ifelse(Mode %in% oth_types, "oth", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% rail_types, "rail", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% car_types, "cars", mode_group)) |>
+  mutate(mode_group=ifelse(Mode=="LR", "LR", mode_group)) |>
+  mutate(ID=ifelse(ID=="", NA, ID)) |>
+  fill(ID, .direction = "up") |>
+  group_by(mode_group, ID) |>
+  summarize(UPT=sum(UPT))
+
+df3<-pivot_wider(df2, 
+                 names_from = "mode_group", 
+                 values_from = "UPT",
+                 values_fill=0) |>
+  mutate(total=LR+bus+cars+oth+rail) |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
+
+df_y01<-df3 |>
+  mutate(year=2001)
+```
+
+## 2002 Statistics
+
+```{r}
+df <- read.csv("NTD/2002_Operating_Stats.csv")
+
+df2<-df |>
+  rename(Unlinked.Passenger.Trips=Unlinked.Passenger.Trips) |>
+  select(ID, Mode, Unlinked.Passenger.Trips) |>
+  mutate(UPT=str_remove_all(Unlinked.Passenger.Trips, ",")) |>
+  mutate(UPT=as.numeric(UPT)) |>
+  mutate(mode_group=ifelse(Mode %in% bus_types, "bus", NA)) |>
+  mutate(mode_group=ifelse(Mode %in% oth_types, "oth", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% rail_types, "rail", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% car_types, "cars", mode_group)) |>
+  mutate(mode_group=ifelse(Mode=="LR", "LR", mode_group)) |>
+  group_by(mode_group, ID) |>
+  summarize(UPT=sum(UPT))
+
+df3<-pivot_wider(df2, 
+                 names_from = "mode_group", 
+                 values_from = "UPT",
+                 values_fill=0) |>
+  mutate(total=LR+bus+cars+oth+rail) |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
+
+df_y02<-df3 |>
+  mutate(year=2002)
+
+```
+
+## 2003 Statistics
+
+```{r}
+df <- read.csv("NTD/2003_Operating_Stats.csv")
+
+df2<-df |>
+  select(ID, Mode, Unlinked.Passenger.Trips) |>
+  mutate(UPT=str_remove_all(Unlinked.Passenger.Trips, ",")) |>
+  mutate(UPT=as.numeric(UPT)) |>
+  mutate(mode_group=ifelse(Mode %in% bus_types, "bus", NA)) |>
+  mutate(mode_group=ifelse(Mode %in% oth_types, "oth", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% rail_types, "rail", mode_group)) |>
+  mutate(mode_group=ifelse(Mode %in% car_types, "cars", mode_group)) |>
+  mutate(mode_group=ifelse(Mode=="LR", "LR", mode_group)) |>
+  group_by(mode_group, ID) |>
+  summarize(UPT=sum(UPT))
+
+df3<-pivot_wider(df2, 
+                 names_from = "mode_group", 
+                 values_from = "UPT",
+                 values_fill=0) |>
+  mutate(total=LR+bus+cars+oth+rail) |>
+  mutate(share_light=LR/total, share_rail=rail/total, share_bus=bus/total, share_oth=oth/total, share_cars=cars/total)
+
+df_y03<-df3 |>
+  mutate(year=2003)
+```
+
+```{r}
+df_y072<-df_y07 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y082<-df_y08 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y092<-df_y09 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y102<-df_y10 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y112<-df_y11 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+df_y122<-df_y12 |>
+  ungroup() |>
+  dplyr::select(-State, -Name) 
+
+all<-rbind(df_y00, df_y01, df_y02, df_y03, df_y04, df_y05, df_y06, df_y072, 
+           df_y082, df_y092, df_y102, df_y112, df_y122) |>
+  group_by(ID, year) |>
+  summarize(bus=sum(bus), 
+            LR=sum(LR), 
+            rail=sum(rail), 
+            cars=sum(cars),
+            oth=sum(oth), 
+            total=sum(total))
+
+write.csv(all, "ntd_00to12.csv", row.names=F)
 ```
 
 ## Charlotte, NC Light Rail Shares
