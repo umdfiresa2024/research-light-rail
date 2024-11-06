@@ -33,10 +33,12 @@ opentime<-7
 df<-read.csv("daily roads/panel.csv") 
 
 df3 <- df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
+  filter(Address=="Winston-Salem, NC" | 
+           Address=="Greenville, SC" | 
            Address=="Columbia, SC" | Address=="Asheville, NC" |
            Address=="Charleston, SC" | Address=="Durham, NC" |
-           Address=="Fayetteville, NC" | Address=="Greenville, SC" |
+           Address=="Fayetteville, NC" | 
+           Address=="Greenville, SC" |
            Address=="Charlotte, NC") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
@@ -229,7 +231,8 @@ df3 <- df |>
   Psurf_f_tavg = mean(Psurf_f_tavg, na.rm = TRUE),
   SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE)) |>
     mutate(date=as.Date(paste0(as.character(year), 
-                             "-", as.character(month), "-01"))) |>
+                             "-", as.character(month), 
+                             "-01"))) |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
   arrange(time) |>
   mutate(time=ifelse(time>opentime-1, time-32, time))
@@ -246,7 +249,8 @@ epa<-read.csv("epa_by_day.csv") |>
 ntd<-read.csv("pop_ntd_year.csv") |>
   rename(Address=Urbanized.Area) |>
   group_by(Address, year) |>
-  summarize(pop=mean(pop), bus=mean(bus), rail=mean(rail), cars=mean(cars), oth=mean(oth)) 
+  summarize(pop=mean(pop), bus=mean(bus), rail=mean(rail), 
+            cars=mean(cars), oth=mean(oth)) 
 
 df4<-merge(df3, epa, by=c("year", "month", "Address"))
 
