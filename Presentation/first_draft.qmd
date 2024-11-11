@@ -78,3 +78,20 @@ editor: visual
 ```{r}
 1 + 1
 ```
+
+## Treatment Area
+
+```{=tex}
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth]{images/treat_combined.png} \hfill
+\end{figure}
+```
+## Untreated Area
+
+```{=tex}
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth]{images/charlotte_cntrl_roads.png} \hfill
+\end{figure}
+```
