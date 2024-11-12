@@ -28,23 +28,30 @@ filtered_data <- ntd_data %>%
 filtered_data <- filtered_data %>%
   mutate(Urbanized.Area = factor(Urbanized.Area, levels = c(treatment_city, setdiff(unique(Urbanized.Area), treatment_city))))
 
-# Gather the data for transportation modes
+# Gather the data for transportation modes and calculate the total number of people
 average_data <- filtered_data %>%
   gather(key = "transportation", value = "people", bus, cars, oth, LR) %>%
   group_by(Urbanized.Area, group, transportation, period) %>%
-  summarise(average_people = mean(people, na.rm = TRUE), .groups = "drop")
+  summarise(average_people = sum(people, na.rm = TRUE), .groups = "drop") %>%
+  # Calculate total number of people per city and period
+  group_by(Urbanized.Area, group, period) %>%
+  mutate(total_people = sum(average_people)) %>%
+  ungroup() %>%
+  # Calculate the proportion for each transportation mode
+  mutate(proportion = average_people / total_people)
 
-# Plot the stacked bar chart with raw numbers (not proportions)
-ggplot(average_data, aes(x = Urbanized.Area, y = average_people, fill = transportation)) +
+# Plot the stacked bar chart with proportions
+ggplot(average_data, aes(x = Urbanized.Area, y = proportion, fill = transportation)) +
   geom_bar(stat = "identity") +
   theme_minimal() +
   labs(
-    title = "Average Number of People Using Different Transportation Modes by City (2004-2011)",
+    title = "Proportion of People Using Different Transportation Modes by City (2004-2011)",
     x = "City",
-    y = "Average Number of People",
+    y = "Proportion of People",
     fill = "Transportation Mode"
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_fill_manual(values = c("bus" = '#6AA84F', "cars" = '#F1C232', "oth" = '#E06666', "LR" = '#5B9BD5')) +
   scale_x_discrete(labels = function(x) gsub(",", ", ", x)) +  # Clean up city names for display
   facet_wrap(~period, scales = "free_x", ncol = 2, labeller = label_both)  # Split by period
+
