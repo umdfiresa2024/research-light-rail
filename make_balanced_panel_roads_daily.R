@@ -1,28 +1,43 @@
 library("tidyverse")
 
+###Phoenix-Mesa#######################################
 
-####pm2.5 houston and phoenix#######################################
-
-f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/Houston & Phoenix")
+f<-dir("Phoenix_TA_PM25/")
 
 p_indv<-c()
 for (i in 1:length(f)) {
   print(f[i])
-  pdf<-read.csv(paste0("G:/Shared drives/2024 FIRE Light Rail/DATA/Houston & Phoenix/",f[i])) |>
+  pdf<-read.csv(paste0("Phoenix_TA_PM25/",f[i])) |>
     mutate(year=substr(date, 1, 4)) |>
     mutate(month=substr(date, 5, 6)) |>
     mutate(day=substr(date, 7,8))
   
   p_indv<-rbind(p_indv, pdf)
 }
+p_nc<-p_indv
 
-p_tx_az<-p_indv
+p_az2<-p_nc |>
+  mutate(Address="Phoenix=Mesa, AZ")
+###Houston#######################################
 
-p_tx_az2<-p_tx_az |>
-  mutate(Address=ifelse(city_num==1, "Phoenix-Mesa, AZ", "Houston, TX")) |>
-  select(-city_num)
+f<-dir("Houston_TA_PM25/")
 
-###charlotte#######################################
+p_indv<-c()
+for (i in 1:length(f)) {
+  print(f[i])
+  pdf<-read.csv(paste0("Houston_TA_PM25/",f[i])) |>
+    mutate(year=substr(date, 1, 4)) |>
+    mutate(month=substr(date, 5, 6)) |>
+    mutate(day=substr(date, 7,8))
+  
+  p_indv<-rbind(p_indv, pdf)
+}
+p_nc<-p_indv
+
+p_tx2<-p_nc |>
+  mutate(Address="Houston, TX")
+
+##############################################
 
 f<-dir("Charlotte_TA_PM25/")
 
@@ -60,7 +75,8 @@ p_mn<-p_indv
 p_mn2<-p_mn |>
   mutate(Address="Minneapolis-St. Paul, MN")
 
-p_trt<-rbind(p_mn2, p_nc2, p_tx_az2)
+p_trt<-bind_rows(p_mn2, p_nc2, p_tx2, p_az2) |>
+  select(-city_num)
 
 write.csv(p_trt, "daily roads/pm25_daily_roads.csv", row.names=F)
 
@@ -86,11 +102,53 @@ p_cntrl<-p_indv
 
 p_cntrl2<-merge(p_cntrl, cgroup, by="city_num")
 
-write.csv(p_cntrl2, "daily roads/pm25_daily_roads_cntrl.csv", row.names=F)
+#get new mexico cities
+f<-dir("PM25_daily", pattern="nm")
+
+p_indv<-c()
+for (i in 1:length(f)) {
+  print(f[i])
+  pdf<-read.csv(paste0("PM25_daily/",f[i])) |>
+    mutate(year=substr(date, 1, 4)) |>
+    mutate(month=substr(date, 5, 6)) |>
+    mutate(day=substr(date, 7,8))
+  
+  p_indv<-rbind(p_indv, pdf)
+}
+
+p_indv2<-p_indv |>
+  mutate(Address=ifelse(city_num==1, "Las Cruces, NM", "Santa Fe, NM"))
+
+p_cntrl3<-rbind(p_cntrl2, p_indv2)  
+
+write.csv(p_cntrl3, "daily roads/pm25_daily_roads_cntrl.csv", row.names=F)
 
 ######met#########################################################
 
-f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/cntrl_met_data")
+# f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/cntrl_met_data")
+# 
+# p_indv<-c()
+# for (i in 1:length(f)) {
+#   print(f[i])
+#   pdf<-read.csv(paste0("G:/Shared drives/2024 FIRE Light Rail/DATA/cntrl_met_data/",f[i])) |>
+#     mutate(year=substr(date, 1, 4)) |>
+#     mutate(month=substr(date, 5, 6)) |>
+#     mutate(day=substr(date, 7,8))
+#   
+#   p_indv<-rbind(p_indv, pdf)
+# }
+# p_met<-p_indv |>
+#   rename(city_num=ID)
+# 
+# p_met2<-merge(p_met, cgroup, by="city_num")
+# 
+# write.csv(p_met2, "daily roads/met_daily_cntrls.csv", row.names=F)
+
+p_met2<-read.csv("daily roads/met_daily_cntrls.csv")
+
+#add nm cities
+
+f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/cntrl_met_data", pattern="nm")
 
 p_indv<-c()
 for (i in 1:length(f)) {
@@ -103,24 +161,24 @@ for (i in 1:length(f)) {
   p_indv<-rbind(p_indv, pdf)
 }
 p_met<-p_indv |>
-  rename(city_num=ID)
+  rename(city_num=ID) |>
+  mutate(Address=ifelse(city_num==1, "Las Cruces, NM", "Santa Fe, NM"))
 
-p_met2<-merge(p_met, cgroup, by="city_num")
+p_met3<-rbind(p_met2, p_met)
 
-write.csv(p_met2, "daily roads/met_daily_cntrls.csv", row.names=F)
-
+write.csv(p_met3, "daily roads/met_daily_cntrls_withnm.csv", row.names=F)
 ######met#########################################################
 
-f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/trt_met_data")
+f<-dir("G:/Shared drives/2024 FIRE Light Rail/DATA/trt_met_data_updated")
 
 p_indv<-c()
 for (i in 1:length(f)) {
   print(f[i])
-  pdf<-read.csv(paste0("G:/Shared drives/2024 FIRE Light Rail/DATA/trt_met_data/",f[i])) |>
+  pdf<-read.csv(paste0("G:/Shared drives/2024 FIRE Light Rail/DATA/trt_met_data_updated/",f[i])) |>
     mutate(year=substr(date, 1, 4)) |>
     mutate(month=substr(date, 5, 6)) |>
     mutate(day=substr(date, 7,8))
-  
+
   p_indv<-rbind(p_indv, pdf)
 }
 p_met<-p_indv |>
@@ -146,7 +204,7 @@ trt_met<-read.csv("daily roads/met_daily_trt.csv") |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
   select(-c(year, month, day))
 
-cntrl_met<-read.csv("daily roads/met_daily_cntrls.csv") |>
+cntrl_met<-read.csv("daily roads/met_daily_cntrls_withnm.csv") |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
 
 trt<-merge(trt_met, trt_pm, by=c("Address", "date"))
@@ -155,72 +213,5 @@ cntrl<-merge(cntrl_pm, cntrl_met, by=c("Address", "date")) |>
   filter(!is.na(TWS_tavg))
 
 df<-bind_rows(trt,cntrl) 
-write.csv(df, "daily roads/panel.csv", row.names=FALSE)
+write.csv(df, "daily roads/panel_updated.csv", row.names=FALSE)
   
-###################################################################################
-rm(trt_met, trt_pm, cntrl_pm, cntrl_met)
-
-
-df<-bind_rows(trt,cntrl) |>
-  select(-city_num) |>
-  mutate(start=as.Date("01/12/2003", format="%d/%m/%Y")) |>
-  mutate(open=as.Date("01/11/2007", format="%d/%m/%Y")) |>
-  mutate(end=as.Date("01/11/2011", format="%d/%m/%Y")) |>
-  mutate(opentime=ifelse(as.Date(date)>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Charlotte, NC",1,0)) |>
-  mutate(time=interval(start, date)/days(1)) |>
-  filter(Address!="Concord, NC") |>
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
-  filter(date>=start & date<=end) |>
-  mutate(dow=weekdays(date))
-
-library("Synth")
-library("gsynth")
-  
-
-dataprep.out <-
-  dataprep(
-    df,
-    predictors            = names(df[c(3:35)]),
-    dependent             = "pm25",
-    unit.variable         = "add_num", #city number
-    time.variable         = "time", 
-    unit.names.variable   = "Address",
-    treatment.identifier  = 7, #treatment city number
-    controls.identifier   = c(1:6, 8:25),
-    time.predictors.prior = c(0:1431),
-    time.optimize.ssr     = c(0:1300), 
-    time.plot             = c(1000:2500)
-  )
-
-synth.out <- synth(dataprep.out)
-
-print(synth.tables   <- synth.tab(
-  dataprep.res = dataprep.out,
-  synth.res    = synth.out)
-)
-
-path.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
-          Xlab         = c("Months"),
-          Legend       = c("Treated City","Synthetic City"),
-          Legend.position = c("topleft")
-)
-
-abline(v   = 1432,
-       lty = 2)
-
-gaps.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Gap"),
-          Xlab         = c("Year"),
-          Ylim         = c(-10, 10),
-          Main         = ""
-)
-
-abline(v   = 1432,
-       lty = 2)
-  
-synth_control = dataprep.out$Y0plot %*% synth.out$solution.w
