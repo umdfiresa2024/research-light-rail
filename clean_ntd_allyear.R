@@ -1,6 +1,12 @@
 cities<-read.csv("cntrl_cities.csv")
 
-cities2<-c(cities$x, "Charlotte, NC", "Phoenix-Mesa, AZ", "Houston, TX", "Minneapolis-St. Paul, MN")
+cities2<-c(cities$x, 
+           "Charlotte, NC", 
+           "Phoenix-Mesa, AZ", 
+           "Houston, TX", 
+           "Minneapolis-St. Paul, MN", 
+           "El Paso, TX-NM", 
+           "Las Cruces, NM")
 
 df<-read.csv("ntd_00to12.csv") 
   
