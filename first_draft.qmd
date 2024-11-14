@@ -1,0 +1,31 @@
+---
+title: "SEA Conference"
+format: beamer
+editor: visual
+---
+
+## Treated Area
+
+As particulate matter is one of the most damaging air pollutants, we use ground-level PM2.5 concentrations to represent city-level air quality. PM2.5 data comes from Di et al. (2019), which provides daily PM2.5 concentrations in grid cells at a resolution of 1 km for the years 2000 to 2016.
+
+For each treated city, we identified which highway light rails could potentially serve as a substitute, and we extracted daily levels of PM2.5 in areas within 1 km of those highways.
+
+## Untreated Area
+
+Untreated areas have similar levels of alternative transportation before the light rail system was put into place. Additionally, the PM2.5 concentration was calculated by drawing a 30 km radius around each city’s centroid, and cropping interstates segments that fall within that centroid, then drawing 1 km radius around each cropped interstate. We then find the daily average PM2.5 levels within each 1 km radius around the cropped interstate area for each city.
+
+## Treatment Area for the Twin cities
+
+![](images/treat_twin_cities.png){fig-align="center"}
+
+## Treatment Area for Charlotte
+
+![](images/treat_charlotte.png){fig-align="center"}
+
+## Treatment Area for Phoenix
+
+![](images/treat_phoenix.png){fig-align="center"}
+
+## Treatment Area for Houston
+
+![](images/treat_houston.png){fig-align="center"}
