@@ -6,7 +6,7 @@ ntd_data <- read.csv("ntd_by_year.csv")
 # Define treatment and control cities
 treatment_city <- "Phoenix-Mesa, AZ"
 control_cities <- c(
-  "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ"
+  "Flagstaff, AZ", "Sierra Vista, AZ", "Tucson, AZ", "El Paso, TX-NM", "Las Cruces, NM"
 )
 
 # Filter data for treatment city and control cities, and separate by year range

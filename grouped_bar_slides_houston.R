@@ -25,7 +25,7 @@ filtered_data <- ntd_data %>%
   ) %>%
   filter(!is.na(period))  # Remove rows where period is NA
 
-# Ensure 'Urbanized.Area' is a factor with Charlotte first
+# Ensure 'Urbanized.Area' is a factor with Houston first
 filtered_data <- filtered_data %>%
   mutate(Urbanized.Area = factor(Urbanized.Area, levels = c(treatment_city, setdiff(unique(Urbanized.Area), treatment_city))))
 
