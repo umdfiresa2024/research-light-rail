@@ -30,14 +30,14 @@ open<-as.Date("2007-11-01")
 
 opentime<-7
 
-df<-read.csv("daily roads/panel.csv") 
+df<-read.csv("daily roads/panel_updated.csv") 
 
 df3 <- df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Asheville, NC" |
-           Address=="Charleston, SC" | Address=="Durham, NC" |
-           Address=="Fayetteville, NC" | Address=="Greenville, SC" |
-           Address=="Charlotte, NC") |>
+  filter(Address!="Columbia, SC") |>
+  filter(Address!="Concord, NC") |>
+  filter(Address!="Flagstaff, AZ") |>
+  filter(Address!="Odessa, TX") |>
+  filter(Address!="Brownsville, TX") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -87,11 +87,6 @@ df3 <- df |>
 ```
 
 ```{r}
-rm(df)
-gc()
-```
-
-```{r}
 epa<-read.csv("epa_by_day.csv") |>
   mutate(date=as.Date(Date)) |>
   mutate(month=month(date), year=year(date)) |>
@@ -110,12 +105,9 @@ ntd<-read.csv("pop_ntd_year.csv") |>
 
 df4<-merge(df3, epa, by=c("year", "Address"))
 
-df5<-left_join(df4, ntd, by=c("year", "Address")) |>
-  filter(Address!="Columbia, SC")
+df5<-merge(df4, ntd, by=c("year", "Address")) 
 
-temp<-df5 |>
-  group_by(Address) |>
-  summarise(varbus=var(bus), varCO2=var(CO2))
+table(df5$Address)
 
 ```
 
@@ -127,17 +119,18 @@ end<-max(df5$time)
 
 df5<-as.data.frame(df5)
 
+table(df5$time)
+
 dataprep.out <-
   dataprep(
     df5,
-    #predictors            = colnames(df5)[c(5:35, 37:41, 43:44)], #add linear, square, cubic weather
-    predictors            = colnames(df5)[c(5:35)], #add linear, square, cubic weather
+    predictors            = colnames(df5)[c(5:35, 37:40, 41, 43, 44)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1, 5:8), #value of other control cities
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:3, 9:12, 14, 15, 17, 20, 21, 23:26), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -151,9 +144,11 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
+
+png("Results/synth_nc_annualavg.png")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
+          Ylab         = c("PM2.5"),
           Xlab         = c("Year"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
@@ -161,6 +156,7 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+dev.off()
 ```
 
 ```{r}
@@ -182,11 +178,11 @@ abline(v   = opentime,
 opentime<-62
 
 df3 <- df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Asheville, NC" |
-           Address=="Charleston, SC" | Address=="Durham, NC" |
-           Address=="Fayetteville, NC" | Address=="Greenville, SC" |
-           Address=="Charlotte, NC") |>
+  filter(Address!="Columbia, SC") |>
+  filter(Address!="Concord, NC") |>
+  filter(Address!="Flagstaff, AZ") |>
+  filter(Address!="Odessa, TX") |>
+  filter(Address!="Brownsville, TX") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -229,7 +225,8 @@ df3 <- df |>
   Psurf_f_tavg = mean(Psurf_f_tavg, na.rm = TRUE),
   SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE)) |>
     mutate(date=as.Date(paste0(as.character(year), 
-                             "-", as.character(month), "-01"))) |>
+                             "-", as.character(month), 
+                             "-01"))) |>
   mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
   arrange(time) |>
   mutate(time=ifelse(time>opentime-1, time-32, time))
@@ -246,7 +243,8 @@ epa<-read.csv("epa_by_day.csv") |>
 ntd<-read.csv("pop_ntd_year.csv") |>
   rename(Address=Urbanized.Area) |>
   group_by(Address, year) |>
-  summarize(pop=mean(pop), bus=mean(bus), rail=mean(rail), cars=mean(cars), oth=mean(oth)) 
+  summarize(pop=mean(pop), bus=mean(bus), rail=mean(rail), 
+            cars=mean(cars), oth=mean(oth)) 
 
 df4<-merge(df3, epa, by=c("year", "month", "Address"))
 
@@ -269,8 +267,8 @@ dataprep.out <-
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1, 5:8), #value of other control cities
+    treatment.identifier  = 6, #value in add_num column
+    controls.identifier   = c(1:3, 9:12, 14, 15, 17, 20, 21, 23:26), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -284,6 +282,7 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
+png("Results/synth_nc_monthlyavg.png")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
           Ylab         = c("Y"),
@@ -294,6 +293,8 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+
+dev.off()
 
 gaps.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
@@ -314,14 +315,12 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df<-read.csv("daily roads/panel.csv") 
-
 df3 <- df |>
-  filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Asheville, NC" |
-           Address=="Charleston, SC" | Address=="Durham, NC" |
-           Address=="Fayetteville, NC" | Address=="Greenville, SC" |
-           Address=="Charlotte, NC") |>
+  filter(Address!="Columbia, SC") |>
+  filter(Address!="Concord, NC") |>
+  filter(Address!="Flagstaff, AZ") |>
+  filter(Address!="Odessa, TX") |>
+  filter(Address!="Brownsville, TX") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -410,8 +409,8 @@ dataprep.out <-
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1, 5:8), #value of other control cities
+    treatment.identifier  = 6 , #value in add_num column
+   controls.identifier   = c(1:3, 9:12, 14, 15, 17, 20, 21, 23:26), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -425,9 +424,11 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
+png("Presentation/images/synth_nc_thursavg.png", 
+    res=500, width=5, height=5, units="in")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
+          Ylab         = c("PM2.5"),
           Xlab         = c("Months"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
@@ -435,6 +436,7 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+dev.off()
 ```
 
 ```{r}
@@ -489,6 +491,7 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
+png("Presentation/images/synth_nc_thurs_Janavg.png")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
           Ylab         = c("Y"),
@@ -499,6 +502,7 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+dev.off()
 
 gaps.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
@@ -550,6 +554,7 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
+png("Presentation/images/synth_nc_thurs_Febavg.png")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
           Ylab         = c("Y"),
@@ -560,6 +565,7 @@ path.plot(synth.res    = synth.out,
 
 abline(v   = opentime,
        lty = 2)
+dev.off()
 
 gaps.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
@@ -580,28 +586,24 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==3) |>
   mutate(time=interval(as.Date("2000-03-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>5, time-3, time))
+  mutate(time=ifelse(time>5, time-3, time)) 
 
 opentime<-5
-end<-max(df5$time)
-
-df6 <-df5 |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
     df6,
-    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
+    predictors            = colnames(df6)[c(6:39, 42:43, 45:46)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -645,38 +647,38 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-library("dplyr")
-
-df5<-df4 |>
+df6<-df5 |>
   filter(month==4) |>
   mutate(time=interval(as.Date("2000-04-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-3, time)) |>
-  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
 
-df6 <-df5 |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+table(df6$time)
 
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
     df6,
-    predictors            = colnames(df6)[6:23], #add linear, square, cubic weather
+    predictors            = colnames(df6)[c(6:34, 37:40)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
@@ -710,40 +712,38 @@ abline(v   = opentime,
 ## May averages for Thursdays
 
 ```{r}
-#| echo: false
-#| message: false
-#| warnings: false
-
-df5<-df4 |>
+df6<-df5 |>
   filter(month==5) |>
   mutate(time=interval(as.Date("2000-05-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-3, time)) |>
   select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
 
-df6 <-df5 |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+table(df6$time)
 
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
     df6,
-    predictors            = colnames(df6)[6:23], #add linear, square, cubic weather
+    predictors            = colnames(df6)[c(6:34, 37:40)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
@@ -781,27 +781,28 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==6) |>
   mutate(time=interval(as.Date("2000-06-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
+
+table(df6$time)
+names(df6)
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:34, 38, 40:41)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:3, 9:12, 14, 15, 17, 20, 21, 23:26), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -812,19 +813,27 @@ synth.out <- synth(dataprep.out)
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
   synth.res    = synth.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 ```
 
 ```{r}
+png("Presentation/images/synth_nc_thurs_Juneavg.png", 
+    res=500, width=5, height=5, units="in")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
-          Xlab         = c("Months"),
+          Ylab         = c("PM2.5"),
+          Xlab         = c("Time"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
 )
 
 abline(v   = opentime,
        lty = 2)
+
+dev.off()
 ```
 
 ## July averages for Thursdays
@@ -834,27 +843,28 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==7) |>
   mutate(time=interval(as.Date("2000-07-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
+
+table(df6$time)
+names(df6)
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:34, 38, 40:41)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
-    treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:3, 9:12, 14, 15, 17, 20, 21, 23:26), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
@@ -868,6 +878,8 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
+png("Presentation/images/synth_nc_thurs_Julyavg.png", 
+    res=500, width=5, height=5, units="in")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
           Ylab         = c("Y"),
@@ -887,33 +899,38 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==8) |>
   mutate(time=interval(as.Date("2000-08-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
+
+table(df6$time)
+
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:34, 37:40)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
@@ -940,33 +957,38 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==9) |>
   mutate(time=interval(as.Date("2000-09-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
+
+table(df6$time)
+
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:34, 37:40)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
@@ -993,36 +1015,38 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==10) |>
   mutate(time=interval(as.Date("2000-10-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-3, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) |>
-  select_at(vars(-contains("Snow"))) |>
-  select_at(vars(-contains("Qsm"))) |>
-  select_at(vars(-contains("SWE")))
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
+
+table(df6$time)
+
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:22], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:39, 42:45)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
@@ -1049,33 +1073,38 @@ abline(v   = opentime,
 #| message: false
 #| warnings: false
 
-df5<-df4 |>
+df6<-df5 |>
   filter(month==11) |>
   mutate(time=interval(as.Date("2000-11-01"), date)/months(12)) |>
   mutate(time=ifelse(time>5, time-2, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+  select(where(~ any(. != 0)))
 
 opentime<-5
-end<-max(df5$time)
+
+table(df6$time)
+
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:39, 42:45)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,
@@ -1101,34 +1130,38 @@ abline(v   = opentime,
 #| echo: false
 #| message: false
 #| warnings: false
-
-df5<-df4 |>
+df6<-df5 |>
   filter(month==12) |>
   mutate(time=interval(as.Date("2000-12-01"), date)/months(12)) |>
-  mutate(time=ifelse(time>4, time-2, time)) |>
-  select(where(~ any(. != 0))) |>
-  select_at(vars(-contains("cubed"))) |>
-  select_at(vars(-contains("squared"))) 
+  mutate(time=ifelse(time>5, time-2, time)) |>
+  select(where(~ any(. != 0)))
 
-opentime<-4
-end<-max(df5$time)
+opentime<-5
+
+table(df6$time)
+
+end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
-    df5,
-    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
+    df6,
+    predictors            = colnames(df6)[c(6:39, 42:45)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
     unit.names.variable   = "Address",
     treatment.identifier  = 3 , #value in add_num column
-    controls.identifier   = c(1:2, 4:8), #value of other control cities
+    controls.identifier   = c(1, 5:8), #value of other control cities
     time.predictors.prior = c(1:opentime-1),
     time.optimize.ssr     = c(1:opentime-1),
     time.plot             = c(1:end)
   )
 
 synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
 
 synth.tables   <- synth.tab(
   dataprep.res = dataprep.out,

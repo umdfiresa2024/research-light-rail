@@ -23,7 +23,7 @@ expansion<-as.Date("2012-12-01")
 open<-as.Date("2007-11-01")
 
 #start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
+df<-read.csv("daily roads/panel_updated.csv") |>
   filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
            Address=="Columbia, SC" | Address=="Asheville, NC" |
            Address=="Charleston, SC" | Address=="Durham, NC" |
@@ -181,17 +181,34 @@ m3 <- feols(f, cluster = "Address", data = df)
 f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
 m4 <- feols(f, cluster = "Address", data = df)
 
-res<-as.data.frame(rbind(coeftable(m1)[nrow(coeftable(m1)),],
-       coeftable(m2)[nrow(coeftable(m2)),],
-       coeftable(m3)[nrow(coeftable(m3)),],
-       coeftable(m4)[nrow(coeftable(m4)),]))
+etable(m1, m2, m3, m4, 
+       se = "cluster",
+       cluster = "Address",
+       keep = c("operating x treatcity", "Wind_f_"),
+       order = c("operating x treatcity", "Wind_f_"),
+       se.below = TRUE,
+       digits = 2,
+       replace=TRUE,
+       title="DiD Results for Charlotte, NC",
+       fitstat=c('n', 'ar2'),
+       digits.stats = 2,
+       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
 
-res$controls<-c("Linear Weather Vars, City FE, Day of Week-Month FE",
-                "Linear Weather Vars, City FE, Day of Week-Month-Year FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month FE",
-                "Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
+etable(m1, m2, m3, m4, 
+       se = "cluster",
+       cluster = "Address",
+       keep = c("treatcity", "Wind_f_"),
+       order = c("treatcity", "Wind_f_"),
+       se.below = TRUE,
+       digits = 2,
+       file="Results/nc_did.tex",
+       replace=TRUE,
+       title="DiD Results for Charlotte, NC",
+       fitstat=c('n', 'ar2'),
+       digits.stats = 2,
+       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
 
-kable(res, digits=2)
+
 ```
 
 Day of week heterogeneous treatment effects.
@@ -201,14 +218,21 @@ Day of week heterogeneous treatment effects.
 #| message: false
 #| warning: false
 f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
+m5 <- feols(f, cluster = "Address", data = df)
 
-res<-as.data.frame(
-       coeftable(m4)[(nrow(coeftable(m4))-6):nrow(coeftable(m4)),])
-
-res$controls<-c("Polynomial Weather Vars, City FE, Day of Week-Month-Year FE")
-
-kable(res, digits=2)
+etable(m5, 
+       se = "cluster",
+       cluster = "Address",
+       keep = c("operating"),
+       order = c("operating"),
+       se.below = FALSE,
+       digits = 2,
+       replace=TRUE,
+       file="Results/nc_did.tex",
+       title="DiD Results for Charlotte, NC",
+       fitstat=c('n', 'ar2'),
+       digits.stats = 2,
+       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
 ```
 
 Do the same task for the Twin Cities, Phoenix-Mesa, and Houston.
@@ -427,9 +451,10 @@ expansion<-as.Date("2012-07-01")
 open<-as.Date("2008-12-27")
 
 #start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
+df<-read.csv("daily roads/panel_updated.csv") |>
   filter(Address=="Flagstaff, AZ" | Address=="Phoenix-Mesa, AZ" | 
-           Address=="Tucson, AZ") |>
+           Address=="Tucson, AZ" | Address=="El Paso, TX-NM" | 
+           Address=="Las Cruces, NM") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -441,7 +466,8 @@ df<-read.csv("daily roads/panel.csv") |>
   mutate(treatcity=ifelse(Address=="Phoenix-Mesa, AZ",1,0)) |>
   mutate(dow=weekdays(date)) |>
   mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year))
+  mutate(dow_my=paste0(dow,"-",month,"-",year)) |>
+  mutate(dow_y=paste0(dow, "-", year))
 ```
 
 ```{r}
@@ -566,6 +592,7 @@ wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg
 ```{r}
 mfe<-"| dow_m + Address"
 myfe<-"| dow_my + Address"
+yfe<-"| dow_y + Address"
 
 f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
                     wcontrols, mfe))
@@ -598,7 +625,8 @@ kable(res, digits=2)
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
+f<-as.formula(paste("pm25 ~ operating:treatcity:as.factor(month) + ", 
+                    wcontrols3, yfe))
 m4 <- feols(f, cluster = "Address", data = df)
 
 res<-as.data.frame(
