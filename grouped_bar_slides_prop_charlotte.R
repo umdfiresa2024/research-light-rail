@@ -17,8 +17,8 @@ filtered_data <- ntd_data %>%
   mutate(
     group = ifelse(Urbanized.Area == treatment_city, "Treatment City (Charlotte, NC)", "Control Cities"),
     period = case_when(
-      year >= 2004 & year <= 2007 ~ "2004-2007",
-      year >= 2008 & year <= 2011 ~ "2008-2011",
+      year >= 2000 & year <= 2004 ~ "2000-2004",
+      year >= 2007 & year <= 2011 ~ "2008-2011",
       TRUE ~ NA_character_
     )
   ) %>%
@@ -40,14 +40,17 @@ average_data <- filtered_data %>%
   # Calculate the proportion for each transportation mode
   mutate(proportion = average_people / total_people)
 
+png("Presentation/images/ntd_nc.png", 
+    res=500, width=7, height=5, units="in")
+
 # Plot the stacked bar chart with proportions
 ggplot(average_data, aes(x = Urbanized.Area, y = proportion, fill = transportation)) +
   geom_bar(stat = "identity") +
   theme_minimal() +
   labs(
-    title = "Proportion of People Using Different Transportation Modes by City (2004-2011)",
+    title = "Proportion of Trips of Each Public Transportation Mode",
     x = "City",
-    y = "Proportion of People",
+    y = "Proportion of Trips",
     fill = "Transportation Mode"
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -55,3 +58,4 @@ ggplot(average_data, aes(x = Urbanized.Area, y = proportion, fill = transportati
   scale_x_discrete(labels = function(x) gsub(",", ", ", x)) +  # Clean up city names for display
   facet_wrap(~period, scales = "free_x", ncol = 2, labeller = label_both)  # Split by period
 
+dev.off()

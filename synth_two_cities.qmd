@@ -34,15 +34,11 @@ opentime<-6
 df<-read.csv("daily roads/panel_updated.csv") 
 
 df3 <- df |>
-  filter(Address=="Flagstaff, AZ" | Address=="Phoenix-Mesa, AZ" | 
-           Address=="Tucson, AZ" | Address=="El Paso, TX-NM" | 
-           Address=="Las Cruces, NM" | Address=="Winston-Salem, NC" | 
-           Address=="Greenville, SC" | 
-           Address=="Columbia, SC" | Address=="Asheville, NC" |
-           Address=="Charleston, SC" | Address=="Durham, NC" |
-           Address=="Fayetteville, NC" | 
-           Address=="Greenville, SC" |
-           Address=="Charlotte, NC")  |>
+  filter(Address!="Columbia, SC") |>
+  filter(Address!="Concord, NC") |>
+  filter(Address!="Flagstaff, AZ") |>
+  filter(Address!="Odessa, TX") |>
+  filter(Address!="Brownsville, TX") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -131,67 +127,44 @@ df5<-as.data.frame(df5) |>
   mutate(D=ifelse(time>=6 & Address=="Phoenix-Mesa, AZ", 1, D)) |>
   filter(Address!="Flagstaff, AZ") |>
   filter(Address!="Columbia, SC") |>
-  rename(Y=pm25, X1=Rainf_tavg, X2=CO2)
+  rename(Y=pm25)
 
 names(df5)
 
-library("devtools")
-devtools::install_github('xuyiqing/panelView') 
+#library("devtools")
+#devtools::install_github('xuyiqing/panelView') 
 library(panelView)
 
 panelview(Y ~ D, data = df5,  index = c("add_num","time"), pre.post = TRUE) 
 panelview(Y ~ D, data = df5,  index = c("add_num","time"), type = "outcome") 
 
-out <- gsynth(Y ~ D + X1 + X2 , data = df5, 
+out <- gsynth(Y ~ D + Rainf_tavg  +    Swnet_tavg  + Wind_f_tavg  +   Tair_f_tavg  +   Qair_f_tavg +   
+                CO2    + SO2    + NOx    + pop    + bus    + cars   +     oth, 
+              data = df5, 
                   index = c("add_num","time"), force = "two-way", 
-                  se = TRUE, r=c(0,4),  
+                  se = TRUE, r=c(0,4), 
                   inference = "parametric", nboots = 1000, 
                   parallel = FALSE, min.T0 = 5)
+
+# out <- gsynth(Y ~ D + Rainf_tavg  +    Swnet_tavg  +    Lwnet_tavg  +  
+#                 Qle_tavg + Qh_tavg + Qg_tavg + Snowf_tavg + Evap_tavg + Qs_tavg + Qsm_tavg  +  
+#                 SnowT_tavg  +    AvgSurfT_tavg  + SWE_tavg   + SnowDepth_tavg + 
+#                 SoilMoist_S_tavg + SoilMoist_RZ_tavg + SoilMoist_P_tavg +
+#                 ECanop_tavg + TVeg_tavg + ESoil_tavg + CanopInt_tavg  + 
+#                 EvapSnow_tavg  + ACond_tavg  +    TWS_tavg  +    
+#                 GWS_tavg   + Wind_f_tavg  +   Tair_f_tavg  +   Qair_f_tavg  +   
+#                 Psurf_f_tavg  +  SWdown_f_tavg + CO2    + SO2    + NOx + pop + bus + cars + oth, 
+#               data = df5, 
+#                   index = c("add_num","time"), force = "two-way", 
+#                   se = TRUE, r=c(0,4), r.cv=4,
+#                   inference = "parametric", nboots = 1000, 
+#                   parallel = FALSE, min.T0 = 5)
 
 
 print(out)
 plot(out, type="raw")
 plot(out, type="counterfactual")
 
-panelview(Y ~ D, data = simdata,  index = c("id","time"), type = "outcome") 
-
-dataprep.out <-
-  dataprep(
-    df5,
-    predictors            = colnames(df5)[c(5:34, 36:38)], #add linear, square, cubic weather
-    dependent             = "pm25",
-    unit.variable         = "add_num",
-    time.variable         = "time",
-    unit.names.variable   = "Address",
-    treatment.identifier  = c(3, 11) , #value in add_num column
-    controls.identifier   = c(1:2, 4:10, 12:13), #value of other control cities
-    time.predictors.prior = c(1:opentime-1),
-    time.optimize.ssr     = c(1:opentime-1),
-    time.plot             = c(1:end)
-  )
-
-synth.out <- synth(dataprep.out)
-
-synth.tables   <- synth.tab(
-  dataprep.res = dataprep.out,
-  synth.res    = synth.out)
-```
-
-```{r}
-
-png("Presentation/images/synth_az_annualavg.png", 
-    res=500, width=5, height=5, units="in")
-path.plot(synth.res    = synth.out,
-          dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
-          Xlab         = c("Year"),
-          Legend       = c("Treated City","Synthetic City"),
-          Legend.position = c("topleft")
-)
-
-abline(v   = opentime,
-       lty = 2)
-dev.off()
 ```
 
 ## Monthly averages

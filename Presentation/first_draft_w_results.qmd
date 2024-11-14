@@ -5,20 +5,6 @@ format: beamer
 editor: visual
 ---
 
-
-## Literature Review {.smaller}
-
--  Previous studies on the air pollution impact of public transit (Chen and Whalley, 2012; Gendron-Carrier et al., 2022; Xie et al., 2024) used Discontinuity-Based OLS as there was instant uptake in ridership.
-
-![Ridership Data from Chen and Whalley (2012)](images/chen_whalley.png){width="50%"}
-
-## Literature Review {.smaller}
-
--   *Fageda, 2021* used DiD to analyze the impact of light rail openings across 98 mid-sized European cities, and found that air pollution was reduced by 3 percent.
-
--   The study used annual PM2.5 data, going back only up to 3 years before opening.
-
-
 ## Why Light Rail? {.smaller}
 
 -   Light rail is a form of rail public transit with trains that combine features from buses and subways.
@@ -28,8 +14,6 @@ editor: visual
     -   Higher capacity, more frequent operation
 
     -   Lower maintenance
-
-    -   More environmentally friendly (electric instead of gas!)
 
     -   Can have exclusive right-of-way
 
@@ -41,19 +25,89 @@ editor: visual
 
 ## Data: Light Rail Routes {.smaller}
 
--   We focus on light rail systems in our study opened after the 2000s (our PM2.5 dataset has data from 2000 to 2018).
+-   We focus on light rail systems in our study opened after the 2000s (our PM2.5 dataset has data from 2000 to 2016).
 
 -   We picked systems in cities where light rail was the primary mode of rail transit, allowing us to isolate air pollution effects resulting from the opening of a light rail.
 
 -   Cities with a population of at least 1 million residents were picked to ensure light rails were in urban cities.
 
--   After considering these criteria, our panel of cities was narrowed down to four systems:
+-   After considering these criteria, our panel of cities was narrowed down to two systems:
 
-    **Charlotte, NC's LYNX system, Houston, TX's METRORail system, Minneapolis-St. Paul, MN's METRO system, and Phoenix, AZ's Valley Metro Rail system.**
+    **Charlotte, NC's LYNX system and Phoenix, AZ's Valley Metro Rail system.**
 
-## PM2.5 Trends for Charlotte, NC
+## Literature Review {.smaller}
 
-![](images/nc_time.png){width="70%"}
+-   Previous studies on the air pollution impact of public transit (Chen and Whalley, 2012; Gendron-Carrier et al., 2022; Xie et al., 2024) used Discontinuity-Based OLS as there was instant uptake in ridership.
+
+![Ridership Data from Chen and Whalley (2012)](images/chen_whalley.png){width="50%"}
+
+## Literature Review {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+![](images/ridership_nc.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](images/ridership_az.png){width="100%"}
+:::
+:::::
+
+## Literature Review {.smaller}
+
+-   *Fageda, 2021* used DiD to estimate the impact of light rail openings across 98 European cities, and found that air pollution was reduced by 3 percent.
+
+-   They study used annual PM2.5 data, going back only up to 3 years before opening, which can confound with construction time.
+
+::::: columns
+::: {.column width="50%"}
+![](images/construction_nc.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](images/construction_az.png){width="100%"}
+:::
+:::::
+
+## Treated Area
+
+## Untreated Area
+
+For each control city, we find cities with no light rails, no subways, and similar public transportation profiles.
+
+::::: columns
+::: {.column width="50%"}
+![](images/ntd_nc.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](images/ntd_az.png){width="100%"}
+:::
+:::::
+
+## Untreated Area
+
+-   For each untreated city, we draw a 30 km radius around each city's centroid, crop interstates segments that fall within that centroid, and draw 1 km radius around each cropped interstate.
+
+-   We then find the daily average PM2.5 levels within each 1 km radius around the cropped interstate area for each city.
+
+![](images/cntrl_roads.png){width="50%"}
+
+## DiD Methodology
+
+For each treatment city, we use data from untreated city with similar public pre-light-rail transportation profiles as controls. Our main regression specification is:
+
+$P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta +\mu_{it} + \epsilon{it}$
+
+where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day $t$.
+
+$D_i$ is a dummy variable that is equal to one when city $i$ is the city with a light rail system.
+
+$Open_t$ is a dummy variable that is equal to one when the light rail system in the treated city is in operation.
+
+$W_{it}$ includes 48 meteorological control variables in its linear, square, and cubic form for each city and day.
+
+$\mu_it$ are city-day of week-month-year fixed effects.
 
 ## DiD Results
 
@@ -127,6 +181,14 @@ editor: visual
 \end{table}
 ```
 
+## Synthetic Control Methodology
+
+-   We use the synthetic control method described in Abadie et al. (2008)
+
+-   To construct a synthetic city for each treated city, we minimize the gap in PM2.5 trends before construction time.
+
+-   We also include 47 meteorology variables, CO2, NO2, and SO2 emissions from power plants in the same county, and number of public bus and car trips.
+
 ## SYC Results for Charlotte, NC
 
 ::::: columns
@@ -159,20 +221,16 @@ July averages of PM2.5 on Thursdays
 
 ::::: columns
 ::: {.column width="50%"}
-
-
 ![](images/synth_nc_thurs_Julyavg.png){width="70%"}
 :::
 
 ::: {.column width="50%"}
-| weights | unit names      |
-|---------|-----------------|
-| 0.418   | Fayetteville, NC |
+| weights | unit names        |
+|---------|-------------------|
+| 0.418   | Fayetteville, NC  |
 | 0.582   | Winston-Salem, NC |
-
 :::
 :::::
-
 
 ## SYC Results for Phoenix-Mesa, AZ
 
@@ -211,7 +269,16 @@ June averages
 
 ![](images/timeline.png){width="100%"}
 
-## SYC with Two Treatment Cities?
+## SYC with Two Treatment Cities
 
-![](images/gsynth.png){width="100%"}
+Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Effects Models (Xu, 2017)
 
+::::: columns
+::: {.column width="50%"}
+![](images/synth_group_raw.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](images/synth_group.png){width="100%"}
+:::
+:::::
