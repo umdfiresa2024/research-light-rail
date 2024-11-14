@@ -28,7 +28,7 @@ pts_proj<-project(pts_buffer, crs(r))
 
 png(filename="maps/charlotte_cntrl_roads.png")
 bg <- get_tiles(ext(pts_buffer), provider = "Esri.WorldGrayCanvas")
-charlotte <- plot(bg, main="Treated Area in Charlotte, NC")
+charlotte <- plot(bg, main="Untreated Area in Charlotte, NC")
 lines(pts_proj)
 lines(r, col="red")
 dev.off()
