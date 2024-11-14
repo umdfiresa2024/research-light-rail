@@ -57,6 +57,7 @@ ntd<-read.csv("ntd_by_year.csv") |>
   mutate(County=ifelse(Urbanized.Area=="Wausau, WI", "Marathon County", County)) |>
   mutate(County=ifelse(Urbanized.Area=="Wilmington, NC", "New Hanover County", County)) |>
   mutate(County=ifelse(Urbanized.Area=="Winston-Salem, NC", "Forsyth County", County)) |>
+  mutate(County=ifelse(Urbanized.Area=="Las Cruces, NM", "Dona Ana County", County)) |>
   group_by(Urbanized.Area, County, County2) |>
   tally() |>
   select(-n)

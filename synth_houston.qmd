@@ -1,0 +1,1839 @@
+---
+title: "Synthetic Controls Grouped DOW"
+format: html
+editor: visual
+---
+
+# Houston
+
+## Monthly averages for Monday/Tuesday
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+library("tidyverse")
+library("Synth")
+library("gsynth")
+```
+
+```{r}
+construction<-as.Date("2001-03-01")
+expansion<-as.Date("2014-01-01")
+open<-as.Date("2004-01-01")
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+opentime<-47
+ 
+df<-read.csv("daily roads/panel.csv") 
+
+df3 <- df |>
+  filter(Address=="Austin, TX" | Address=="Beaumont, TX" | 
+           Address=="Brownsville, TX" | Address=="College Station, TX" |
+           Address=="Corpus Christi, TX" | Address=="Lewisville, TX" |
+           Address=="El Paso, TX-NM" | Address=="Laredo, TX" |
+           Address=="Lubbock, TX"| Address=="Odessa, TX" |
+           Address=="San Antonio, TX" | Address=="Waco, TX" |
+           Address=="Houston, TX") |>
+  #create number representing each city
+  mutate(add_num=factor(Address)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  #remove unwanted years
+  mutate(date=as.Date(date)) |>
+  filter(date<construction | date>open) |> 
+  filter(date<expansion) |>
+  #select Mondays and Tuesdays 
+  mutate(dow=weekdays(date)) |>
+  filter(dow=="Monday" | dow=='Tuesday') |>
+  #find monthly averages
+  group_by(month, year, Address, add_num) |>
+  group_by(month, year, Address, add_num) |>
+  summarize(pm25 = mean(pm25, na.rm = TRUE),
+              Rainf_tavg = mean(Rainf_tavg, na.rm = TRUE),
+              Swnet_tavg = mean(Swnet_tavg, na.rm = TRUE),
+              Swnet_tavg_squared = Swnet_tavg^2,
+              Swnet_tavg_cubed = Swnet_tavg^3,
+              # Lwnet_tavg = mean(Lwnet_tavg, na.rm = TRUE),
+              # Lwnet_tavg_squared = Lwnet_tavg^2,
+              # Lwnet_tavg_cubed = Lwnet_tavg^3,
+              Qle_tavg = mean(Qle_tavg, na.rm = TRUE),
+              Qle_tavg_squared = Qle_tavg^2,
+              Qle_tavg_cubed = Qle_tavg^3,
+              Qh_tavg = mean(Qh_tavg, na.rm = TRUE),
+              # Qh_tavg_squared = Qh_tavg^2,
+              # Qh_tavg_cubed = Qh_tavg^3,
+              Qg_tavg = mean(Qg_tavg, na.rm = TRUE),
+              Qg_tavg_squared = Qg_tavg^2,
+              Qg_tavg_cubed = Qg_tavg^3,
+              Snowf_tavg = mean(Snowf_tavg, na.rm = TRUE),
+              Snowf_tavg_squared = Snowf_tavg^2,
+              Snowf_tavg_cubed = Snowf_tavg^3,
+              Rainf_tavg_squared = Rainf_tavg^2,
+              Rainf_tavg_cubed = Rainf_tavg^3,
+              # Evap_tavg = mean(Evap_tavg, na.rm = TRUE),
+              # Evap_tavg_squared = Evap_tavg^2,
+              # Evap_tavg_cubed = Evap_tavg^3,
+              # Qs_tavg = mean(Qs_tavg, na.rm = TRUE),
+              # Qs_tavg_squared = Qs_tavg^2,
+              # Qs_tavg_cubed = Qs_tavg^3,
+              # Qsb_tavg = mean(Qsb_tavg, na.rm = TRUE),
+              # Qsb_tavg_squared = Qsb_tavg^2,
+              # Qsb_tavg_cubed = Qsb_tavg^3,
+              Qsm_tavg = mean(Qsm_tavg, na.rm = TRUE),
+              Qsm_tavg_squared = Qsm_tavg^2,
+              Qsm_tavg_cubed = Qsm_tavg^3,
+              SnowT_tavg = mean(SnowT_tavg, na.rm = TRUE),
+              SnowT_tavg_squared = SnowT_tavg^2,
+              SnowT_tavg_cubed = SnowT_tavg^3,
+              AvgSurfT_tavg = mean(AvgSurfT_tavg, na.rm = TRUE),
+              AvgSurfT_tavg_squared = AvgSurfT_tavg^2,
+              AvgSurfT_tavg_cubed = AvgSurfT_tavg^3,
+              SWE_tavg = mean(SWE_tavg, na.rm = TRUE),
+              SWE_tavg_squared = SWE_tavg^2,
+              SWE_tavg_cubed = SWE_tavg^3,
+              SnowDepth_tavg = mean(SnowDepth_tavg, na.rm = TRUE),
+              SnowDepth_tavg_squared = SnowDepth_tavg^2,
+              SnowDepth_tavg_cubed = SnowDepth_tavg^3,
+              SoilMoist_S_tavg = mean(SoilMoist_S_tavg, na.rm = TRUE),
+              SoilMoist_S_tavg_squared = SoilMoist_S_tavg^2,
+              SoilMoist_S_tavg_cubed = SoilMoist_S_tavg^3,
+              SoilMoist_RZ_tavg = mean(SoilMoist_RZ_tavg, na.rm = TRUE),
+              SoilMoist_RZ_tavg_squared = SoilMoist_RZ_tavg^2,
+              SoilMoist_RZ_tavg_cubed = SoilMoist_RZ_tavg^3,
+              SoilMoist_P_tavg = mean(SoilMoist_P_tavg, na.rm = TRUE),
+              SoilMoist_P_tavg_squared = SoilMoist_P_tavg^2,
+              SoilMoist_P_tavg_cubed = SoilMoist_P_tavg^3,
+              ECanop_tavg = mean(ECanop_tavg, na.rm = TRUE),
+              ECanop_tavg_squared = ECanop_tavg^2,
+              ECanop_tavg_cubed = ECanop_tavg^3,
+              TVeg_tavg = mean(TVeg_tavg, na.rm = TRUE),
+              TVeg_tavg_squared = TVeg_tavg^2,
+              TVeg_tavg_cubed = TVeg_tavg^3,
+              ESoil_tavg = mean(ESoil_tavg, na.rm = TRUE),
+              ESoil_tavg_squared = ESoil_tavg^2,
+              ESoil_tavg_cubed = ESoil_tavg^3,
+              # CanopInt_tavg = mean(CanopInt_tavg, na.rm = TRUE),
+              # CanopInt_tavg_squared = CanopInt_tavg^2,
+              # CanopInt_tavg_cubed = CanopInt_tavg^3,
+              EvapSnow_tavg = mean(EvapSnow_tavg, na.rm = TRUE),
+              EvapSnow_tavg_squared = EvapSnow_tavg^2,
+              EvapSnow_tavg_cubed = EvapSnow_tavg^3,
+              # ACond_tavg = mean(ACond_tavg, na.rm = TRUE),
+              # ACond_tavg_squared = ACond_tavg^2,
+              # ACond_tavg_cubed = ACond_tavg^3,
+              TWS_tavg = mean(TWS_tavg, na.rm = TRUE),
+              TWS_tavg_squared = TWS_tavg^2,
+              TWS_tavg_cubed = TWS_tavg^3,
+              # GWS_tavg = mean(GWS_tavg, na.rm = TRUE),
+              # GWS_tavg_squared = GWS_tavg^2,
+              # GWS_tavg_cubed = GWS_tavg^3,
+              Wind_f_tavg = mean(Wind_f_tavg, na.rm = TRUE),
+              Wind_f_tavg_squared = Wind_f_tavg^2,
+              Wind_f_tavg_cubed = Wind_f_tavg^3,
+              Tair_f_tavg = mean(Tair_f_tavg, na.rm = TRUE),
+              # Tair_f_tavg_squared = Tair_f_tavg^2,
+              # Tair_f_tavg_cubed = Tair_f_tavg^3,
+              # Qair_f_tavg = mean(Qair_f_tavg, na.rm = TRUE),
+              # Qair_f_tavg_squared = Qair_f_tavg^2,
+              # Qair_f_tavg_cubed = Qair_f_tavg^3,
+              Psurf_f_tavg = mean(Psurf_f_tavg, na.rm = TRUE),
+              Psurf_f_tavg_squared = Psurf_f_tavg^2,
+              Psurf_f_tavg_cubed = Psurf_f_tavg^3,
+              SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE),
+              SWdown_f_tavg_squared = SWdown_f_tavg^2,
+              SWdown_f_tavg_cubed = SWdown_f_tavg^3) |>
+  #create time index
+  mutate(date=as.Date(paste0(as.character(year), 
+                             "-", as.character(month), "-01"))) |>
+  mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
+  #make sure that time index is continuous 
+  mutate(time=ifelse(time>opentime-1, time-34, time))
+
+#opening time=47
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+opentime<-47
+end<-max(df3$time)
+
+df4<-as.data.frame(df3)
+
+dataprep.out <-
+  dataprep(
+    df4,
+    predictors            = colnames(df4)[6:70], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+```{r}
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## January averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+#| error: false 
+#| include: false
+df5<-df4 |>
+  filter(month==1) |>
+  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>1, time-2, time))
+
+opentime<-2
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## February averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+#| error: false 
+#| include: false
+df5<-df4 |>
+  filter(month==2) |>
+  mutate(time=interval(as.Date("2000-02-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>1, time-2, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+
+opentime<-2
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## March averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==3) |>
+  mutate(time=interval(as.Date("2000-03-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+
+opentime<-1
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+dataprep.out <-
+  dataprep(
+    df6,
+    predictors            = colnames(df6)[c(6:10, 13:14, 17:22, 24:28)],
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## April averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+library("dplyr")
+
+df5<-df4 |>
+  filter(month==4) |>
+  mutate(time=interval(as.Date("2000-04-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+
+opentime<-1
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+
+dataprep.out <-
+  dataprep(
+    df6,
+    predictors            = colnames(df6)[c(6:10, 12:13, 16:26)], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## May averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==5) |>
+  mutate(time=interval(as.Date("2000-05-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0)))
+
+opentime<-1
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+
+dataprep.out <-
+  dataprep(
+    df6,
+    predictors            = colnames(df6)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## June averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==6) |>
+  mutate(time=interval(as.Date("2000-06-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-1
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## July averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==7) |>
+  mutate(time=interval(as.Date("2000-07-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-1
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## August averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==8) |>
+  mutate(time=interval(as.Date("2000-08-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-5
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## September averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==9) |>
+  mutate(time=interval(as.Date("2000-09-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-1
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## Oct averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==10) |>
+  mutate(time=interval(as.Date("2000-10-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) |>
+  select_at(vars(-contains("Snow"))) |>
+  select_at(vars(-contains("Qsm"))) |>
+  select_at(vars(-contains("SWE")))
+
+opentime<-1
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:22], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## Nov averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==11) |>
+  mutate(time=interval(as.Date("2000-11-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-1
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## December averages for Mondays/Tuesdays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==12) |>
+  mutate(time=interval(as.Date("2000-12-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>0, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-1
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+# Phoenix-Mesa
+
+## Monthly averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+library("tidyverse")
+library("Synth")
+library("gsynth")
+```
+
+```{r}
+construction<-as.Date("2005-07-01")
+expansion<-as.Date("2012-07-01")
+open<-as.Date("2008-12-01")
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+opentime<-106
+
+df<-read.csv("daily roads/panel.csv")
+
+df3 <- df |>
+  filter(Address=="Flagstaff, AZ" | 
+           Address=="Tucson, AZ" |
+           Address=="Phoenix-Mesa, AZ") |>
+  #create number representing each city
+  mutate(add_num=factor(Address)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  #remove unwanted years
+  mutate(date=as.Date(date)) |>
+  filter(date<construction | date>open) |>
+  filter(date<expansion) |>
+  #select Saturday and Sunday
+  mutate(dow=weekdays(date)) |>
+  filter(dow=="Saturday" | dow=='Sunday') |>
+  #find monthly averages
+  group_by(month, year, Address, add_num) |>
+  group_by(month, year, Address, add_num) |>
+  summarize(pm25 = mean(pm25, na.rm = TRUE),
+              Rainf_tavg = mean(Rainf_tavg, na.rm = TRUE),
+              Swnet_tavg = mean(Swnet_tavg, na.rm = TRUE),
+              Swnet_tavg_squared = Swnet_tavg^2,
+              Swnet_tavg_cubed = Swnet_tavg^3,
+              # Lwnet_tavg = mean(Lwnet_tavg, na.rm = TRUE),
+              # Lwnet_tavg_squared = Lwnet_tavg^2,
+              # Lwnet_tavg_cubed = Lwnet_tavg^3,
+              Qle_tavg = mean(Qle_tavg, na.rm = TRUE),
+              Qle_tavg_squared = Qle_tavg^2,
+              Qle_tavg_cubed = Qle_tavg^3,
+              Qh_tavg = mean(Qh_tavg, na.rm = TRUE),
+              # Qh_tavg_squared = Qh_tavg^2,
+              # Qh_tavg_cubed = Qh_tavg^3,
+              Qg_tavg = mean(Qg_tavg, na.rm = TRUE),
+              Qg_tavg_squared = Qg_tavg^2,
+              Qg_tavg_cubed = Qg_tavg^3,
+              Snowf_tavg = mean(Snowf_tavg, na.rm = TRUE),
+              Snowf_tavg_squared = Snowf_tavg^2,
+              Snowf_tavg_cubed = Snowf_tavg^3,
+              Rainf_tavg_squared = Rainf_tavg^2,
+              Rainf_tavg_cubed = Rainf_tavg^3,
+              # Evap_tavg = mean(Evap_tavg, na.rm = TRUE),
+              # Evap_tavg_squared = Evap_tavg^2,
+              # Evap_tavg_cubed = Evap_tavg^3,
+              # Qs_tavg = mean(Qs_tavg, na.rm = TRUE),
+              # Qs_tavg_squared = Qs_tavg^2,
+              # Qs_tavg_cubed = Qs_tavg^3,
+              # Qsb_tavg = mean(Qsb_tavg, na.rm = TRUE),
+              # Qsb_tavg_squared = Qsb_tavg^2,
+              # Qsb_tavg_cubed = Qsb_tavg^3,
+              Qsm_tavg = mean(Qsm_tavg, na.rm = TRUE),
+              Qsm_tavg_squared = Qsm_tavg^2,
+              Qsm_tavg_cubed = Qsm_tavg^3,
+              SnowT_tavg = mean(SnowT_tavg, na.rm = TRUE),
+              SnowT_tavg_squared = SnowT_tavg^2,
+              SnowT_tavg_cubed = SnowT_tavg^3,
+              AvgSurfT_tavg = mean(AvgSurfT_tavg, na.rm = TRUE),
+              AvgSurfT_tavg_squared = AvgSurfT_tavg^2,
+              AvgSurfT_tavg_cubed = AvgSurfT_tavg^3,
+              SWE_tavg = mean(SWE_tavg, na.rm = TRUE),
+              SWE_tavg_squared = SWE_tavg^2,
+              SWE_tavg_cubed = SWE_tavg^3,
+              SnowDepth_tavg = mean(SnowDepth_tavg, na.rm = TRUE),
+              SnowDepth_tavg_squared = SnowDepth_tavg^2,
+              SnowDepth_tavg_cubed = SnowDepth_tavg^3,
+              SoilMoist_S_tavg = mean(SoilMoist_S_tavg, na.rm = TRUE),
+              SoilMoist_S_tavg_squared = SoilMoist_S_tavg^2,
+              SoilMoist_S_tavg_cubed = SoilMoist_S_tavg^3,
+              SoilMoist_RZ_tavg = mean(SoilMoist_RZ_tavg, na.rm = TRUE),
+              SoilMoist_RZ_tavg_squared = SoilMoist_RZ_tavg^2,
+              SoilMoist_RZ_tavg_cubed = SoilMoist_RZ_tavg^3,
+              SoilMoist_P_tavg = mean(SoilMoist_P_tavg, na.rm = TRUE),
+              SoilMoist_P_tavg_squared = SoilMoist_P_tavg^2,
+              SoilMoist_P_tavg_cubed = SoilMoist_P_tavg^3,
+              ECanop_tavg = mean(ECanop_tavg, na.rm = TRUE),
+              ECanop_tavg_squared = ECanop_tavg^2,
+              ECanop_tavg_cubed = ECanop_tavg^3,
+              TVeg_tavg = mean(TVeg_tavg, na.rm = TRUE),
+              TVeg_tavg_squared = TVeg_tavg^2,
+              TVeg_tavg_cubed = TVeg_tavg^3,
+              ESoil_tavg = mean(ESoil_tavg, na.rm = TRUE),
+              ESoil_tavg_squared = ESoil_tavg^2,
+              ESoil_tavg_cubed = ESoil_tavg^3,
+              # CanopInt_tavg = mean(CanopInt_tavg, na.rm = TRUE),
+              # CanopInt_tavg_squared = CanopInt_tavg^2,
+              # CanopInt_tavg_cubed = CanopInt_tavg^3,
+              EvapSnow_tavg = mean(EvapSnow_tavg, na.rm = TRUE),
+              EvapSnow_tavg_squared = EvapSnow_tavg^2,
+              EvapSnow_tavg_cubed = EvapSnow_tavg^3,
+              # ACond_tavg = mean(ACond_tavg, na.rm = TRUE),
+              # ACond_tavg_squared = ACond_tavg^2,
+              # ACond_tavg_cubed = ACond_tavg^3,
+              TWS_tavg = mean(TWS_tavg, na.rm = TRUE),
+              TWS_tavg_squared = TWS_tavg^2,
+              TWS_tavg_cubed = TWS_tavg^3,
+              # GWS_tavg = mean(GWS_tavg, na.rm = TRUE),
+              # GWS_tavg_squared = GWS_tavg^2,
+              # GWS_tavg_cubed = GWS_tavg^3,
+              Wind_f_tavg = mean(Wind_f_tavg, na.rm = TRUE),
+              Wind_f_tavg_squared = Wind_f_tavg^2,
+              Wind_f_tavg_cubed = Wind_f_tavg^3,
+              Tair_f_tavg = mean(Tair_f_tavg, na.rm = TRUE),
+              # Tair_f_tavg_squared = Tair_f_tavg^2,
+              # Tair_f_tavg_cubed = Tair_f_tavg^3,
+              # Qair_f_tavg = mean(Qair_f_tavg, na.rm = TRUE),
+              # Qair_f_tavg_squared = Qair_f_tavg^2,
+              # Qair_f_tavg_cubed = Qair_f_tavg^3,
+              Psurf_f_tavg = mean(Psurf_f_tavg, na.rm = TRUE),
+              Psurf_f_tavg_squared = Psurf_f_tavg^2,
+              Psurf_f_tavg_cubed = Psurf_f_tavg^3,
+              SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE),
+              SWdown_f_tavg_squared = SWdown_f_tavg^2,
+              SWdown_f_tavg_cubed = SWdown_f_tavg^3) |>
+  #create time index
+  mutate(date=as.Date(paste0(as.character(year), 
+                             "-", as.character(month), "-01"))) |>
+  mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
+  #make sure that time index is continuous 
+  mutate(time=ifelse(time>opentime-1, time-41, time))
+
+#opening time=106
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+opentime<-106
+end<-max(df3$time)
+
+df4<-as.data.frame(df3)
+
+dataprep.out <-
+  dataprep(
+    df4,
+    predictors            = colnames(df3)[6:70], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+```{r}
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## January averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+#| error: false 
+#| include: false
+df5<-df4 |>
+  filter(month==1) |>
+  mutate(time=interval(as.Date("2000-01-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time))
+
+opentime<-6
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## February averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+#| error: false 
+#| include: false
+df5<-df4 |>
+  filter(month==2) |>
+  mutate(time=interval(as.Date("2000-02-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+
+opentime<-6
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## March averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==3) |>
+  mutate(time=interval(as.Date("2000-03-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+
+opentime<-6
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+dataprep.out <-
+  dataprep(
+    df6,
+    predictors            = colnames(df6)[c(6:10, 13:14, 17:22, 24:28)],
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## April averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+library("dplyr")
+
+df5<-df4 |>
+  filter(month==4) |>
+  mutate(time=interval(as.Date("2000-04-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0))) #Removes columns with all zeroes (i.e. snowfall)
+
+opentime<-1
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+
+dataprep.out <-
+  dataprep(
+    df6,
+    predictors            = colnames(df6)[c(6:10, 13:14, 17:22, 24:26)],
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## May averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==5) |>
+  mutate(time=interval(as.Date("2000-05-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0)))
+
+opentime<-6
+end<-max(df5$time)
+
+df6 <-df5 |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+
+dataprep.out <-
+  dataprep(
+    df6,
+    predictors            = colnames(df6)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## June averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==6) |>
+  mutate(time=interval(as.Date("2000-06-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## July averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==7) |>
+  mutate(time=interval(as.Date("2000-07-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-4, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## August averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==8) |>
+  mutate(time=interval(as.Date("2000-08-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-4, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## September averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==9) |>
+  mutate(time=interval(as.Date("2000-09-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-4, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:23], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## Oct averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==10) |>
+  mutate(time=interval(as.Date("2000-10-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-4, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) |>
+  select_at(vars(-contains("Snow"))) |>
+  select_at(vars(-contains("Qsm"))) |>
+  select_at(vars(-contains("SWE")))
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:22], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## Nov averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==11) |>
+  mutate(time=interval(as.Date("2000-11-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-4, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
+
+## December averages for Saturdays/Sundays
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+
+df5<-df4 |>
+  filter(month==12) |>
+  mutate(time=interval(as.Date("2000-12-01"), date)/months(12)) |>
+  mutate(time=ifelse(time>5, time-3, time)) |>
+  select(where(~ any(. != 0))) |>
+  select_at(vars(-contains("cubed"))) |>
+  select_at(vars(-contains("squared"))) 
+
+opentime<-6
+end<-max(df5$time)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[6:28], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 2 , #value in add_num column
+    controls.identifier   = c(1, 3), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+```
