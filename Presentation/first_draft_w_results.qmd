@@ -34,6 +34,15 @@ editor: visual
 -   After considering these criteria, our panel of cities was narrowed down to two systems:
 
     **Charlotte, NC's LYNX system and Phoenix, AZ's Valley Metro Rail system.**
+    
+## Data: PM2.5 and Meteorology {.smaller}
+
+-   PM2.5 data comes from Di et al. (2019), which provides daily PM2.5 concentrations in grid cells at a resolution of 1 km for the years 2000 to 2016.
+
+-   To consider meteorological conditions, we include 48 land surface meteorological variables provided by NASA Global Land Data Assimilation System Version 2. The data set provides rasters with a raster of 0.25 x0.25 degree daily.
+
+-   For each treated city, we identified which highway light rails could potentially serve as a substitute, and we extracted daily levels of PM2.5 and our meteorological variables from areas within 1 km of those highways.
+
 
 ## Literature Review {.smaller}
 
@@ -57,7 +66,7 @@ editor: visual
 
 -   *Fageda, 2021* used DiD to estimate the impact of light rail openings across 98 European cities, and found that air pollution was reduced by 3 percent.
 
--   They study used annual PM2.5 data, going back only up to 3 years before opening, which can confound with construction time.
+-   Their study used annual PM2.5 data, going back only up to 3 years before opening, which can confound with construction time.
 
 ::: columns
 ::: {.column width="50%"}
