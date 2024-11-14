@@ -24,6 +24,102 @@ open<-as.Date("2004-01-01")
 ```
 
 ```{r}
+
+#| echo: false
+#| message: false
+#| warnings: false
+
+opentime<-7
+
+df<-read.csv("daily roads/panel_updated.csv") 
+
+df3 <- df |>
+  filter(Address=="Austin, TX" | Address=="Beaumont, TX" | 
+           Address=="Brownsville, TX" | Address=="College Station, TX" |
+           Address=="Corpus Christi, TX" | Address=="Lewisville, TX" |
+           Address=="El Paso, TX-NM" | Address=="Laredo, TX" |
+           Address=="Lubbock, TX"| Address=="Odessa, TX" |
+           Address=="San Antonio, TX" | Address=="Waco, TX" |
+           Address=="Houston, TX") |>
+  #create number representing each city
+  mutate(add_num=factor(Address)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  #remove unwanted years
+  mutate(date=as.Date(date)) |>
+  filter(date<construction | date>open) |> 
+  filter(date<expansion) |>
+  #find monthly averages
+  group_by(year, Address, add_num) |>
+  summarize(pm25 = mean(pm25, na.rm = TRUE),
+              Rainf_tavg = mean(Rainf_tavg, na.rm = TRUE),
+              Swnet_tavg = mean(Swnet_tavg, na.rm = TRUE),
+              Lwnet_tavg = mean(Lwnet_tavg, na.rm = TRUE),
+              Qle_tavg = mean(Qle_tavg, na.rm = TRUE),
+              Qh_tavg = mean(Qh_tavg, na.rm = TRUE),
+              Qg_tavg = mean(Qg_tavg, na.rm = TRUE),
+            Snowf_tavg = mean(Snowf_tavg, na.rm = TRUE),
+  Evap_tavg = mean(Evap_tavg, na.rm = TRUE),
+  Qs_tavg = mean(Qs_tavg, na.rm = TRUE),
+  Qsb_tavg = mean(Qsb_tavg, na.rm = TRUE),
+  Qsm_tavg = mean(Qsm_tavg, na.rm = TRUE),
+  SnowT_tavg = mean(SnowT_tavg, na.rm = TRUE),
+  AvgSurfT_tavg = mean(AvgSurfT_tavg, na.rm = TRUE),
+  SWE_tavg = mean(SWE_tavg, na.rm = TRUE),
+  SnowDepth_tavg = mean(SnowDepth_tavg, na.rm = TRUE),
+  SoilMoist_S_tavg = mean(SoilMoist_S_tavg, na.rm = TRUE),
+  SoilMoist_RZ_tavg = mean(SoilMoist_RZ_tavg, na.rm = TRUE),
+  SoilMoist_P_tavg = mean(SoilMoist_P_tavg, na.rm = TRUE),
+  ECanop_tavg = mean(ECanop_tavg, na.rm = TRUE),
+  TVeg_tavg = mean(TVeg_tavg, na.rm = TRUE),
+  ESoil_tavg = mean(ESoil_tavg, na.rm = TRUE),
+  CanopInt_tavg = mean(CanopInt_tavg, na.rm = TRUE),
+  EvapSnow_tavg = mean(EvapSnow_tavg, na.rm = TRUE),
+  ACond_tavg = mean(ACond_tavg, na.rm = TRUE),
+  TWS_tavg = mean(TWS_tavg, na.rm = TRUE),
+  GWS_tavg = mean(GWS_tavg, na.rm = TRUE),
+  Wind_f_tavg = mean(Wind_f_tavg, na.rm = TRUE),
+  Tair_f_tavg = mean(Tair_f_tavg, na.rm = TRUE),
+  Qair_f_tavg = mean(Qair_f_tavg, na.rm = TRUE),
+  Psurf_f_tavg = mean(Psurf_f_tavg, na.rm = TRUE),
+  SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE)) |>
+  mutate(time=year-2000) |>
+  #make sure that time index is continuous 
+  mutate(time=ifelse(time>opentime-1, time-1, time))
+
+#opening time=62
+
+```
+
+```{r}
+epa<-read.csv("epa_by_day.csv") |>
+  mutate(date=as.Date(Date)) |>
+  mutate(month=month(date), year=year(date)) |>
+  rename(Address=Urbanized.Area) |>
+  group_by(Address, year) |>
+  summarise(CO2=sum(CO2), 
+            SO2=sum(SO2), 
+            NOx=sum(NOx)) 
+
+
+ntd<-read.csv("pop_ntd_year.csv") |>
+  rename(Address=Urbanized.Area) |>
+  group_by(Address, year) |>
+  summarize(pop=mean(pop), bus=mean(bus), 
+            rail=mean(rail), cars=mean(cars), oth=mean(oth)) 
+
+df4<-merge(df3, epa, by=c("year", "Address"))
+
+df5<-left_join(df4, ntd, by=c("year", "Address")) |>
+  filter(Address!="Columbia, SC")
+
+temp<-df5 |>
+  group_by(Address) |>
+  summarise(varbus=var(bus), varCO2=var(CO2))
+```
+
+## Monthly averages for Monday/Tuesday
+
+```{r}
 #| echo: false
 #| message: false
 #| warnings: false
