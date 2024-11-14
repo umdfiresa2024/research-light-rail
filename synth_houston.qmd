@@ -6,8 +6,6 @@ editor: visual
 
 # Houston
 
-## Monthly averages for Monday/Tuesday
-
 ```{r}
 #| echo: false
 #| message: false
@@ -23,13 +21,15 @@ expansion<-as.Date("2014-01-01")
 open<-as.Date("2004-01-01")
 ```
 
+## Annual averages
+
 ```{r}
 
 #| echo: false
 #| message: false
 #| warnings: false
 
-opentime<-7
+opentime<-2
 
 df<-read.csv("daily roads/panel_updated.csv") 
 
@@ -84,7 +84,7 @@ df3 <- df |>
   SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE)) |>
   mutate(time=year-2000) |>
   #make sure that time index is continuous 
-  mutate(time=ifelse(time>opentime-1, time-1, time))
+  mutate(time=ifelse(time>opentime-1, time-2, time))
 
 #opening time=62
 
@@ -115,6 +115,196 @@ df5<-left_join(df4, ntd, by=c("year", "Address")) |>
 temp<-df5 |>
   group_by(Address) |>
   summarise(varbus=var(bus), varCO2=var(CO2))
+
+table(df5$time)
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warnings: false
+end<-max(df5$time)
+
+df5<-as.data.frame(df5)
+
+names(df5)
+
+dataprep.out <-
+  dataprep(
+    df5,
+    predictors            = colnames(df5)[c(5:35, 37:40, 41, 43, 44)], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7, 9, 11:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+
+png("Presentation/images/synth_tx_annualavg.png", 
+    res=500, width=5, height=5, units="in")
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Y"),
+          Xlab         = c("Year"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+dev.off()
+```
+
+## Monthly averages
+
+```{r}
+opentime<-14
+
+df3 <- df |>
+  filter(Address=="Austin, TX" | Address=="Beaumont, TX" | 
+           Address=="Brownsville, TX" | Address=="College Station, TX" |
+           Address=="Corpus Christi, TX" | Address=="Lewisville, TX" |
+           Address=="El Paso, TX-NM" | Address=="Laredo, TX" |
+           Address=="Lubbock, TX"| Address=="Odessa, TX" |
+           Address=="San Antonio, TX" | Address=="Waco, TX" |
+           Address=="Houston, TX") |>
+  #create number representing each city
+  mutate(add_num=factor(Address)) |>
+  mutate(add_num=as.numeric(add_num)) |>
+  #remove unwanted years
+  mutate(date=as.Date(date)) |>
+  filter(date<construction | date>open) |> 
+  filter(date<expansion) |>
+  #find monthly averages
+  group_by(month, year, Address, add_num) |>
+  summarize(pm25 = mean(pm25, na.rm = TRUE),
+              Rainf_tavg = mean(Rainf_tavg, na.rm = TRUE),
+              Swnet_tavg = mean(Swnet_tavg, na.rm = TRUE),
+              Lwnet_tavg = mean(Lwnet_tavg, na.rm = TRUE),
+              Qle_tavg = mean(Qle_tavg, na.rm = TRUE),
+              Qh_tavg = mean(Qh_tavg, na.rm = TRUE),
+              Qg_tavg = mean(Qg_tavg, na.rm = TRUE),
+            Snowf_tavg = mean(Snowf_tavg, na.rm = TRUE),
+  Evap_tavg = mean(Evap_tavg, na.rm = TRUE),
+  Qs_tavg = mean(Qs_tavg, na.rm = TRUE),
+  Qsb_tavg = mean(Qsb_tavg, na.rm = TRUE),
+  Qsm_tavg = mean(Qsm_tavg, na.rm = TRUE),
+  SnowT_tavg = mean(SnowT_tavg, na.rm = TRUE),
+  AvgSurfT_tavg = mean(AvgSurfT_tavg, na.rm = TRUE),
+  SWE_tavg = mean(SWE_tavg, na.rm = TRUE),
+  SnowDepth_tavg = mean(SnowDepth_tavg, na.rm = TRUE),
+  SoilMoist_S_tavg = mean(SoilMoist_S_tavg, na.rm = TRUE),
+  SoilMoist_RZ_tavg = mean(SoilMoist_RZ_tavg, na.rm = TRUE),
+  SoilMoist_P_tavg = mean(SoilMoist_P_tavg, na.rm = TRUE),
+  ECanop_tavg = mean(ECanop_tavg, na.rm = TRUE),
+  TVeg_tavg = mean(TVeg_tavg, na.rm = TRUE),
+  ESoil_tavg = mean(ESoil_tavg, na.rm = TRUE),
+  CanopInt_tavg = mean(CanopInt_tavg, na.rm = TRUE),
+  EvapSnow_tavg = mean(EvapSnow_tavg, na.rm = TRUE),
+  ACond_tavg = mean(ACond_tavg, na.rm = TRUE),
+  TWS_tavg = mean(TWS_tavg, na.rm = TRUE),
+  GWS_tavg = mean(GWS_tavg, na.rm = TRUE),
+  Wind_f_tavg = mean(Wind_f_tavg, na.rm = TRUE),
+  Tair_f_tavg = mean(Tair_f_tavg, na.rm = TRUE),
+  Qair_f_tavg = mean(Qair_f_tavg, na.rm = TRUE),
+  Psurf_f_tavg = mean(Psurf_f_tavg, na.rm = TRUE),
+  SWdown_f_tavg = mean(SWdown_f_tavg, na.rm = TRUE)) |>
+    mutate(date=as.Date(paste0(as.character(year), 
+                             "-", as.character(month), 
+                             "-01"))) |>
+  mutate(time=interval(as.Date("2000-01-01"), date)/months(1)) |>
+  arrange(time) |>
+  mutate(time=ifelse(time>opentime-1, time-34, time))
+
+table(df3$time)
+
+epa<-read.csv("epa_by_day.csv") |>
+  mutate(date=as.Date(Date)) |>
+  mutate(month=month(date), year=year(date)) |>
+  rename(Address=Urbanized.Area) |>
+  group_by(month, Address, year) |>
+  summarise(CO2=sum(CO2), 
+            SO2=sum(SO2), 
+            NOx=sum(NOx)) 
+
+ntd<-read.csv("pop_ntd_year.csv") |>
+  rename(Address=Urbanized.Area) |>
+  group_by(Address, year) |>
+  summarize(pop=mean(pop), bus=mean(bus), rail=mean(rail), 
+            cars=mean(cars), oth=mean(oth)) 
+
+df4<-merge(df3, epa, by=c("year", "month", "Address"))
+
+df5<-left_join(df4, ntd, by=c("year", "Address")) 
+```
+
+```{r}
+end<-max(df5$time)
+
+df5<-as.data.frame(df5)
+
+dataprep.out <-
+  dataprep(
+    df5,   
+    predictors            = colnames(df5)[c(6:36, 39:43, 45:46)], #add linear, square, cubic weather
+    dependent             = "pm25",
+    unit.variable         = "add_num",
+    time.variable         = "time",
+    unit.names.variable   = "Address",
+    treatment.identifier  = 6 , #value in add_num column
+    controls.identifier   = c(1:5, 7, 9, 11:12), #value of other control cities
+    time.predictors.prior = c(1:opentime-1),
+    time.optimize.ssr     = c(1:opentime-1),
+    time.plot             = c(1:end)
+  )
+
+synth.out <- synth(dataprep.out)
+
+synth.tables   <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res    = synth.out)
+```
+
+```{r}
+png("Presentation/images/synth_tx_monthlyavg.png",
+    res=500, width=5, height=5, units="in")
+
+path.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("PM2.5"),
+          Xlab         = c("Months"),
+          Legend       = c("Treated City","Synthetic City"),
+          Legend.position = c("topleft")
+)
+
+abline(v   = opentime,
+       lty = 2)
+
+dev.off()
+
+gaps.plot(synth.res    = synth.out,
+          dataprep.res = dataprep.out,
+          Ylab         = c("Gap"),
+          Xlab         = c("Year"),
+          Ylim         = c(-5, 5),
+          Main         = ""
+)
+
+abline(v   = opentime,
+       lty = 2)
 ```
 
 ## Monthly averages for Monday/Tuesday

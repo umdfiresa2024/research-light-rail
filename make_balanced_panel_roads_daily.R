@@ -194,15 +194,22 @@ write.csv(p_met, "daily roads/met_daily_trt.csv", row.names=F)
 library("tidyverse")
 
 trt_pm<-read.csv("daily roads/pm25_daily_roads.csv") |>
-  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))
+  mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
+  mutate(Address=ifelse(Address=="Phoenix=Mesa, AZ", "Phoenix-Mesa, AZ", Address))
+
+table(trt_pm$Address)
 
 cntrl_pm<-read.csv("daily roads/pm25_daily_roads_cntrl.csv") |>
   select(-city_num, -year, -month, -day) |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) 
 
+table(cntrl_pm$Address)
+
 trt_met<-read.csv("daily roads/met_daily_trt.csv") |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d")) |>
   select(-c(year, month, day))
+
+table(trt_met$Address)
 
 cntrl_met<-read.csv("daily roads/met_daily_cntrls_withnm.csv") |>
   mutate(date=as.Date(substr(date, 1,8), "%Y%m%d"))

@@ -792,13 +792,13 @@ df6<-df5 |>
 opentime<-5
 
 table(df6$time)
-
+names(df6)
 end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
     df6,
-    predictors            = colnames(df6)[c(6:34, 37:40)], #add linear, square, cubic weather
+    predictors            = colnames(df6)[c(6:31, 34:40)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",
@@ -822,11 +822,12 @@ synth.tables   <- synth.tab(
 ```
 
 ```{r}
-png("Presentation/images/synth_nc_thurs_Junavg.png")
+png("Presentation/images/synth_nc_thurs_Julyavg.png", 
+    res=500, width=5, height=5, units="in")
 path.plot(synth.res    = synth.out,
           dataprep.res = dataprep.out,
-          Ylab         = c("Y"),
-          Xlab         = c("Months"),
+          Ylab         = c("PM2.5"),
+          Xlab         = c("Time"),
           Legend       = c("Treated City","Synthetic City"),
           Legend.position = c("topleft")
 )
@@ -853,13 +854,13 @@ df6<-df5 |>
 opentime<-5
 
 table(df6$time)
-
+names(df6)
 end<-max(df6$time)
 
 dataprep.out <-
   dataprep(
     df6,
-    predictors            = colnames(df6)[c(6:34, 37:40)], #add linear, square, cubic weather
+    predictors            = colnames(df6)[c(6:31, 34:40)], #add linear, square, cubic weather
     dependent             = "pm25",
     unit.variable         = "add_num",
     time.variable         = "time",

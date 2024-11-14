@@ -451,9 +451,10 @@ expansion<-as.Date("2012-07-01")
 open<-as.Date("2008-12-27")
 
 #start dif-in-dif data analysis
-df<-read.csv("daily roads/panel.csv") |>
+df<-read.csv("daily roads/panel_updated.csv") |>
   filter(Address=="Flagstaff, AZ" | Address=="Phoenix-Mesa, AZ" | 
-           Address=="Tucson, AZ") |>
+           Address=="Tucson, AZ" | Address=="El Paso, TX-NM" | 
+           Address=="Las Cruces, NM") |>
   #create number representing each city
   mutate(add_num=factor(Address)) |>
   mutate(add_num=as.numeric(add_num)) |>
@@ -465,7 +466,8 @@ df<-read.csv("daily roads/panel.csv") |>
   mutate(treatcity=ifelse(Address=="Phoenix-Mesa, AZ",1,0)) |>
   mutate(dow=weekdays(date)) |>
   mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year))
+  mutate(dow_my=paste0(dow,"-",month,"-",year)) |>
+  mutate(dow_y=paste0(dow, "-", year))
 ```
 
 ```{r}
@@ -590,6 +592,7 @@ wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg
 ```{r}
 mfe<-"| dow_m + Address"
 myfe<-"| dow_my + Address"
+yfe<-"| dow_y + Address"
 
 f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
                     wcontrols, mfe))
@@ -622,7 +625,8 @@ kable(res, digits=2)
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
+f<-as.formula(paste("pm25 ~ operating:treatcity:as.factor(month) + ", 
+                    wcontrols3, yfe))
 m4 <- feols(f, cluster = "Address", data = df)
 
 res<-as.data.frame(

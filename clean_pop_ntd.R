@@ -14,6 +14,7 @@ add_county<-read.csv("address_county.csv") |>
   mutate(STNAME=ifelse(State1==" SC", "South Carolina", STNAME)) |>
   mutate(STNAME=ifelse(State1==" MN", "Minnesota", STNAME)) |>
   mutate(STNAME=ifelse(State1==" WI", "Wisconsin", STNAME)) |>
+  mutate(STNAME=ifelse(State1==" NM", "New Mexico", STNAME)) |>
   mutate(city1=ifelse(city1=="Winston city", "Winston-Salem city", city1)) |>
   select(Urbanized.Area, city1, County, STNAME)
 
@@ -29,6 +30,7 @@ add_county2<-read.csv("address_county.csv") |>
   mutate(STNAME=ifelse(State==" SC", "South Carolina", STNAME)) |>
   mutate(STNAME=ifelse(State==" MN", "Minnesota", STNAME)) |>
   mutate(STNAME=ifelse(State==" WI", "Wisconsin", STNAME)) |>
+  mutate(STNAME=ifelse(State==" NM", "New Mexico", STNAME)) |>
   mutate(STNAME=ifelse(city2=="Socastee", "North Carolina", STNAME)) |>
   select(Urbanized.Area, city2, County, STNAME) |>
   mutate(city2=paste0(city2, " city")) |>
