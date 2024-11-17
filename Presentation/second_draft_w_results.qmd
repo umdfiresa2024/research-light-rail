@@ -26,7 +26,7 @@ With a light rail opening, people will shift from driving cars to using the ligh
 
 -   Our PM2.5 data starts from the year 2000, so we focus on US light rail systems that are built after that time.
 
--   We picked cities where light rails, buses, and cars were the primary mode of rail transit.
+-   We chose cities where buses and cars were the primary mode of transit prior light rail opening.
 
 -   After considering these criteria, our panel of cities was narrowed down to two systems:
 
@@ -42,7 +42,7 @@ With a light rail opening, people will shift from driving cars to using the ligh
 
 ## Literature Review {.smaller}
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/ridership_nc.png){width="100%"}
 :::
@@ -50,15 +50,15 @@ With a light rail opening, people will shift from driving cars to using the ligh
 ::: {.column width="50%"}
 ![](images/ridership_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Literature Review {.smaller}
 
--   *Fageda, 2021* used DiD to estimate the impact of light rail openings across 98 European cities, and found that air pollution was reduced by 3 percent.
+-   *Fageda (2021)* used DiD to estimate the impact of light rail openings across 98 European cities, and found that air pollution was reduced by 3 percent.
 
 -   They study used annual PM2.5 data, going back only up to 3 years before opening, which can confound with construction time.
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/construction_nc.png){width="100%"}
 :::
@@ -66,7 +66,7 @@ With a light rail opening, people will shift from driving cars to using the ligh
 ::: {.column width="50%"}
 ![](images/construction_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Treated Area
 
@@ -74,7 +74,7 @@ With a light rail opening, people will shift from driving cars to using the ligh
 
 For each control city, we find cities with no light rails, no subways, and similar public transportation profiles.
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/ntd_nc.png){width="100%"}
 :::
@@ -82,7 +82,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 ::: {.column width="50%"}
 ![](images/ntd_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Untreated Area
 
@@ -144,7 +144,6 @@ $\mu_it$ are city-day of week-month-year fixed effects.
    \end{tabular}
 \end{table}
 ```
-
 ## DiD Results for Each Day of the Week
 
 ```{=latex}
@@ -179,7 +178,6 @@ $\mu_it$ are city-day of week-month-year fixed effects.
    \end{tabular}
 \end{table}
 ```
-
 ## Synthetic Control Methodology
 
 -   We use the synthetic control method described in Abadie et al. (2008)
@@ -190,7 +188,7 @@ $\mu_it$ are city-day of week-month-year fixed effects.
 
 ## SYC Results for Charlotte, NC
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_nc_annualavg.png){width="100%"}
 :::
@@ -198,13 +196,13 @@ $\mu_it$ are city-day of week-month-year fixed effects.
 ::: {.column width="50%"}
 ![](images/synth_nc_monthlyavg.png){width="100%"}
 :::
-:::::
+:::
 
 ## SYC Results for Charlotte, NC
 
 January and February averages of PM2.5 on Thursdays
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_nc_thurs_Janavg.png){width="100%"}
 :::
@@ -212,13 +210,13 @@ January and February averages of PM2.5 on Thursdays
 ::: {.column width="50%"}
 ![](images/synth_nc_thurs_Febavg.png){width="100%"}
 :::
-:::::
+:::
 
 ## SYC Results for Charlotte, NC
 
 July averages of PM2.5 on Thursdays
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_nc_thurs_Julyavg.png){width="70%"}
 :::
@@ -229,13 +227,13 @@ July averages of PM2.5 on Thursdays
 | 0.418   | Fayetteville, NC  |
 | 0.582   | Winston-Salem, NC |
 :::
-:::::
+:::
 
 ## SYC Results for Phoenix-Mesa, AZ
 
 Annual and monthly averages
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_az_annualavg.png){width="100%"}
 :::
@@ -243,13 +241,13 @@ Annual and monthly averages
 ::: {.column width="50%"}
 ![](images/synth_az_monthlyavg.png){width="100%"}
 :::
-:::::
+:::
 
 ## SYC Results for Phoenix-Mesa, AZ
 
 June averages
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_az_Juneavg.png){width="100%"}
 :::
@@ -262,7 +260,7 @@ June averages
 | 0.006   | Las Cruces, NM  |
 | 0.11    | Tucson, AZ      |
 :::
-:::::
+:::
 
 ## SYC with Two Treatment Cities?
 
@@ -272,7 +270,7 @@ June averages
 
 Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Effects Models (Xu, 2017)
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_group_raw.png){width="100%"}
 :::
@@ -280,4 +278,4 @@ Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Ef
 ::: {.column width="50%"}
 ![](images/synth_group.png){width="100%"}
 :::
-:::::
+:::
