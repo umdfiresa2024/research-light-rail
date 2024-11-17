@@ -1,6 +1,6 @@
 ---
 title: "Can Light Rails Provide the Track to Cleaner Air?"
-author: T. Ruangmas, L. Thomas, R. Yance, G. Zhang
+author: Thanicha Ruangmas, Landon Thomas, Rygel Yance, Geoffrey Zhang
 institute: University of Maryland
 format: 
   beamer:
@@ -18,77 +18,71 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 Has past light rail openings lead to a decrease in air pollution?
 
-## What are Light Rails? {.smaller}
+## Literature Review {.smaller}
 
--   Light Rails are electric-powered vehicles on dedicated tracks.
+Many studies on air pollution impacts of urban rails and subways.
 
--   They usually run alongside roads, with dedicated rights-of-way.
+-   *Chen & Whalley (2012)* found that the opening of Taipei's Metro System reduces CO by 5 to 15 percent.
 
-![](images/lynxblue.jpg){fig-align="center" width="80%"}
+-   *Gendron-Carrier et al. (2022)* found that among 58 subways openings, only those in PM2.5 cities see a 4 percent reduction.
 
-## Light Rails vs. Subways {.smaller}
-
--   Light rails have a lower passenger capacity.
-
--   Light rails make more frequent stops.
-
--   Light rails are much cheaper to build.
+-   *Xie et al. (2024)* found that 15 subways openings in China reduced PM2.5 by 19 percent.
 
 ## Literature Review {.smaller}
 
--   Existing studies have found that **subways** systems are effective in reducing air pollution.
+Few studies on air pollution impacts of light rails with quasi-experimental research designs.
 
-    -   Chen & Whalley (2012) found that Taipei's Metro System opening reduced CO by 5 to 15 percent.
-
-    -   Gendron-Carrier et al. (2022) found that among 58 subways openings globally, only those in highly polluted cities see a 4 percent reduction.
-
-    -   Xie et al. (2024) found that 15 subways openings in China reduced PM2.5 by 19 percent.
-
--   Fageda (2021) is the only study that used a quasi-experimental research design to estimate the impact of **light rail** openings across 98 European cities, and found a small reduction of 3 percent.
+-   *Fageda (2021)* used DiD to estimate the impact of light rail openings across 98 European cities, and found that air pollution was reduced by 3 percent.
 
 ## Hypothesis {.smaller}
 
--   Light rail openings in the US will make shift people from driving their own cars or taking buses to using the light rail, reducing air pollution.
+With a light rail opening, people will shift from driving their own cars or taking buses to using the light rail, reducing air pollution.
 
--   We expect to see smaller decrease than 3 percent as:
+## Preview
 
-    -   The US population drives more cars than Europe.
+## Light Rail Routes {.smaller}
 
-    -   We will data from light rail construction period, which can increase pollution prior light rail opening, from our analysis.
+-   M2.5 data starts from the year 2000, so we focus on US light rail systems that are built after that time.
 
-![](images/timetrend.png){fig-align="center" width="60%"}
+-   We chose cities where buses were the primary mode of public transit prior light rail opening.
 
-## Data {.smaller}
+-   After considering these criteria, our panel of cities was narrowed down to two systems:
 
--   Daily PM2.5, from the years 2000 to 2016 with 1 km x 1 km grid resolution from Di et al. (2019).
+-   Charlotte, NC's LYNX system which opened in 2007
 
--   47 land surface meteorological variables with 25 km x km grid resolution from NASA GLDAS 2.
+-   Phoenix, AZ's Valley Metro Rail system which opened in 2009.
 
--   Treated city selection criteria
+## Literature Review {.smaller}
 
-    -   Light rail construction period must start a few years after 2000.
+-   Previous studies on the air pollution impact of public transit (Chen and Whalley, 2012; Gendron-Carrier et al., 2022; Xie et al., 2024) used Discontinuity-Based OLS as there was instant uptake in ridership.
 
-    -   Buses were the primary public transit mode before the light rail opened.
+![Ridership Data from Chen and Whalley (2012)](images/chen_whalley.png){width="50%"}
 
--   These criteria narrows down to two light rail systems:
-
-    -   Charlotte, NC's LYNX system, which opened in 2007
-
-    -   Phoenix, AZ's Valley Metro Rail system, which opened in 2008
-
-## Research Design {.smaller}
-
--   Previous studies on subway's impact on air pollution (Chen and Whalley, 2012; Gendron-Carrier et al., 2022; Xie et al., 2024) used Discontinuity-Based OLS as there was instant uptake in ridership.
-
--   We will use **difference-in-difference** as light rail ridership gradually increased treated cities.
+## Literature Review {.smaller}
 
 ::: columns
-::: {.column width="42%"}
-![](images/chen_whalley.png){width="100%"}
+::: {.column width="50%"}
+![](images/ridership_nc.png){width="100%"}
 :::
 
-::: {.column width="58%"}
-![](images/ridership.png){width="100%"}
+::: {.column width="50%"}
+![](images/ridership_az.png){width="100%"}
+:::
+:::
+
+## Literature Review {.smaller}
+
+-   *Fageda (2021)* used DiD to estimate the impact of light rail openings across 98 European cities, and found that air pollution was reduced by 3 percent.
+
+-   They study used annual PM2.5 data, going back only up to 3 years before opening, which can confound with construction time.
+
+::: columns
+::: {.column width="50%"}
+![](images/construction_nc.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](images/construction_az.png){width="100%"}
 :::
 :::
 

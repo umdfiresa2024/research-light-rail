@@ -43,7 +43,7 @@ editor: visual
 
 ## Literature Review {.smaller}
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/ridership_nc.png){width="100%"}
 :::
@@ -51,7 +51,7 @@ editor: visual
 ::: {.column width="50%"}
 ![](images/ridership_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Literature Review {.smaller}
 
@@ -59,7 +59,7 @@ editor: visual
 
 -   Their study used annual PM2.5 data, going back only up to 3 years before opening, which can confound with construction time.
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/construction_nc.png){width="100%"}
 :::
@@ -67,7 +67,7 @@ editor: visual
 ::: {.column width="50%"}
 ![](images/construction_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Data: PM2.5 and Meteorology {.smaller}
 
@@ -77,7 +77,7 @@ editor: visual
 
 ## Treated Area
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/treat_charlotte2.png)
 :::
@@ -85,13 +85,13 @@ editor: visual
 ::: {.column width="50%"}
 ![](images/treat_phoenix2.png)
 :::
-:::::
+:::
 
 ## Untreated Area
 
 For each control city, we find cities with no light rails, no subways, and similar public transportation profiles.
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/ntd_nc.png){width="100%"}
 :::
@@ -99,7 +99,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 ::: {.column width="50%"}
 ![](images/ntd_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Untreated Area
 
@@ -127,6 +127,7 @@ $\mu_it$ are city-day of week-month-year fixed effects.
 
 ## DiD Results
 
+```{=tex}
 \tiny
 \begin{table}[htbp]
    \caption{DiD Results for Charlotte, NC}
@@ -159,9 +160,10 @@ $\mu_it$ are city-day of week-month-year fixed effects.
       \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
-
+```
 ## DiD Results for Each Day of the Week
 
+```{=tex}
 \tiny
 \begin{table}[htbp]
    \caption{DiD Results for Charlotte, NC}
@@ -192,7 +194,7 @@ $\mu_it$ are city-day of week-month-year fixed effects.
       \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
-
+```
 ## Synthetic Control Methodology
 
 -   We use the synthetic control method described in Abadie et al. (2008)
@@ -203,7 +205,7 @@ $\mu_it$ are city-day of week-month-year fixed effects.
 
 ## SYC Results for Charlotte, NC
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_nc_annualavg.png){width="100%"}
 :::
@@ -211,13 +213,13 @@ $\mu_it$ are city-day of week-month-year fixed effects.
 ::: {.column width="50%"}
 ![](images/synth_nc_monthlyavg.png){width="100%"}
 :::
-:::::
+:::
 
 ## SYC Results for Charlotte, NC
 
 January and February averages of PM2.5 on Thursdays
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_nc_thurs_Janavg.png){width="100%"}
 :::
@@ -225,13 +227,13 @@ January and February averages of PM2.5 on Thursdays
 ::: {.column width="50%"}
 ![](images/synth_nc_thurs_Febavg.png){width="100%"}
 :::
-:::::
+:::
 
 ## SYC Results for Charlotte, NC
 
 July averages of PM2.5 on Thursdays
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_nc_thurs_Julyavg.png){width="70%"}
 :::
@@ -242,13 +244,13 @@ July averages of PM2.5 on Thursdays
 | 0.418   | Fayetteville, NC  |
 | 0.582   | Winston-Salem, NC |
 :::
-:::::
+:::
 
 ## SYC Results for Phoenix-Mesa, AZ
 
 Annual and monthly averages
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_az_annualavg.png){width="100%"}
 :::
@@ -256,13 +258,13 @@ Annual and monthly averages
 ::: {.column width="50%"}
 ![](images/synth_az_monthlyavg.png){width="100%"}
 :::
-:::::
+:::
 
 ## SYC Results for Phoenix-Mesa, AZ
 
 June averages
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_az_Juneavg.png){width="100%"}
 :::
@@ -275,7 +277,7 @@ June averages
 | 0.006   | Las Cruces, NM  |
 | 0.11    | Tucson, AZ      |
 :::
-:::::
+:::
 
 ## SYC with Two Treatment Cities?
 
@@ -285,7 +287,7 @@ June averages
 
 Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Effects Models (Xu, 2017)
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/synth_group_raw.png){width="100%"}
 :::
@@ -293,4 +295,4 @@ Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Ef
 ::: {.column width="50%"}
 ![](images/synth_group.png){width="100%"}
 :::
-:::::
+:::
