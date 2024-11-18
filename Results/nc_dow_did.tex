@@ -1,0 +1,32 @@
+
+\begin{table}[htbp]
+   \caption{DiD Results for Charlotte, NC}
+   \centering
+   \begin{tabular}{lc}
+      \tabularnewline \midrule \midrule
+      Dependent Variable:                                  & pm25\\  
+      Model:                                               & (1)\\  
+      \midrule
+      \emph{Variables}\\
+      operating $\times$ treatcity $\times$ dowFriday      & -0.48 (0.27)\\   
+      operating $\times$ treatcity $\times$ dowMonday      & -0.57 (0.33)\\   
+      operating $\times$ treatcity $\times$ dowSaturday    & -0.53 (0.35)\\   
+      operating $\times$ treatcity $\times$ dowSunday      & -0.50 (0.31)\\   
+      operating $\times$ treatcity $\times$ dowThursday    & -0.78$^{**}$ (0.25)\\   
+      operating $\times$ treatcity $\times$ dowTuesday     & -0.56$^{*}$ (0.25)\\   
+      operating $\times$ treatcity $\times$ dowWednesday   & -0.61$^{**}$ (0.25)\\   
+      \midrule
+      \emph{Fixed-effects}\\
+      dow\_my                                              & Yes\\  
+      Address                                              & Yes\\  
+      \midrule
+      \emph{Fit statistics}\\
+      Observations                                         & 29,936\\  
+      Adjusted R$^2$                                       & 0.43\\  
+      \midrule \midrule
+      \multicolumn{2}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \end{tabular}
+\end{table}
+
+

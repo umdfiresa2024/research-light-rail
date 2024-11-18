@@ -68,7 +68,6 @@ legend("top",
 ```
 
 ```{r}
-{r}
 #get coordinate for city
 df<-cities |>
   filter(joint_address=="Phoenix-Mesa, AZ") |>
@@ -108,15 +107,26 @@ u_buffer<-terra::buffer(u, width = 1000)
 ```
 
 ```{r}
+
+e<-ext(lr_buffer)
+e2<-ext(-112.14, -112.14+.4, 33.35, 33.35+0.37)
 bg <- get_tiles(ext(lr_buffer), provider = "Esri.WorldGrayCanvas")
-plot(bg)
-lines(lr_project, col="yellow", lwd = 3)
-lines(u_buffer, col = "black", lwd = 3)
+
+png("Presentation/images/treated_az.png", 
+    res=500, width=6, height=5, units="in")
+
+plot(e2, alpha=0, main="Treated Area in Phoenix-Mesa, AZ")
+plot(bg, add=TRUE)
+lines(u_buffer, col = "black", lwd = 5, add=TRUE)
+plot(i, col="#7f7f7f", lwd = 1, add=TRUE)
+plot(s, col="#7f7f7f", lwd = 1, add=TRUE)
+plot(lr_project, col="#e21833", lwd = 3, add=TRUE)
 legend("top", 
-       legend = c("Light Rail Line", "Substitute Road Buffer"),  
-       col = c("yellow", "black"),    
+       legend = c("Light Rail Line", "Highways", "Substitute Highway Buffers"),  
+       col = c("#e21833", "#7f7f7f", "black"),    
        lwd = 2,
        bty = "n")
+dev.off()
 ```
 
 ```{r}
@@ -145,12 +155,12 @@ lr_buffer<-terra::buffer(lr_project, width = 5000)
 r<-vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2021_ncmecklenburg_roads")
 r_project<-project(r, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 i<-subset(r_project, r_project$RTTYP=="I")
-ic_buffer<-terra::buffer(i, width = 1000)
+ic_buffer<-terra::buffer(i, width = 500)
 c<-subset(r_project, r_project$RTTYP=="C")
 m<-subset(r_project, r_project$RTTYP=="M")
 o<-subset(r_project, r_project$RTTYP=="O")
 s<-subset(r_project, r_project$RTTYP=="S")
-oc_buffer<-terra::buffer(o, width = 1000)
+oc_buffer<-terra::buffer(o, width = 500)
 
 #crop s and i highways that are within 10 km of the light rail centroid
 oint<-crop(oc_buffer, lr_buffer)
@@ -162,8 +172,7 @@ u_buffer<-terra::buffer(u, width = 1000)
 ```
 
 ```{r}
-png(filename="maps/treat_charlotte.png")
-bg <- get_tiles(ext(lrc_buff), provider = "Esri.WorldGrayCanvas")
+g <- get_tiles(ext(lrc_buff), provider = "Esri.WorldGrayCanvas")
 plot(bg, main="Treated Area in Charlotte, NC")
 lines(lr_project, col="yellow", lwd = 3)
 lines(u_buffer, col = "black", lwd = 3)
@@ -172,6 +181,30 @@ legend("top",
        col = c("yellow", "black"),    
        lwd = 2,
        bty = "n")
+```
+
+```{r}
+bg <- get_tiles(ext(lrc_buff), provider = "Esri.WorldGrayCanvas")
+
+e<-ext(lr_buffer)
+e2<-ext(-81, -81+0.4, 35.06, 35.06+0.37)
+
+png(filename="Presentation/images/treated_nc.png", 
+    res=500, width=6, height=5, units="in")
+
+plot(e2, alpha=0, main="Treated Area in Charlotte, NC")
+plot(bg, add=TRUE)
+plot(lr_project, col="#e21833", lwd = 3, add=TRUE)
+plot(i, col="#7f7f7f", lwd = 1, add=TRUE)
+plot(o, col="#7f7f7f", lwd = 1, add=TRUE)
+lines(u_buffer, col = "black", lwd = 5)
+
+legend("top", 
+       legend = c("Light Rail Line", "Highways", "Substitute Highway Buffers"),  
+       col = c("#e21833", "#7f7f7f", "black"),    
+       lwd = 2,
+       bty = "n")
+
 dev.off()
 ```
 

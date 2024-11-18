@@ -1,0 +1,34 @@
+
+\begin{table}[htbp]
+   \caption{DiD Results for Phoenix-Mesa, AZ}
+   \centering
+   \begin{tabular}{lcccc}
+      \tabularnewline \midrule \midrule
+      Dependent Variable: & \multicolumn{4}{c}{pm25}\\
+      Model:                        & (1)          & (2)         & (3)           & (4)\\  
+      \midrule
+      \emph{Variables}\\
+      operating $\times$ treatcity  & -0.39$^{**}$ & -0.40$^{*}$ & -0.16$^{**}$  & -0.16$^{*}$\\   
+                                    & (0.08)       & (0.12)      & (0.02)        & (0.04)\\   
+      Wind\_f\_tavg                 & -1.6$^{**}$  & -1.6$^{**}$ & 0.40          & 0.46\\   
+                                    & (0.22)       & (0.25)      & (1.8)         & (2.1)\\   
+      Wind\_f\_tavg\_sq             &              &             & -0.95$^{***}$ & -0.97$^{**}$\\   
+                                    &              &             & (0.04)        & (0.14)\\   
+      Wind\_f\_tavg\_cu             &              &             & 0.12$^{***}$  & 0.12$^{***}$\\   
+                                    &              &             & (0.01)        & (0.008)\\   
+      \midrule
+      \emph{Fixed-effects}\\
+      dow\_m                        & Yes          &             & Yes           & \\  
+      Address                       & Yes          & Yes         & Yes           & Yes\\  
+      dow\_my                       &              & Yes         &               & Yes\\  
+      \midrule
+      \emph{Fit statistics}\\
+      Observations                  & 9,867        & 9,867       & 9,867         & 9,867\\  
+      Adjusted R$^2$                & 0.32         & 0.35        & 0.37          & 0.40\\  
+      \midrule \midrule
+      \multicolumn{5}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \end{tabular}
+\end{table}
+
+

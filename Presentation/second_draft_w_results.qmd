@@ -72,9 +72,9 @@ Has past light rail openings lead to a decrease in air pollution?
 
 -   These criteria narrows down to two light rail systems:
 
-    -   Charlotte, NC's LYNX system, which opened in 2007
+    -   **Charlotte, NC's LYNX system**, which opened in 2007
 
-    -   Phoenix, AZ's Valley Metro Rail system, which opened in 2008
+    -   **Phoenix, AZ's Valley Metro Rail system**, which opened in 2008
 
 ## Research Design {.smaller}
 
@@ -82,7 +82,7 @@ Has past light rail openings lead to a decrease in air pollution?
 
 -   We will use **difference-in-difference** as light rail ridership gradually increased treated cities.
 
-::: columns
+::::: columns
 ::: {.column width="42%"}
 ![](images/chen_whalley.png){width="100%"}
 :::
@@ -90,15 +90,29 @@ Has past light rail openings lead to a decrease in air pollution?
 ::: {.column width="58%"}
 ![](images/ridership.png){width="100%"}
 :::
-:::
+:::::
 
 ## Treated Area
+
+-   We indicate potential highways that are the light rails serve as a substitute, and draw 1.5 km buffers around each highway.
+
+-   We then find the average daily PM2.5 and meteorological variables within those areas.
+
+::::: columns
+::: {.column width="50%"}
+![](images/treated_nc.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](images/treated_az.png){width="100%"}
+:::
+:::::
 
 ## Untreated Area
 
 For each control city, we find cities with no light rails, no subways, and similar public transportation profiles.
 
-::: columns
+::::: columns
 ::: {.column width="50%"}
 ![](images/ntd_nc.png){width="100%"}
 :::
@@ -106,7 +120,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 ::: {.column width="50%"}
 ![](images/ntd_az.png){width="100%"}
 :::
-:::
+:::::
 
 ## Untreated Area
 
@@ -128,7 +142,7 @@ $D_i$ is a dummy variable that is equal to one when city $i$ is the city with a 
 
 $Open_t$ is a dummy variable that is equal to one when the light rail system in the treated city is in operation.
 
-$W_{it}$ includes 48 meteorological control variables in its linear, square, and cubic form for each city and day.
+$W_{it}$ includes 47 meteorological control variables in its linear, square, and cubic form for each city and day.
 
 $\mu_it$ are city-day of week-month-year fixed effects.
 
@@ -168,6 +182,7 @@ $\mu_it$ are city-day of week-month-year fixed effects.
    \end{tabular}
 \end{table}
 ```
+
 ## DiD Results for Each Day of the Week
 
 ```{=latex}
@@ -202,104 +217,4 @@ $\mu_it$ are city-day of week-month-year fixed effects.
    \end{tabular}
 \end{table}
 ```
-## Synthetic Control Methodology
 
--   We use the synthetic control method described in Abadie et al. (2008)
-
--   To construct a synthetic city for each treated city, we minimize the gap in PM2.5 trends before construction time.
-
--   We also include 47 meteorology variables, CO2, NO2, and SO2 emissions from power plants in the same county, and number of public bus and car trips.
-
-## SYC Results for Charlotte, NC
-
-::: columns
-::: {.column width="50%"}
-![](images/synth_nc_annualavg.png){width="100%"}
-:::
-
-::: {.column width="50%"}
-![](images/synth_nc_monthlyavg.png){width="100%"}
-:::
-:::
-
-## SYC Results for Charlotte, NC
-
-January and February averages of PM2.5 on Thursdays
-
-::: columns
-::: {.column width="50%"}
-![](images/synth_nc_thurs_Janavg.png){width="100%"}
-:::
-
-::: {.column width="50%"}
-![](images/synth_nc_thurs_Febavg.png){width="100%"}
-:::
-:::
-
-## SYC Results for Charlotte, NC
-
-July averages of PM2.5 on Thursdays
-
-::: columns
-::: {.column width="50%"}
-![](images/synth_nc_thurs_Julyavg.png){width="70%"}
-:::
-
-::: {.column width="50%"}
-| weights | unit names        |
-|---------|-------------------|
-| 0.418   | Fayetteville, NC  |
-| 0.582   | Winston-Salem, NC |
-:::
-:::
-
-## SYC Results for Phoenix-Mesa, AZ
-
-Annual and monthly averages
-
-::: columns
-::: {.column width="50%"}
-![](images/synth_az_annualavg.png){width="100%"}
-:::
-
-::: {.column width="50%"}
-![](images/synth_az_monthlyavg.png){width="100%"}
-:::
-:::
-
-## SYC Results for Phoenix-Mesa, AZ
-
-June averages
-
-::: columns
-::: {.column width="50%"}
-![](images/synth_az_Juneavg.png){width="100%"}
-:::
-
-::: {.column width="50%"}
-| weights | unit names      |
-|---------|-----------------|
-| 0.353   | El Pason, TX-NM |
-| 0.63    | Flagstaff, AZ   |
-| 0.006   | Las Cruces, NM  |
-| 0.11    | Tucson, AZ      |
-:::
-:::
-
-## SYC with Two Treatment Cities?
-
-![](images/timeline.png){width="100%"}
-
-## SYC with Two Treatment Cities
-
-Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Effects Models (Xu, 2017)
-
-::: columns
-::: {.column width="50%"}
-![](images/synth_group_raw.png){width="100%"}
-:::
-
-::: {.column width="50%"}
-![](images/synth_group.png){width="100%"}
-:::
-:::
