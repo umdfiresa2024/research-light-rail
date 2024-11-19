@@ -122,7 +122,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 
 ![](images/charlotte_cntrl_roads.png){fig-align="center" width="50%"}
 
-## Parallel Trends 
+## Parallel Trends
 
 ::::: columns
 ::: {.column width="50%"}
@@ -223,6 +223,7 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
 ```
 
 ## DiD Results for Phoenix-Mesa, AZ
+
 ```{=latex}
 \tiny
 \begin{table}[htbp]
@@ -258,6 +259,7 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
 ```
 
 ## DiD Results for Phoenix-Mesa in Each Day of the Week
+
 ```{=latex}
 \tiny
 \begin{table}[htbp]
@@ -303,4 +305,5 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
 -   We are exploring using synthetic control to recalculate the impacts.
 
 ## Pooled DiD
+
 ![](images/timeline.png){width="100%"}
