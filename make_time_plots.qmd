@@ -55,8 +55,9 @@ library("tidyverse")
 
 
 pm<-read.csv("daily roads/panel_updated.csv")
-cgroup<-c("Charlotte, NC", 
-          "Greenville, SC", 
+cgroup<-c("Asheville, NC", "Charleston, SC", "Charlotte, NC",
+          "Columbia, SC", "Durham, NC", "Fayetteville, NC", 
+          "Greenville, SC", "Wilmington, NC",
           "Winston-Salem, NC")
 
 pm_month<-pm |>
@@ -67,19 +68,25 @@ pm_month<-pm |>
                              as.character(month),"-",
                              "01"), "%Y-%m-%d"))
 
-maxdate<-max(pm_month$date)
+pm_cntrl<-pm_month |>
+  filter(Address!="Charlotte, NC")
 
 pm_char<-pm_month |>
   filter(Address=="Charlotte, NC")
 
 
+maxdate<-max(pm_month$date)
 
-#png("Presentation/images/nc_time.png")
-ggplot(data=pm_month, aes(y=pm25, x=date, col=Address)) + 
+library(RColorBrewer)
+g<-brewer.pal(10, "Greys")
+pal<-c(g[1:2], "#e21833", g[3:7])
+  
+png("Presentation/images/nc_parallel.png", 
+    res=500, width=6, height=6, units="in")
+
+ggplot(data=pm_cntrl, aes(y=pm25, x=date, col=Address)) + 
   geom_line(size=1) + 
-  scale_color_manual(values=c("grey","black","#FFCD00", "#c8102e"))+
-  geom_vline(aes(xintercept=as.Date("2007-11-01"), col=" LR Opening"), 
-             linetype="dashed", size=1)+
+  scale_color_manual(values=pal)+
   annotate("rect", xmin = as.Date("2005-01-01"), xmax = as.Date("2007-11-01"), 
            ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
   annotate("rect", xmin = as.Date("2012-12-01"), xmax = maxdate, 
@@ -87,15 +94,58 @@ ggplot(data=pm_month, aes(y=pm25, x=date, col=Address)) +
   theme_bw() + 
   ylab("PM2.5 (in ug/m3)") + 
   xlab("Date") + 
-  ggtitle("PM2.5 in Charlotte and Seleted Control Cities")
-#dev.off()
+  ggtitle("PM2.5 in Charlotte its Control Cities") + 
+  geom_line(data=pm_char, aes(y=pm25, x=date, col="Charlotte, NC"), size=0.7) 
+
+dev.off()
 ```
 
-## Houston
+## Phoenix
 
 ```{r}
-#| echo: false
-2 * 2
+library("tidyverse")
+
+
+pm<-read.csv("daily roads/panel_updated.csv")
+cgroup<-c("Phoenix-Mesa, AZ", "Tucson, AZ", "El Paso, TX-NM")
+
+pm_month<-pm |>
+  group_by(Address, month, year) |>
+  summarise(pm25=mean(pm25)) |>
+  filter(Address %in% cgroup) |>
+  mutate(date=as.Date(paste0(as.character(year),"-",
+                             as.character(month),"-",
+                             "01"), "%Y-%m-%d"))
+
+pm_cntrl<-pm_month |>
+  filter(Address!="Phoenix-Mesa, AZ")
+
+pm_char<-pm_month |>
+  filter(Address=="Phoenix-Mesa, AZ")
+
+maxdate<-max(pm_month$date)
+
+library(RColorBrewer)
+g<-brewer.pal(5, "Greys")
+pal<-c(g[2],"#e21833", g[3])
+  
+png("Presentation/images/az_parallel.png", 
+    res=500, width=6, height=6, units="in")
+
+ggplot(data=pm_cntrl, aes(y=pm25, x=date, col=Address)) + 
+  geom_line(size=1) + 
+  scale_color_manual(values=pal)+
+  annotate("rect", xmin = as.Date("2005-03-01"), xmax = as.Date("2007-11-01"), 
+           ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
+  annotate("rect", xmin = as.Date("2012-07-01"), xmax = maxdate, 
+           ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
+  theme_bw() + 
+  ylab("PM2.5 (in ug/m3)") + 
+  xlab("Date") + 
+  ggtitle("PM2.5 in Phoenix-Mesa its Control Cities") + 
+  geom_line(data=pm_char, aes(y=pm25, x=date, col="Phoenix-Mesa, AZ"), size=0.7) 
+
+dev.off()
 ```
 
 ## Ridership

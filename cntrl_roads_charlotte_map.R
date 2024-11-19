@@ -6,8 +6,8 @@ library("maptiles")
 cities<-read.csv("allcities_latlon.csv")
 
 cgroup<-c("Asheville, NC", "Charleston, SC", 
-          "Columbia, SC", "Concord, NC", "Durham, NC", "Fayetteville, NC", 
-          "Greenville, SC", "Myrtle Beach, SC", "Socastee, SC", "Wilmington, NC",
+          "Columbia, SC", "Durham, NC", "Fayetteville, NC", 
+          "Greenville, SC", 
           "Winston-Salem, NC")
 
 c2<-cities |>
@@ -17,20 +17,41 @@ c2<-cities |>
 #converts df into a spatvector
 x <- vect(c2, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
 
+t<-cities |>
+  filter(Address %in% "Charlotte, NC") |>
+  select(Address, lon, lat)
+
+#converts df into a spatvector
+xt <- vect(t, geom=c("lon", "lat"), crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+
 #create a 30 km (30,000 meter) buffer (radius)
 pts_buffer<-buffer(x, width = 30000)
 
 #primary roads in the US
-r <- vect("~/Google Drive/Shared drives/2024 FIRE Light Rail/DATA/tl_2016_us_primaryroads/tl_2016_us_primaryroads.shp")
+r <- vect("G:/Shared drives/2024 FIRE Light Rail/DATA/tl_2016_us_primaryroads/tl_2016_us_primaryroads.shp")
 
 #change projection system to match roads
 pts_proj<-project(pts_buffer, crs(r))
 
-png(filename="maps/charlotte_cntrl_roads.png")
+pts_t<-project(xt, crs(r))
+
 bg <- get_tiles(ext(pts_buffer), provider = "Esri.WorldGrayCanvas")
-charlotte <- plot(bg, main="Untreated Area in Charlotte, NC")
-lines(pts_proj)
-lines(r, col="red")
+
+png(filename="Presentation/images/charlotte_cntrl_roads.png", 
+    res=500, width=9, height=6, units="in")
+
+plot(bg, main="Untreated Areas for Charlotte, NC")
+plot(pts_proj, col="#ffd200", alpha=0.5, add=TRUE)
+plot(pts_t, col="#e21833", cex=2, add=TRUE)
+lines(r, col="#7f7f7f", lwd=2)
+legend("topright", 
+       legend = c("Charlotte \nNC", "Untreated \nCities", "Interstate \nBuffers"),  
+       col = c("#e21833", "#ffd200", "#7f7f7f"),
+       pch = c(16, 16, 3),
+       lwd = 2,
+       bty = "n",
+       y.intersp=1.5)
+
 dev.off()
 
 #crop roads outside buffer areas
