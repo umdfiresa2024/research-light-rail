@@ -26,17 +26,16 @@ df<-read.csv("daily roads/panel_updated.csv") |>
            Address=="Columbia, SC" | Address=="Asheville, NC" |
            Address=="Fayetteville, NC" | 
            Address=="Charlotte, NC" |
+           Address=="Durham, NC" |
            Address=="Phoenix-Mesa, AZ" | 
            Address=="Tucson, AZ" | Address=="El Paso, TX-NM") |>
-  #create number representing each city
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
   #remove unwanted years
   mutate(date=as.Date(date)) |>
   filter(date<construction | date>open) |> 
   filter(date<expansion) |>
   mutate(operating=ifelse(date>open,1,0)) |>
-  mutate(treatcity=ifelse(Address=="Charlotte, NC" | Address=="Phoenix-Mesa, AZ",
+  mutate(treatcity=ifelse(Address=="Charlotte, NC" | 
+                            Address=="Phoenix-Mesa, AZ",
                           1,0)) |>
   mutate(dow=weekdays(date)) |>
   mutate(dow_m=paste0(dow,"-",month)) |>
@@ -59,41 +58,30 @@ wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tav
 mfe<-"| dow_m + Address"
 myfe<-"| dow_my + Address"
 dafe<- "| dow_a + Address"
-dafem<-"| dow_a + Address + month + year"
+dafem<-"| dow_a + Address + month"
+dafemy<-"| dow_a + Address + month + year"
 
 f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols, dafe))
-
+                    wcontrols, mfe))
 m1 <- feols(f, cluster = "Address", data = df)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, dafem))
-
+f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", wcontrols, dafe))
 m2 <- feols(f, cluster = "Address", data = df)
 
+f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
+                    wcontrols, dafem))
+m3 <- feols(f, cluster = "Address", data = df)
 
-etable(m1, m2, 
+etable(m1, m2, m3,
        se = "cluster",
        cluster = "Address",
-       keep = c("operating x treatcity", "Wind_f_"),
-       order = c("operating x treatcity", "Wind_f_"),
+       keep = c("operating x treatcity", "operating"),
+       order = c("operating x treatcity", "operating"),
        se.below = TRUE,
        digits = 2,
+       file="Results/twocities_did.tex",
        replace=TRUE,
-       title="DiD Results for Charlotte, NC",
-       fitstat=c('n', 'ar2'),
-       digits.stats = 2,
-       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
-
-etable(m1, m2, 
-       se = "cluster",
-       cluster = "Address",
-       keep = c("treatcity", "Wind_f_"),
-       order = c("treatcity", "Wind_f_"),
-       se.below = TRUE,
-       digits = 2,
-       #file="Results/nc_did.tex",
-       replace=TRUE,
-       title="DiD Results for Charlotte, NC",
+       title="DiD Results for Both Cities",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,
        signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
@@ -107,7 +95,7 @@ Day of week heterogeneous treatment effects.
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols, dafe))
+f<-as.formula(paste("pm25 ~ operating:treatcity:dow + operating:dow + ", wcontrols, dafem))
 m5 <- feols(f, cluster = "Address", data = df)
 
 etable(m5, 
@@ -118,8 +106,8 @@ etable(m5,
        se.below = FALSE,
        digits = 2,
        replace=TRUE,
-       #file="Results/nc_dow_did.tex",
-       title="DiD Results for Charlotte, NC",
+       file="Results/two_cities_dow_did.tex",
+       title="DiD Results for Both Cities",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,
        signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))

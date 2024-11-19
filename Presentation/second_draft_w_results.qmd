@@ -136,9 +136,9 @@ For each control city, we find cities with no light rails, no subways, and simil
 
 ## DiD Specification {.smaller}
 
-We ran regressions separately for Charlotte, NC and its control cities, and Phoenix-Mesa, AZ and its control cities. Our regression specification is:
+We first ran regressions separately for Charlotte, NC and its control cities, and Phoenix-Mesa, AZ and its control cities. Our regression specification is:
 
-$P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsilon{it}$
+$P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$
 
 -   where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day $t$.
 
@@ -146,11 +146,13 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
 
 -   $Open_t = 1$ when the light rail system in the treated city has opened and $Open_t = 0$ before construction has started.
 
--   $W_{it}$ includes 47 meteorological control variables in its linear, square, and cubic form.
+-   $W_{it}$ includes 47 meteorological control variables.
 
 -   $\alpha_i$ are city fixed effects.
 
--   $\mu_{t}$ are day of week-month-year fixed effects.
+-   $\mu_{it}$ are day of week-city fixed effects.
+
+-   $\kappa_{t}$ are month fixed effects.
 
 ## DiD Results for Charlotte, NC
 
@@ -291,6 +293,9 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
    \end{tabular}
 \end{table}
 ```
+## Pooled DiD
+
+![](images/timeline.png){width="100%"}
 
 ## Possible Confounding Factors
 
@@ -298,12 +303,7 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
 
 -   Mecklenberg County became non-attainment for 8-hour O3 in 2004.
 
--   Non-attainment status for control cities?
-
--   Since there are only two treated cities, the standard errors might be biased.
+-   Since there are only two treated cities, there is low cross-sectional variation, leading to an underestimation of standard errors.
 
 -   We are exploring using synthetic control to recalculate the impacts.
 
-## Pooled DiD
-
-![](images/timeline.png){width="100%"}

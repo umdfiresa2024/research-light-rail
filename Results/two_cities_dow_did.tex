@@ -1,0 +1,40 @@
+
+\begin{table}[htbp]
+   \caption{DiD Results for Both Cities}
+   \centering
+   \begin{tabular}{lc}
+      \tabularnewline \midrule \midrule
+      Dependent Variable:                                  & pm25\\  
+      Model:                                               & (1)\\  
+      \midrule
+      \emph{Variables}\\
+      operating $\times$ dowFriday                         & -3.5$^{***}$ (0.59)\\   
+      operating $\times$ dowMonday                         & -3.3$^{***}$ (0.60)\\   
+      operating $\times$ dowSaturday                       & -3.5$^{***}$ (0.67)\\   
+      operating $\times$ dowSunday                         & -3.2$^{***}$ (0.60)\\   
+      operating $\times$ dowThursday                       & -3.6$^{***}$ (0.55)\\   
+      operating $\times$ dowTuesday                        & -3.2$^{***}$ (0.55)\\   
+      operating $\times$ dowWednesday                      & -3.8$^{***}$ (0.64)\\   
+      operating $\times$ treatcity $\times$ dowFriday      & 0.81 (1.5)\\   
+      operating $\times$ treatcity $\times$ dowMonday      & 0.53 (1.1)\\   
+      operating $\times$ treatcity $\times$ dowSaturday    & 0.94 (1.6)\\   
+      operating $\times$ treatcity $\times$ dowSunday      & 0.89 (1.6)\\   
+      operating $\times$ treatcity $\times$ dowThursday    & 0.46 (1.5)\\   
+      operating $\times$ treatcity $\times$ dowTuesday     & 0.41 (1.3)\\   
+      operating $\times$ treatcity $\times$ dowWednesday   & 0.47 (1.6)\\   
+      \midrule
+      \emph{Fixed-effects}\\
+      dow\_a                                               & Yes\\  
+      Address                                              & Yes\\  
+      month                                                & Yes\\  
+      \midrule
+      \emph{Fit statistics}\\
+      Observations                                         & 31,670\\  
+      Adjusted R$^2$                                       & 0.36\\  
+      \midrule \midrule
+      \multicolumn{2}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \end{tabular}
+\end{table}
+
+

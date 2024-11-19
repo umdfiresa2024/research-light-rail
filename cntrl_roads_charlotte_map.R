@@ -5,7 +5,7 @@ library("maptiles")
 
 cities<-read.csv("allcities_latlon.csv")
 
-cgroup<-c("Asheville, NC", "Charleston, SC", 
+cgroup<-c("Asheville, NC", 
           "Columbia, SC", "Durham, NC", "Fayetteville, NC", 
           "Greenville, SC", 
           "Winston-Salem, NC")

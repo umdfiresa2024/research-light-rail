@@ -26,6 +26,7 @@ open<-as.Date("2007-11-01")
 df<-read.csv("daily roads/panel_updated.csv") |>
   filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
            Address=="Columbia, SC" | Address=="Asheville, NC" |
+           Address=="Durham, NC" |
            Address=="Fayetteville, NC" | 
            Address=="Charlotte, NC") |>
   #create number representing each city
@@ -39,59 +40,60 @@ df<-read.csv("daily roads/panel_updated.csv") |>
   mutate(treatcity=ifelse(Address=="Charlotte, NC",1,0)) |>
   mutate(dow=weekdays(date)) |>
   mutate(dow_m=paste0(dow,"-",month)) |>
-  mutate(dow_my=paste0(dow,"-",month,"-",year)) |>
+  mutate(dow_my=paste0(dow,"-",month,"-",year))|>
   mutate(dow_a=paste0(dow,"-",Address))
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#run difference-in-differences
+library("fixest")
+library("kableExtra")
+
 wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg"
 ```
 
 ```{r}
-library("fixest")
-
 mfe<-"| dow_m + Address"
 myfe<-"| dow_my + Address"
 dafe<- "| dow_a + Address"
+dafem<-"| dow_a + Address + month"
 dafemy<-"| dow_a + Address + month + year"
 
 f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols, dafe))
-
+                    wcontrols, mfe))
 m1 <- feols(f, cluster = "Address", data = df)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, dafemy))
-
+f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", wcontrols, dafe))
 m2 <- feols(f, cluster = "Address", data = df)
 
-etable(m1, m2, 
+f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
+                    wcontrols, dafem))
+m3 <- feols(f, cluster = "Address", data = df)
+
+
+# f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
+#                     wcontrols3, mfe))
+# m3 <- feols(f, cluster = "Address", data = df)
+# 
+# f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
+# m4 <- feols(f, cluster = "Address", data = df)
+
+etable(m1, m2, m3, 
        se = "cluster",
        cluster = "Address",
-       keep = c("operating x treatcity", "Wind_f_"),
-       order = c("operating x treatcity", "Wind_f_"),
+       keep = c("operating x treatcity", "operating"),
+       order = c("operating x treatcity", "operating"),
        se.below = TRUE,
        digits = 2,
        replace=TRUE,
        title="DiD Results for Charlotte, NC",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,
-       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
-
-# etable(m1, m2, m3, m4, 
-#        se = "cluster",
-#        cluster = "Address",
-#        keep = c("treatcity", "Wind_f_"),
-#        order = c("treatcity", "Wind_f_"),
-#        se.below = TRUE,
-#        digits = 2,
-#        file="Results/nc_did.tex",
-#        replace=TRUE,
-#        title="DiD Results for Charlotte, NC",
-#        fitstat=c('n', 'ar2'),
-#        digits.stats = 2,
-#        signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
-
-
+       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10),
+       file="Results/nc_did.tex")
 ```
 
 Day of week heterogeneous treatment effects.
@@ -100,7 +102,7 @@ Day of week heterogeneous treatment effects.
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols, dafemy))
+f<-as.formula(paste("pm25 ~ operating:treatcity:dow + operating + ", wcontrols, dafem))
 m5 <- feols(f, cluster = "Address", data = df)
 
 etable(m5, 
@@ -111,7 +113,7 @@ etable(m5,
        se.below = FALSE,
        digits = 2,
        replace=TRUE,
-       #file="Results/nc_dow_did.tex",
+       file="Results/nc_dow_did.tex",
        title="DiD Results for Charlotte, NC",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,
@@ -260,20 +262,6 @@ df$SWdown_f_tavg_cu <- df$SWdown_f_tavg^3
 
 df$LWdown_f_tavg_sq <- df$LWdown_f_tavg^2
 df$LWdown_f_tavg_cu <- df$LWdown_f_tavg^3
-
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#run difference-in-differences
-library("fixest")
-library("kableExtra")
-
-wcontrols<- "Swnet_tavg+Lwnet_tavg+Qle_tavg+Qh_tavg+Qg_tavg+Snowf_tavg+Rainf_tavg+Evap_tavg+Qs_tavg+Qsb_tavg+Qsm_tavg+SnowT_tavg+AvgSurfT_tavg+SWE_tavg+SnowDepth_tavg+SoilMoist_S_tavg+SoilMoist_RZ_tavg+SoilMoist_P_tavg+ECanop_tavg+TVeg_tavg+ESoil_tavg+CanopInt_tavg+EvapSnow_tavg+ACond_tavg+TWS_tavg+GWS_tavg+Wind_f_tavg+Rainf_f_tavg+Tair_f_tavg+Qair_f_tavg+Psurf_f_tavg+SWdown_f_tavg+LWdown_f_tavg"
-
-wcontrols3<-"Swnet_tavg + Swnet_tavg_sq + Swnet_tavg_cu +Lwnet_tavg + Lwnet_tavg_sq+ Lwnet_tavg_cu +Qle_tavg + Qle_tavg_sq + Qle_tavg_cu +Qh_tavg + Qh_tavg_sq + Qh_tavg_cu +Qg_tavg + Qg_tavg_sq + Qg_tavg_cu +Snowf_tavg + Snowf_tavg_sq + Snowf_tavg_cu +Rainf_tavg + Rainf_tavg_sq + Rainf_tavg_cu +Evap_tavg + Evap_tavg_sq + Evap_tavg_cu +Qs_tavg + Qs_tavg_sq + Qs_tavg_cu +Qsb_tavg + Qsb_tavg_sq + Qsb_tavg_cu +Qsm_tavg + Qsm_tavg_sq + Qsm_tavg_cu +SnowT_tavg + SnowT_tavg_sq + SnowT_tavg_cu +AvgSurfT_tavg + AvgSurfT_tavg_sq + AvgSurfT_tavg_cu +SWE_tavg + SWE_tavg_sq + SWE_tavg_cu +SnowDepth_tavg + SnowDepth_tavg_sq + SnowDepth_tavg_cu +SoilMoist_S_tavg + SoilMoist_S_tavg_sq + SoilMoist_S_tavg_cu +SoilMoist_RZ_tavg + SoilMoist_RZ_tavg_sq +SoilMoist_RZ_tavg_cu +SoilMoist_P_tavg + SoilMoist_P_tavg_sq + SoilMoist_P_tavg_cu +ECanop_tavg + ECanop_tavg_sq + ECanop_tavg_cu +TVeg_tavg + TVeg_tavg_sq + TVeg_tavg_cu +ESoil_tavg + ESoil_tavg_sq + ESoil_tavg_cu +CanopInt_tavg + CanopInt_tavg_sq + CanopInt_tavg_cu +EvapSnow_tavg + EvapSnow_tavg_sq + EvapSnow_tavg_cu +ACond_tavg + ACond_tavg_sq + ACond_tavg_cu +TWS_tavg + TWS_tavg_sq + TWS_tavg_cu +GWS_tavg + GWS_tavg_sq + GWS_tavg_cu +Wind_f_tavg + Wind_f_tavg_sq + Wind_f_tavg_cu +Rainf_f_tavg + Rainf_f_tavg_sq + Rainf_f_tavg_cu +Tair_f_tavg + Tair_f_tavg_sq + Tair_f_tavg_cu +Qair_f_tavg + Qair_f_tavg_sq + Qair_f_tavg_cu +Psurf_f_tavg + Psurf_f_tavg_sq + Psurf_f_tavg_cu + SWdown_f_tavg + SWdown_f_tavg_sq + SWdown_f_tavg_cu + LWdown_f_tavg + LWdown_f_tavg_sq + LWdown_f_tavg_cu"
 ```
 
 ```{r}
@@ -335,14 +323,12 @@ open<-as.Date("2008-12-27")
 
 #start dif-in-dif data analysis
 df<-read.csv("daily roads/panel_updated.csv") |>
-  filter(Address=="Phoenix-Mesa, AZ" | Address=="El Paso, TX-NM") |>
+  filter(Address=="Phoenix-Mesa, AZ" | 
+           Address=="Tucson, AZ" | Address=="El Paso, TX-NM") |>
   
   #filter(Address=="Flagstaff, AZ" | Address=="Phoenix-Mesa, AZ" | 
   #         Address=="Tucson, AZ" | Address=="El Paso, TX-NM" | 
   #         Address=="Las Cruces, NM") |>
-  #create number representing each city
-  mutate(add_num=factor(Address)) |>
-  mutate(add_num=as.numeric(add_num)) |>
   #remove unwanted years
   mutate(date=as.Date(date)) |>
   filter(date<construction | date>open) |> 
@@ -352,7 +338,8 @@ df<-read.csv("daily roads/panel_updated.csv") |>
   mutate(dow=weekdays(date)) |>
   mutate(dow_m=paste0(dow,"-",month)) |>
   mutate(dow_my=paste0(dow,"-",month,"-",year)) |>
-  mutate(dow_y=paste0(dow, "-", year))
+  mutate(dow_y=paste0(dow, "-", year))|>
+  mutate(dow_a=paste0(dow,"-",Address))
 ```
 
 ```{r}
@@ -464,48 +451,35 @@ df$LWdown_f_tavg_cu <- df$LWdown_f_tavg^3
 ```{r}
 mfe<-"| dow_m + Address"
 myfe<-"| dow_my + Address"
-yfe<-"| dow_y + Address"
+dafe<- "| dow_a + Address"
+dafem<-"| dow_a + Address + month"
+dafemy<-"| dow_a + Address + month + year"
 
 f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
                     wcontrols, mfe))
 m1 <- feols(f, cluster = "Address", data = df)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols, myfe))
+f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", wcontrols, dafe))
 m2 <- feols(f, cluster = "Address", data = df)
 
 f<-as.formula(paste("pm25 ~ operating:treatcity + operating + ", 
-                    wcontrols3, mfe))
+                    wcontrols, dafem))
 m3 <- feols(f, cluster = "Address", data = df)
 
-f<-as.formula(paste("pm25 ~ operating:treatcity + ", wcontrols3, myfe))
-m4 <- feols(f, cluster = "Address", data = df)
 
-etable(m1, m2, m3, m4, 
+etable(m1, m2, m3, 
        se = "cluster",
        cluster = "Address",
-       keep = c("operating x treatcity", "Wind_f_"),
-       order = c("operating x treatcity", "Wind_f_"),
+       keep = c("operating x treatcity", "operating"),
+       order = c("operating x treatcity", "operating"),
        se.below = TRUE,
        digits = 2,
        replace=TRUE,
        title="DiD Results for Phoenix-Mesa, AZ",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,
-       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
-
-# etable(m1, m2, m3, m4, 
-#        se = "cluster",
-#        cluster = "Address",
-#        keep = c("treatcity", "Wind_f_"),
-#        order = c("treatcity", "Wind_f_"),
-#        se.below = TRUE,
-#        digits = 2,
-#        file="Results/az_did.tex",
-#        replace=TRUE,
-#        title="DiD Results for Phoenix-Mesa, AZ",
-#        fitstat=c('n', 'ar2'),
-#        digits.stats = 2,
-#        signif.code=c("***"=0.01, "**"=0.05, "*"=0.10))
+       signif.code=c("***"=0.01, "**"=0.05, "*"=0.10),
+       file="Results/az_did.tex")
 ```
 
 ```{r}
@@ -513,8 +487,8 @@ etable(m1, m2, m3, m4,
 #| message: false
 #| warning: false
 
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
-m5 <- feols(f, cluster = c("Address"), data = df)
+f<-as.formula(paste("pm25 ~ operating:treatcity:dow + operating + ", wcontrols, dafem))
+m5 <- feols(f, cluster = "Address", data = df)
 
 etable(m5, 
        se = "cluster",
@@ -524,7 +498,7 @@ etable(m5,
        se.below = FALSE,
        digits = 2,
        replace=TRUE,
-       # file="Results/az_dow_did.tex",
+       file="Results/az_dow_did.tex",
        title="DiD Results for Phoenix-Mesa, AZ",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,

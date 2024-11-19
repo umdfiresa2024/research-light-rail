@@ -2,32 +2,29 @@
 \begin{table}[htbp]
    \caption{DiD Results for Phoenix-Mesa, AZ}
    \centering
-   \begin{tabular}{lcccc}
+   \begin{tabular}{lccc}
       \tabularnewline \midrule \midrule
-      Dependent Variable: & \multicolumn{4}{c}{pm25}\\
-      Model:                        & (1)          & (2)         & (3)           & (4)\\  
+      Dependent Variable: & \multicolumn{3}{c}{pm25}\\
+      Model:                        & (1)           & (2)          & (3)\\  
       \midrule
       \emph{Variables}\\
-      operating $\times$ treatcity  & -0.39$^{**}$ & -0.40$^{*}$ & -0.16$^{**}$  & -0.16$^{*}$\\   
-                                    & (0.08)       & (0.12)      & (0.02)        & (0.04)\\   
-      Wind\_f\_tavg                 & -1.6$^{**}$  & -1.6$^{**}$ & 0.40          & 0.46\\   
-                                    & (0.22)       & (0.25)      & (1.8)         & (2.1)\\   
-      Wind\_f\_tavg\_sq             &              &             & -0.95$^{***}$ & -0.97$^{**}$\\   
-                                    &              &             & (0.04)        & (0.14)\\   
-      Wind\_f\_tavg\_cu             &              &             & 0.12$^{***}$  & 0.12$^{***}$\\   
-                                    &              &             & (0.01)        & (0.008)\\   
+      operating                     & -0.42$^{***}$ & -0.48$^{**}$ & -0.43$^{***}$\\   
+                                    & (0.02)        & (0.09)       & (0.02)\\   
+      operating $\times$ treatcity  & -0.39$^{**}$  & -0.39$^{**}$ & -0.39$^{**}$\\   
+                                    & (0.08)        & (0.07)       & (0.08)\\   
       \midrule
       \emph{Fixed-effects}\\
-      dow\_m                        & Yes          &             & Yes           & \\  
-      Address                       & Yes          & Yes         & Yes           & Yes\\  
-      dow\_my                       &              & Yes         &               & Yes\\  
+      dow\_m                        & Yes           &              & \\  
+      Address                       & Yes           & Yes          & Yes\\  
+      dow\_a                        &               & Yes          & Yes\\  
+      month                         &               &              & Yes\\  
       \midrule
       \emph{Fit statistics}\\
-      Observations                  & 9,867        & 9,867       & 9,867         & 9,867\\  
-      Adjusted R$^2$                & 0.32         & 0.35        & 0.37          & 0.40\\  
+      Observations                  & 9,867         & 9,867        & 9,867\\  
+      Adjusted R$^2$                & 0.32          & 0.29         & 0.32\\  
       \midrule \midrule
-      \multicolumn{5}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
-      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+      \multicolumn{4}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{4}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
 
