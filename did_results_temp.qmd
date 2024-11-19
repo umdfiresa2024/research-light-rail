@@ -26,7 +26,6 @@ open<-as.Date("2007-11-01")
 df<-read.csv("daily roads/panel_updated.csv") |>
   filter(Address=="Winston-Salem, NC" | Address=="Greenville, SC" | 
            Address=="Columbia, SC" | Address=="Asheville, NC" |
-           Address=="Durham, NC" | 
            Address=="Fayetteville, NC" | 
            Address=="Charlotte, NC") |>
   #create number representing each city
@@ -216,7 +215,7 @@ Day of week heterogeneous treatment effects.
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols3, myfe))
+f<-as.formula(paste("pm25 ~ operating:treatcity:dow + ", wcontrols, myfe))
 m5 <- feols(f, cluster = "Address", data = df)
 
 etable(m5, 
@@ -227,7 +226,7 @@ etable(m5,
        se.below = FALSE,
        digits = 2,
        replace=TRUE,
-       file="Results/nc_dow_did.tex",
+       #file="Results/nc_dow_did.tex",
        title="DiD Results for Charlotte, NC",
        fitstat=c('n', 'ar2'),
        digits.stats = 2,

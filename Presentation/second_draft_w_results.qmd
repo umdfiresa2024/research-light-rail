@@ -298,5 +298,9 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
 
 -   Non-attainment status for control cities?
 
+-   Since there are only two treated cities, the standard errors might be biased.
+
+-   We are exploring using synthetic control to recalculate the impacts.
+
 ## Pooled DiD
 ![](images/timeline.png){width="100%"}
