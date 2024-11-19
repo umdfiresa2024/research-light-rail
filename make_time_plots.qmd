@@ -57,7 +57,7 @@ library("tidyverse")
 pm<-read.csv("daily roads/panel_updated.csv")
 cgroup<-c("Asheville, NC", "Charleston, SC", "Charlotte, NC",
           "Columbia, SC", "Durham, NC", "Fayetteville, NC", 
-          "Greenville, SC", "Wilmington, NC",
+          "Greenville, SC", 
           "Winston-Salem, NC")
 
 pm_month<-pm |>
@@ -127,7 +127,7 @@ maxdate<-max(pm_month$date)
 
 library(RColorBrewer)
 g<-brewer.pal(5, "Greys")
-pal<-c(g[2],"#e21833", g[3])
+pal<-c(g[2],"#e21833", g[3:5])
   
 png("Presentation/images/az_parallel.png", 
     res=500, width=6, height=6, units="in")

@@ -289,3 +289,14 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{t} + \epsil
    \end{tabular}
 \end{table}
 ```
+
+## Possible Confounding Factors
+
+-   Maricopa County no longer had non-attainment status for 1-hour O3 and CO in 2005.
+
+-   Mecklenberg County became non-attainment for 8-hour O3 in 2004.
+
+-   Non-attainment status for control cities?
+
+## Pooled DiD
+![](images/timeline.png){width="100%"}
