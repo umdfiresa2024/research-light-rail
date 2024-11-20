@@ -16,7 +16,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 ![](images/purpleline.png){fig-align="center" width="50%"}
 
-Has past light rail openings lead to a decrease in air pollution?
+Have past light rail openings lead to a decrease in air pollution?
 
 ## What are Light Rails? {.smaller}
 
@@ -62,7 +62,7 @@ Has past light rail openings lead to a decrease in air pollution?
 
 -   Daily PM2.5, from the years 2000 to 2016 with 1 km x 1 km grid resolution from Di et al. (2019).
 
--   47 land surface meteorological variables with 25 km x km grid resolution from NASA GLDAS 2.
+-   47 land surface meteorological variables with 25 km x 25 km grid resolution from NASA GLDAS 2.
 
 -   Treated city selection criteria
 
