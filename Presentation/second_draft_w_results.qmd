@@ -82,7 +82,7 @@ Has past light rail openings lead to a decrease in air pollution?
 
 -   We will use **difference-in-difference** as light rail ridership gradually increased treated cities.
 
-::: columns
+::::: columns
 ::: {.column width="42%"}
 ![](images/chen_whalley.png){width="100%"}
 :::
@@ -90,7 +90,7 @@ Has past light rail openings lead to a decrease in air pollution?
 ::: {.column width="58%"}
 ![](images/ridership.png){width="100%"}
 :::
-:::
+:::::
 
 ## Treated Area
 
@@ -98,7 +98,7 @@ Has past light rail openings lead to a decrease in air pollution?
 
 -   We then find the average daily PM2.5 and meteorological variables within those areas.
 
-::: columns
+::::: columns
 ::: {.column width="50%"}
 ![](images/treated_nc.png){width="100%"}
 :::
@@ -106,7 +106,7 @@ Has past light rail openings lead to a decrease in air pollution?
 ::: {.column width="50%"}
 ![](images/treated_az.png){width="100%"}
 :::
-:::
+:::::
 
 ## Untreated Area
 
@@ -124,7 +124,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 
 ## Parallel Trends
 
-::: columns
+::::: columns
 ::: {.column width="50%"}
 ![](images/nc_parallel.png){width="100%"}
 :::
@@ -132,7 +132,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 ::: {.column width="50%"}
 ![](images/az_parallel.png){width="100%"}
 :::
-:::
+:::::
 
 ## DiD Specification {.smaller}
 
@@ -154,145 +154,88 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
 
 -   $\kappa_{t}$ are month fixed effects.
 
-## DiD Results for Charlotte, NC {.smaller}
+## DiD Results for Two Cities Separately {.smaller}
 
 ```{=latex}
 \tiny
 \begin{table}[htbp]
    \centering
-   \begin{tabular}{lcccc}
+   \begin{tabular}{lcccccc}
       \tabularnewline \midrule \midrule
-      Dependent Variable: & \multicolumn{4}{c}{pm25}\\
-      Model:                        & (1)          & (2)          & (3)          & (4)\\  
+      Treated City        & \multicolumn{3}{c}{Charlotte, NC} & \multicolumn{3}{c}{Phoenix-Mesa, AZ} \\
+      Dependent Variable: & \multicolumn{6}{c}{PM2.5}\\
+      Model:                        & (1)          & (2)          & (3) & (4)           & (5)          & (6)\\  \\  
       \midrule
       \emph{Variables}\\
-      operating $\times$ treatcity  & -0.51        & -0.54        & -0.52        & -0.57$^{*}$\\   
-                                    & (0.32)       & (0.31)       & (0.28)       & (0.28)\\   
-      Wind\_f\_tavg                 & -2.1$^{***}$ & -2.0$^{***}$ & -3.4$^{***}$ & -2.4$^{***}$\\   
-                                    & (0.54)       & (0.52)       & (0.53)       & (0.54)\\   
-      Wind\_f\_tavg\_sq             &              &              & 0.42$^{***}$ & 0.28$^{**}$\\   
-                                    &              &              & (0.11)       & (0.12)\\   
-      Wind\_f\_tavg\_cu             &              &              & -0.03$^{**}$ & -0.02\\   
-                                    &              &              & (0.009)      & (0.010)\\   
+      operating                     & -4.1$^{***}$ & -4.2$^{***}$ & -4.1$^{***}$ & -0.42$^{***}$ & -0.48$^{**}$ & -0.43$^{***}$\\   
+                                    & (0.23)       & (0.23)       & (0.23) & (0.02)        & (0.09)       & (0.02)\\   
+      operating $\times$ treatcity  & -0.28        & -0.28        & -0.28 & -0.39$^{**}$  & -0.39$^{**}$ & -0.39$^{**}$\\   
+                                    & (0.24)       & (0.24)       & (0.24)& (0.08)        & (0.07)       & (0.08)\\   
       \midrule
       \emph{Fixed-effects}\\
-      dow\_m                        & Yes          &              & Yes          & \\  
-      Address                       & Yes          & Yes          & Yes          & Yes\\  
-      dow\_my                       &              & Yes          &              & Yes\\  
+      day of week-month                        & Yes          &              &     & Yes           &              & \\   
+      city                       & Yes          & Yes          & Yes & Yes           & Yes          & Yes\\  
+      day of week-city                         &              & Yes          & Yes   &               & Yes          & Yes\\    
+      month                         &              &              & Yes   &               &              & Yes\\    
       \midrule
-      \emph{Fit statistics}\\
-      Observations                  & 29,936       & 29,936       & 29,936       & 29,936\\  
-      Adjusted R$^2$                & 0.32         & 0.42         & 0.33         & 0.43\\  
+      Observations                  & 26,194       & 26,194       & 26,194& 9,867         & 9,867        & 9,867\\  
+      Adjusted R$^2$                & 0.34         & 0.32         & 0.33& 0.32          & 0.29         & 0.32\\    
       \midrule \midrule
-      \multicolumn{5}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
-      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+      \multicolumn{7}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
 ```
-## DiD Results for Charlotte, NC in Each Day of the Week {.smaller}
+
+## DiD Results for Two Cities Separately {.smaller}
 
 ```{=latex}
 \tiny
 \begin{table}[htbp]
    \centering
-   \begin{tabular}{lc}
+   \begin{tabular}{lcc}
       \tabularnewline \midrule \midrule
-      Dependent Variable:                                  & pm25\\  
-      Model:                                               & (1)\\  
+      Treated City        & Charlotte, NC & Phoenix-Mesa, AZ \\
+      Dependent Variable: & \multicolumn{2}{c}{PM2.5} \\  
       \midrule
-      \emph{Variables}\\
-      operating $\times$ treatcity $\times$ dowFriday      & -0.48 (0.27)\\   
-      operating $\times$ treatcity $\times$ dowMonday      & -0.57 (0.33)\\   
-      operating $\times$ treatcity $\times$ dowSaturday    & -0.53 (0.35)\\   
-      operating $\times$ treatcity $\times$ dowSunday      & -0.50 (0.31)\\   
-      operating $\times$ treatcity $\times$ dowThursday    & -0.78$^{**}$ (0.25)\\   
-      operating $\times$ treatcity $\times$ dowTuesday     & -0.56$^{*}$ (0.25)\\   
-      operating $\times$ treatcity $\times$ dowWednesday   & -0.61$^{**}$ (0.25)\\   
+     \emph{Variables}\\
+      operating $\times$ dowFriday                         & -4.1$^{***}$ (0.20)     & -0.57$^{*}$ (0.17)\\   
+      operating $\times$ dowMonday                         & -4.0$^{***}$ (0.25)    & -0.27$^{*}$ (0.09)\\    
+      operating $\times$ dowSaturday                       & -4.1$^{***}$ (0.31)    & -0.24 (0.16)\\      
+      operating $\times$ dowSunday                         & -3.8$^{***}$ (0.25)    & -0.11$^{**}$ (0.02)\\     
+      operating $\times$ dowThursday                       & -4.2$^{***}$ (0.21)    & -0.72$^{***}$ (0.02)\\   
+      operating $\times$ dowTuesday                        & -3.8$^{***}$ (0.25)    & -0.45 (0.20)\\    
+      operating $\times$ dowWednesday                      & -4.6$^{***}$ (0.23)    & -0.63$^{***}$ (0.03)\\   
+      operating $\times$ treatcity $\times$ dowFriday      & -0.28 (0.21)           & -0.10 (0.15)\\   
+      operating $\times$ treatcity $\times$ dowMonday      & 0.03 (0.26)            & -0.97$^{**}$ (0.14)\\   
+      operating $\times$ treatcity $\times$ dowSaturday    & -0.16 (0.32)           & -0.09 (0.12)\\   
+      operating $\times$ treatcity $\times$ dowSunday      & -0.09 (0.28)           & 0.11 (0.08)\\    
+      operating $\times$ treatcity $\times$ dowThursday    & -0.51$^{*}$ (0.24)       & -0.32$^{*}$ (0.08)\\   
+      operating $\times$ treatcity $\times$ dowTuesday     & -0.35 (0.25)               & -0.69$^{*}$ (0.23)\\     
+      operating $\times$ treatcity $\times$ dowWednesday   & -0.62$^{**}$ (0.25)        & -0.63$^{**}$ (0.08)\\   
       \midrule
       \emph{Fixed-effects}\\
-      dow\_my                                              & Yes\\  
-      Address                                              & Yes\\  
+      dow\_a                                               & Yes & Yes\\  
+      Address                                              & Yes & Yes\\  
+      month                                                & Yes & Yes\\  
       \midrule
-      \emph{Fit statistics}\\
-      Observations                                         & 29,936\\  
-      Adjusted R$^2$                                       & 0.43\\  
+      Observations                                         & 26,194 & 9,867\\ 
+      Adjusted R$^2$                                       & 0.33 & 0.32\\   
       \midrule \midrule
-      \multicolumn{2}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
-      \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+      \multicolumn{3}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
 ```
-## DiD Results for Phoenix-Mesa, AZ {.smaller}
 
-```{=latex}
-\tiny
-\begin{table}[htbp]
-   \centering
-   \begin{tabular}{lcccc}
-      \tabularnewline \midrule \midrule
-      Dependent Variable: & \multicolumn{4}{c}{pm25}\\
-      Model:                        & (1)          & (2)         & (3)           & (4)\\  
-      \midrule
-      \emph{Variables}\\
-      operating $\times$ treatcity  & -0.39$^{**}$ & -0.40$^{*}$ & -0.16$^{**}$  & -0.16$^{*}$\\   
-                                    & (0.08)       & (0.12)      & (0.02)        & (0.04)\\   
-      Wind\_f\_tavg                 & -1.6$^{**}$  & -1.6$^{**}$ & 0.40          & 0.46\\   
-                                    & (0.22)       & (0.25)      & (1.8)         & (2.1)\\   
-      Wind\_f\_tavg\_sq             &              &             & -0.95$^{***}$ & -0.97$^{**}$\\   
-                                    &              &             & (0.04)        & (0.14)\\   
-      Wind\_f\_tavg\_cu             &              &             & 0.12$^{***}$  & 0.12$^{***}$\\   
-                                    &              &             & (0.01)        & (0.008)\\   
-      \midrule
-      \emph{Fixed-effects}\\
-      dow\_m                        & Yes          &             & Yes           & \\  
-      Address                       & Yes          & Yes         & Yes           & Yes\\  
-      dow\_my                       &              & Yes         &               & Yes\\  
-      \midrule
-      \emph{Fit statistics}\\
-      Observations                  & 9,867        & 9,867       & 9,867         & 9,867\\  
-      Adjusted R$^2$                & 0.32         & 0.35        & 0.37          & 0.40\\  
-      \midrule \midrule
-      \multicolumn{5}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
-      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-   \end{tabular}
-\end{table}
-```
-## DiD Results for Phoenix-Mesa in Each Day of the Week {.smaller}
+## DiD with Two Treated Cities Combined {.smaller}
 
-```{=latex}
-\tiny
-\begin{table}[htbp]
-   \centering
-   \begin{tabular}{lc}
-      \tabularnewline \midrule \midrule
-      Dependent Variable:                                  & pm25\\  
-      Model:                                               & (1)\\  
-      \midrule
-      \emph{Variables}\\
-      operating $\times$ treatcity $\times$ dowFriday      & -0.07$^{**}$ (0.009)\\   
-      operating $\times$ treatcity $\times$ dowMonday      & -0.68$^{**}$ (0.10)\\   
-      operating $\times$ treatcity $\times$ dowSaturday    & 0.14$^{**}$ (0.03)\\   
-      operating $\times$ treatcity $\times$ dowSunday      & 0.36$^{*}$ (0.10)\\   
-      operating $\times$ treatcity $\times$ dowThursday    & -0.07 (0.09)\\   
-      operating $\times$ treatcity $\times$ dowTuesday     & -0.62$^{*}$ (0.17)\\   
-      operating $\times$ treatcity $\times$ dowWednesday   & -0.21 (0.12)\\   
-      \midrule
-      \emph{Fixed-effects}\\
-      dow\_my                                              & Yes\\  
-      Address                                              & Yes\\  
-      \midrule
-      Observations                                         & 9,867\\  
-      Adjusted R$^2$                                       & 0.40\\  
-      \midrule \midrule
-      \multicolumn{2}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
-      \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-   \end{tabular}
-\end{table}
-```
-## DiD with Two Treated Cities {.smaller}
+::::: columns
+::: {.column width="50%"}
+![](images/timeline.png){fig-align="center" width="100%"}
+:::
 
-![](images/timeline.png){fig-align="center" width="50%"}
-
+::: {.column width="50%"}
 ```{=latex}
 \tiny
 \begin{table}[htbp]
@@ -322,6 +265,9 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
    \end{tabular}
 \end{table}
 ```
+:::
+:::::
+
 ## DiD with Two Treated Cities, Each Day of the Week {.smaller}
 
 ```{=latex}
@@ -363,6 +309,7 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
    \end{tabular}
 \end{table}
 ```
+
 ## Results Summary {.smaller}
 
 -   Although we found reductions on weekdays when analyzing the two cities separately, we do not see the same results when all our data are combined.
