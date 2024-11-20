@@ -48,13 +48,13 @@ Has past light rail openings lead to a decrease in air pollution?
 
 ## Hypothesis {.smaller}
 
--   Light rail openings in the US will make shift people from driving their own cars or taking buses to using the light rail, reducing air pollution.
+-   Light rail openings in the US will cause a substitution between people driving their own cars or taking buses to using the light rail, reducing air pollution.
 
 -   We expect to see smaller decrease than 3 percent as:
 
     -   The US population drives more cars than Europe.
 
-    -   We will data from light rail construction period, which can increase pollution prior light rail opening, from our analysis.
+    -   We removed data from light rail construction period, which can increase pollution prior light rail opening, from our analysis.
 
 ![](images/timetrend.png){fig-align="center" width="60%"}
 
@@ -136,7 +136,7 @@ For each control city, we find cities with no light rails, no subways, and simil
 
 ## DiD Specification {.smaller}
 
-We first ran regressions separately for Charlotte, NC and its control cities, and Phoenix-Mesa, AZ and its control cities. Our regression specification is:
+First, we ran regressions separately for Charlotte, NC and its control cities, and Phoenix-Mesa, AZ and its control cities. Our regression specification is:
 
 $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$
 
