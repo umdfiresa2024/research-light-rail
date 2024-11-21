@@ -109,13 +109,13 @@ u_buffer<-terra::buffer(u, width = 1000)
 ```{r}
 
 e<-ext(lr_buffer)
-e2<-ext(-112.14, -112.14+.4, 33.35, 33.35+0.37)
+e2<-ext(-112.13, -112.14+.4, 33.35, 33.35+0.37)
 bg <- get_tiles(ext(lr_buffer), provider = "Esri.WorldGrayCanvas")
 
 png("Presentation/images/treated_az.png", 
     res=500, width=6, height=5, units="in")
 
-plot(e2, alpha=0, main="Treated Area in Phoenix-Mesa, AZ")
+plot(e2, alpha=0, box=FALSE, main="Treated Area in Phoenix-Mesa, AZ")
 plot(bg, add=TRUE)
 lines(u_buffer, col = "black", lwd = 5, add=TRUE)
 plot(i, col="#7f7f7f", lwd = 1, add=TRUE)
@@ -192,7 +192,7 @@ e2<-ext(-81, -81+0.4, 35.06, 35.06+0.37)
 png(filename="Presentation/images/treated_nc.png", 
     res=500, width=6, height=5, units="in")
 
-plot(e2, alpha=0, main="Treated Area in Charlotte, NC")
+plot(e2, alpha=0, box=FALSE, main="Treated Area in Charlotte, NC")
 plot(bg, add=TRUE)
 plot(lr_project, col="#e21833", lwd = 3, add=TRUE)
 plot(i, col="#7f7f7f", lwd = 1, add=TRUE)

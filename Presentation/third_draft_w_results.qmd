@@ -1,12 +1,16 @@
 ---
 title: "Can Light Rails Provide the Track to Cleaner Air?"
-author: T. Ruangmas, L. Thomas, R. Yance, G. Zhang
-institute: University of Maryland
+author: T. Ruangmas*, L. Thomas, R. Yance, G. Zhang
+institute:  University of Maryland
 format: 
   beamer:
-    theme: CambridgeUS
+    #theme: CambridgeUS
+    theme: Montpellier
+    colortheme: beaver
     #colortheme: structure
     #logo: "images/official-logo-FIRE-SS-SA.png"
+    header-includes: |
+       \setbeamertemplate{footline}[page number]
 editor: visual
 ---
 
@@ -144,7 +148,7 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
 
 -   $D_i$ is a dummy variable that is equal to one when city $i$ is the city with a light rail system.
 
--   $Operating_t = 1$ when the light rail system in the treated city has opened and $Operating_t = 0$ before construction has started.
+-   $Operating_t = 1$ when the light rail system in the treated city has opened and $Operating_t = 0$ before construction.
 
 -   $W_{it}$ includes 47 meteorological control variables.
 
@@ -164,7 +168,6 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       Treated City        & \multicolumn{3}{c}{Charlotte, NC} & \multicolumn{3}{c}{Phoenix-Mesa, AZ} \\
       Model:                        & (1)          & (2)          & (3) & (4)           & (5)          & (6)\\
       \midrule
-      \emph{Variables}\\
       operating                     & -4.1$^{***}$ & -4.2$^{***}$ & -4.1$^{***}$ & -0.42$^{***}$ & -0.48$^{**}$ & -0.43$^{***}$\\   
                                     & (0.23)       & (0.23)       & (0.23) & (0.02)        & (0.09)       & (0.02)\\   
       operating $\times$ treatcity  & -0.28        & -0.28        & -0.28 & -0.39$^{**}$  & -0.39$^{**}$ & -0.39$^{**}$\\   
@@ -179,7 +182,7 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       Observations                  & 26,194       & 26,194       & 26,194& 9,867         & 9,867        & 9,867\\  
       Adjusted R$^2$                & 0.34         & 0.32         & 0.33& 0.32          & 0.29         & 0.32\\    
       \midrule \midrule
-      \multicolumn{7}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{7}{l}{\emph{Clustered (city) standard-errors in parentheses}}\\
       \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
@@ -196,7 +199,6 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       Dependent Variable: & \multicolumn{2}{c}{PM2.5} \\  
       Treated City        & Charlotte, NC & Phoenix-Mesa, AZ \\
       \midrule
-     \emph{Variables}\\
      operating $\times$ Monday                         & -4.0$^{***}$ (0.25)    & -0.27$^{*}$ (0.09)\\    
      operating $\times$ Tuesday                        & -3.8$^{***}$ (0.25)    & -0.45 (0.20)\\    
       operating $\times$ Wednesday                      & -4.6$^{***}$ (0.23)    & -0.63$^{***}$ (0.03)\\   
@@ -212,18 +214,15 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       operating $\times$ treatcity $\times$ Friday      & -0.28 (0.21)           & -0.10 (0.15)\\   
       operating $\times$ treatcity $\times$ Saturday    & -0.16 (0.32)           & -0.09 (0.12)\\   
       operating $\times$ treatcity $\times$ Sunday      & -0.09 (0.28)           & 0.11 (0.08)\\    
-    
-     
       \midrule
-      \emph{Fixed-effects}\\
-      day of week-city                                               & Yes & Yes\\  
+      day of week-city                                  & Yes & Yes\\  
       city                                              & Yes & Yes\\  
       month                                                & Yes & Yes\\  
       \midrule
       Observations                                         & 26,194 & 9,867\\ 
       Adjusted R$^2$                                       & 0.33 & 0.32\\   
       \midrule \midrule
-      \multicolumn{3}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{3}{l}{\emph{Clustered (city) standard-errors in parentheses}}\\
       \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
@@ -246,7 +245,6 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       Dependent Variable: & \multicolumn{3}{c}{PM2.5}\\
       Model:                        & (1)          & (2)          & (3)\\  
       \midrule
-      \emph{Variables}\\
       operating                     & -3.4$^{***}$ & -3.5$^{***}$ & -3.4$^{***}$\\   
                                     & (0.60)       & (0.62)       & (0.59)\\   
       operating $\times$ treatcity  & 0.65         & 0.67         & 0.65\\   
@@ -261,7 +259,7 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       Observations                  & 31,670       & 31,670       & 31,670\\  
       Adjusted R$^2$                & 0.36         & 0.35         & 0.36\\  
       \midrule \midrule
-      \multicolumn{4}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{4}{l}{\emph{Clustered (city) standard-errors in parentheses}}\\
       \multicolumn{4}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}
@@ -280,7 +278,6 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       \tabularnewline \midrule \midrule
       Dependent Variable:                                  & PM2.5\\  
       \midrule
-      \emph{Variables}\\
       operating $\times$ Monday                         & -3.3$^{***}$ (0.60)\\   
       operating $\times$ Tuesday                        & -3.2$^{***}$ (0.55)\\   
       operating $\times$ Wednesday                      & -3.8$^{***}$ (0.64)\\  
@@ -307,7 +304,7 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
       Observations                                         & 31,670\\  
       Adjusted R$^2$                                       & 0.36\\  
       \midrule \midrule
-      \multicolumn{2}{l}{\emph{Clustered (Address) standard-errors in parentheses}}\\
+      \multicolumn{2}{l}{\emph{Clustered (city) standard-errors in parentheses}}\\
       \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
    \end{tabular}
 \end{table}

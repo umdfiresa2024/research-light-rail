@@ -8,7 +8,7 @@ df <- data.frame(event = c("NC\nConstruction", "NC\nExpansion", "AZ\nConstructio
                  start = c("2005-03-01", "2012-12-01", "2005-07-01", "2012-07-01", "2000-01-01", "2000-01-01", "2008-12-01"), 
                  end   = c("2007-11-01", "2016-12-01", "2008-12-01", "2016-12-01", "2016-12-01", "2005-03-01", "2012-07-01"),
                  group = c("NC", "NC", "AZ", "AZ", "Combined", "Combined", "Combined"),
-                 color = c(g[3:6], "#ad7231", "#ffd200", "#ffd200"))
+                 color = c(g[3:6], "#e21833", "#ffd200", "#ffd200"))
 
 gg_vistime(df, col.group="group", linewidth=50)
 
