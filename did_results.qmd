@@ -102,7 +102,7 @@ Day of week heterogeneous treatment effects.
 #| echo: false
 #| message: false
 #| warning: false
-f<-as.formula(paste("pm25 ~ operating:treatcity:dow + operating + operating:dow + ", wcontrols, dafem))
+f<-as.formula(paste("pm25 ~ operating:treatcity:dow + operating:dow + ", wcontrols, dafem))
 m4 <- feols(f, cluster = "Address", data = df)
 
 etable(m4, 

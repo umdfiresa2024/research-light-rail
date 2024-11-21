@@ -62,6 +62,30 @@ r_buff<-buffer(r_inside, width = 1000)
 
 r_buff_agg<-aggregate(r_buff, by="Address")
 
+e<-ext(bg)
+e2<-ext(c(-84.0, -76, 33.6, 36.5))
+
+png(filename="Presentation/images/charlotte_cntrl_roads2.png", 
+    res=500, width=9, height=6, units="in")
+
+plot(e2, alpha=0, main="Untreated Areas for Charlotte, NC", box=FALSE)
+plot(bg, add=TRUE)
+#plot(pts_proj, col="#ffd200", alpha=0.5, add=TRUE)
+plot(pts_t, col="#e21833", cex=2, add=TRUE)
+
+plot(r, col="#7f7f7f", lwd=1, add=TRUE)
+plot(r_buff_agg, col="#ffd200", border="#ffd200", add=TRUE)
+legend(x=-78, y=36.5, 
+       legend = c("Charlotte, NC", "Untreated, Areas"),  
+       col = c("#e21833", "#ffd200"),
+       pch = c(16, 16),
+       lwd = 2,
+       bty = "n",
+       y.intersp=1.5)
+dev.off()
+
+
+
 r_buff_df<-as.data.frame(r_buff_agg)
 
 write.csv(r_buff_df, "cntrl_road_cities.csv")

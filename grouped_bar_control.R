@@ -45,28 +45,34 @@ az_data<-average_data |>
 nc<-ggplot(nc_data, aes(x = Urbanized.Area, y = average_people/1000, fill = transportation)) +
   geom_bar(stat = "identity") +
   theme_bw() +
-  ylim(0,30)+
+  ylim(0,28)+
   labs(
     title = "Trips in NC and SC before Construction",
     x = "",
     y = "Annual Average Trips (in Thousands)",
     fill = "Public \nTrans \nMode"
   ) +
-  theme(axis.text.x = element_text(angle = 0)) +
+  theme(axis.text.x = element_text(angle = 0), 
+        legend.text=element_text(size=18),
+        strip.text.x = element_text(size = 18),
+        plot.title = element_text(size = 20)) +
   scale_fill_manual(values = c("bus" = '#7f7f7f', "taxis" = '#ffd200', "oth" = '#ad7231', "LR" = '#e21833')) +
   scale_x_discrete(labels = function(x) gsub(",", ", ", x))   # Clean up city names for display
 
 az<-ggplot(az_data, aes(x = Urbanized.Area, y = average_people/1000, fill = transportation)) +
   geom_bar(stat = "identity") +
   theme_bw() +
-  ylim(0,80)+
+  ylim(0,75)+
   labs(
     title = "Trips in AZ and TX before Construction",
     x = "",
     y = "Annual Average Trips (in Thousands)",
     fill = "Public \nTrans \nMode"
   ) +
-  theme(axis.text.x = element_text(angle = 0)) +
+  theme(axis.text.x = element_text(angle = 0), 
+        legend.text=element_text(size=18),
+        strip.text.x = element_text(size = 18),
+        plot.title = element_text(size = 20)) +
   scale_fill_manual(values = c("bus" = '#7f7f7f', "taxis" = '#ffd200', "oth" = '#ad7231', "LR" = '#e21833')) +
   scale_x_discrete(labels = function(x) gsub(",", ", ", x))   # Clean up city names for display
 
@@ -111,28 +117,34 @@ az_data<-average_data |>
 nc2<-ggplot(nc_data, aes(x = Urbanized.Area, y = average_people/1000, fill = transportation)) +
   geom_bar(stat = "identity") +
   theme_bw() +
-  ylim(0,30)+
+  ylim(0,28)+
   labs(
     title = "Trips in NC and SC after Opening",
     x = "",
     y = "Annual Average Trips (in Thousands)",
     fill = "Public \nTrans \nMode"
   ) +
-  theme(axis.text.x = element_text(angle = 0)) +
+  theme(axis.text.x = element_text(angle = 0), 
+        legend.text=element_text(size=18),
+        strip.text.x = element_text(size = 18),
+        plot.title = element_text(size = 20)) +
   scale_fill_manual(values = c("bus" = '#7f7f7f', "taxis" = '#ffd200', "oth" = '#ad7231', "LR" = '#e21833')) +
   scale_x_discrete(labels = function(x) gsub(",", ", ", x))   # Clean up city names for display
 
 az2<-ggplot(az_data, aes(x = Urbanized.Area, y = average_people/1000, fill = transportation)) +
   geom_bar(stat = "identity") +
   theme_bw() +
-  ylim(0,80)+
+  ylim(0,75)+
   labs(
     title = "Trips in AZ and TX  after Opening",
     x = "",
     y = "Annual Average Trips (in Thousands)",
     fill = "Public \nTrans \nMode"
   ) +
-  theme(axis.text.x = element_text(angle = 0)) +
+  theme(axis.text.x = element_text(angle = 0), 
+        legend.text=element_text(size=18),
+        strip.text.x = element_text(size = 18),
+        plot.title = element_text(size = 20)) + 
   scale_fill_manual(values = c("bus" = '#7f7f7f', "taxis" = '#ffd200', "oth" = '#ad7231', "LR" = '#e21833')) +
   scale_x_discrete(labels = function(x) gsub(",", ", ", x))   # Clean up city names for display
 

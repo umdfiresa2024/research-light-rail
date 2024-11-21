@@ -173,7 +173,9 @@ ggplot(data=charlotte)+
   theme_bw()+
   scale_color_manual(values=c("#ffd200", "#e21833", "#ad7231", "#454545"))+
   scale_x_continuous(breaks = seq(min(charlotte$year), 
-                                  max(charlotte$year), by = 2))+
+                                  max(charlotte$year), by = 4))+
+  theme(legend.text=element_text(size=18), 
+        strip.text.x = element_text(size = 18)) + 
   facet_wrap(~Urbanized.Area)
 
 dev.off()

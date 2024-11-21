@@ -106,11 +106,12 @@ acs_long<-pivot_longer(acs, cols=c(4:8, 10:11), names_to="Mode", values_to = "Co
   group_by(State, Mode, year) |>
   summarise(Count=sum(Count)) |>
   mutate(year=as.factor(year)) |>
+  filter(Mode!="Missing") |>
   mutate(State=ifelse(State=="Arizona", "Phoenix-Mesa, AZ", "Charlotte, NC"))
 
 library(RColorBrewer)
 pal<-brewer.pal(7, "Greys")
-pal2<-c(pal[1:2], "#e21833", pal[3:6])
+pal2<-c("#ad7231", "#e6e6e6","#e21833", pal[3:6])
 
 png("Presentation/images/acs.png", 
     res=500, width=8, height=5, units="in")
@@ -123,6 +124,9 @@ ggplot(acs_long) +
   scale_fill_manual(values=pal2) +
   facet_grid(~ State) +
   theme_bw() +
+  theme(axis.text.x = element_text(angle = 0), 
+        legend.text=element_text(size=18),
+        strip.text.x = element_text(size = 18)) +
   labs(title = "Mode of Transportation to Work from 1-year ACS",
        subtitle = "Population-Weighted Estimates from PUMAs with Light Rail")
 

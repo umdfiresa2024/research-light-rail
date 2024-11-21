@@ -14,9 +14,9 @@ editor: visual
 
 The purple line, a new light rail system north of DC, is scheduled to open in late 2027.
 
-![](images/purpleline.png){fig-align="center" width="50%"}
+![](images/purpleline.png){fig-align="center" width="60%"}
 
-Have past light rail openings lead to a decrease in air pollution?
+**Have past light rail openings lead to a decrease in air pollution?**
 
 ## What are Light Rails? {.smaller}
 
@@ -36,37 +36,37 @@ Have past light rail openings lead to a decrease in air pollution?
 
 ## Literature Review {.smaller}
 
--   Existing studies have found that **subways** systems are effective in reducing air pollution.
+-   Existing studies have found that **subway** systems are effective in reducing air pollution.
 
     -   Chen & Whalley (2012) found that Taipei's Metro System opening reduced CO by 5 to 15 percent.
 
-    -   Gendron-Carrier et al. (2022) found that among 58 subways openings globally, only those in highly polluted cities see a 4 percent reduction.
+    -   Gendron-Carrier et al. (2022) found that among 58 subway openings globally, only those in highly polluted cities see a 4 percent reduction.
 
-    -   Xie et al. (2024) found that 15 subways openings in China reduced PM2.5 by 19 percent.
+    -   Xie et al. (2024) found that 15 subway openings in China reduced PM2.5 by 19 percent.
 
--   Fageda (2021) is the only study that used a quasi-experimental research design to estimate the impact of **light rail** openings across 98 European cities, and found a small reduction of 3 percent.
+-   Fageda (2021) is the only study that used a quasi-experimental research design to estimate the impact of **light rail** openings across 98 European cities and found a slight reduction of 3 percent.
 
 ## Hypothesis {.smaller}
 
--   Light rail openings in the US will cause a substitution between people driving their own cars or taking buses to using the light rail, reducing air pollution.
+-   Light rail openings in the US will cause a substitution between people driving their own cars or taking buses to use the light rail, reducing air pollution.
 
--   We expect to see smaller decrease than 3 percent as:
+-   We expect to see a smaller decrease than 3 percent as:
 
     -   The US population drives more cars than Europe.
 
-    -   We removed data from light rail construction period, which can increase pollution prior light rail opening, from our analysis.
+    -   We removed data from the light rail construction period, which can increase pollution before the light rail opening.
 
-![](images/timetrend.png){fig-align="center" width="60%"}
+![](images/timetrend.png){fig-align="center" width="50%"}
 
 ## Data {.smaller}
 
--   Daily PM2.5, from the years 2000 to 2016 with 1 km x 1 km grid resolution from Di et al. (2019).
+-   Daily PM2.5, from 2000 to 2016, with 1 km x 1 km grid resolution from Di et al. (2019).
 
 -   47 land surface meteorological variables with 25 km x 25 km grid resolution from NASA GLDAS 2.
 
 -   Treated city selection criteria
 
-    -   Light rail construction period must start a few years after 2000.
+    -   The light rail construction period must start a few years after 2000.
 
     -   Buses were the primary public transit mode before the light rail opened.
 
@@ -78,9 +78,9 @@ Have past light rail openings lead to a decrease in air pollution?
 
 ## Research Design {.smaller}
 
--   Previous studies on subway's impact on air pollution (Chen and Whalley, 2012; Gendron-Carrier et al., 2022; Xie et al., 2024) used Discontinuity-Based OLS as there was instant uptake in ridership.
+-   Previous studies on the subway's impact on air pollution (Chen and Whalley, 2012; Gendron-Carrier et al., 2022; Xie et al., 2024) used Discontinuity-Based OLS as there was instant uptake in ridership.
 
--   We will use **difference-in-difference** as light rail ridership gradually increased treated cities.
+-   We will use **difference-in-difference** as light rail ridership gradually increases in treated cities.
 
 ::::: columns
 ::: {.column width="42%"}
@@ -94,7 +94,7 @@ Have past light rail openings lead to a decrease in air pollution?
 
 ## Treated Area
 
--   We indicate potential highways that are the light rails serve as a substitute, and draw 1.5 km buffers around each highway.
+-   We indicate potential highways where the light rails are substitutes and draw 1.5 km buffers around each highway.
 
 -   We then find the average daily PM2.5 and meteorological variables within those areas.
 
@@ -110,17 +110,17 @@ Have past light rail openings lead to a decrease in air pollution?
 
 ## Untreated Area
 
-For each control city, we find cities with no light rails, no subways, and similar public transportation profiles.
+-   For each treated city, we select untreated cities with no light rails and no subways but similar shares of buses and taxis.
 
 ![](images/ntd_before_after.png){fig-align="center" width="80%"}
 
 ## Untreated Area
 
--   For each untreated city, we crop interstates within 30 km radius of each city, and created 1 km buffers around each cropped interstate.
+-   For each untreated city, we crop interstates within a 30 km radius of each city and create 1 km buffers around each cropped interstate.
 
--   We then find the daily average PM2.5 and meteorology values within each city's interstate buffers.
+-   We find the daily average PM2.5 and meteorology values within each city's interstate buffers.
 
-![](images/charlotte_cntrl_roads.png){fig-align="center" width="50%"}
+![](images/charlotte_cntrl_roads2.png){fig-align="center" width="80%"}
 
 ## Parallel Trends
 
@@ -138,19 +138,17 @@ For each control city, we find cities with no light rails, no subways, and simil
 
 First, we ran regressions separately for Charlotte, NC and its control cities, and Phoenix-Mesa, AZ and its control cities. Our regression specification is:
 
-$P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$
+$P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$
 
 -   where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day $t$.
 
 -   $D_i$ is a dummy variable that is equal to one when city $i$ is the city with a light rail system.
 
--   $Open_t = 1$ when the light rail system in the treated city has opened and $Open_t = 0$ before construction has started.
+-   $Operating_t = 1$ when the light rail system in the treated city has opened and $Operating_t = 0$ before construction has started.
 
 -   $W_{it}$ includes 47 meteorological control variables.
 
--   $\alpha_i$ are city fixed effects.
-
--   $\mu_{it}$ are day of week-city fixed effects.
+-   $\alpha_i$ are city fixed effects. $\mu_{it}$ are day of week-city fixed effects.
 
 -   $\kappa_{t}$ are month fixed effects.
 
@@ -162,9 +160,9 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
    \centering
    \begin{tabular}{lcccccc}
       \tabularnewline \midrule \midrule
+      Dependent Variable: & \multicolumn{6}{c}{PM2.5}\\      
       Treated City        & \multicolumn{3}{c}{Charlotte, NC} & \multicolumn{3}{c}{Phoenix-Mesa, AZ} \\
-      Dependent Variable: & \multicolumn{6}{c}{PM2.5}\\
-      Model:                        & (1)          & (2)          & (3) & (4)           & (5)          & (6)\\  \\  
+      Model:                        & (1)          & (2)          & (3) & (4)           & (5)          & (6)\\
       \midrule
       \emph{Variables}\\
       operating                     & -4.1$^{***}$ & -4.2$^{***}$ & -4.1$^{***}$ & -0.42$^{***}$ & -0.48$^{**}$ & -0.43$^{***}$\\   
@@ -193,30 +191,33 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
 \tiny
 \begin{table}[htbp]
    \centering
-   \begin{tabular}{lcc}
+   \begin{tabular}{lll}
       \tabularnewline \midrule \midrule
-      Treated City        & Charlotte, NC & Phoenix-Mesa, AZ \\
       Dependent Variable: & \multicolumn{2}{c}{PM2.5} \\  
+      Treated City        & Charlotte, NC & Phoenix-Mesa, AZ \\
       \midrule
      \emph{Variables}\\
-      operating $\times$ dowFriday                         & -4.1$^{***}$ (0.20)     & -0.57$^{*}$ (0.17)\\   
-      operating $\times$ dowMonday                         & -4.0$^{***}$ (0.25)    & -0.27$^{*}$ (0.09)\\    
-      operating $\times$ dowSaturday                       & -4.1$^{***}$ (0.31)    & -0.24 (0.16)\\      
-      operating $\times$ dowSunday                         & -3.8$^{***}$ (0.25)    & -0.11$^{**}$ (0.02)\\     
-      operating $\times$ dowThursday                       & -4.2$^{***}$ (0.21)    & -0.72$^{***}$ (0.02)\\   
-      operating $\times$ dowTuesday                        & -3.8$^{***}$ (0.25)    & -0.45 (0.20)\\    
-      operating $\times$ dowWednesday                      & -4.6$^{***}$ (0.23)    & -0.63$^{***}$ (0.03)\\   
-      operating $\times$ treatcity $\times$ dowFriday      & -0.28 (0.21)           & -0.10 (0.15)\\   
-      operating $\times$ treatcity $\times$ dowMonday      & 0.03 (0.26)            & -0.97$^{**}$ (0.14)\\   
-      operating $\times$ treatcity $\times$ dowSaturday    & -0.16 (0.32)           & -0.09 (0.12)\\   
-      operating $\times$ treatcity $\times$ dowSunday      & -0.09 (0.28)           & 0.11 (0.08)\\    
-      operating $\times$ treatcity $\times$ dowThursday    & -0.51$^{*}$ (0.24)       & -0.32$^{*}$ (0.08)\\   
-      operating $\times$ treatcity $\times$ dowTuesday     & -0.35 (0.25)               & -0.69$^{*}$ (0.23)\\     
-      operating $\times$ treatcity $\times$ dowWednesday   & -0.62$^{**}$ (0.25)        & -0.63$^{**}$ (0.08)\\   
+     operating $\times$ Monday                         & -4.0$^{***}$ (0.25)    & -0.27$^{*}$ (0.09)\\    
+     operating $\times$ Tuesday                        & -3.8$^{***}$ (0.25)    & -0.45 (0.20)\\    
+      operating $\times$ Wednesday                      & -4.6$^{***}$ (0.23)    & -0.63$^{***}$ (0.03)\\   
+     operating $\times$ Thursday                       & -4.2$^{***}$ (0.21)    & -0.72$^{***}$ (0.02)\\   
+      operating $\times$ Friday                         & -4.1$^{***}$ (0.20)     & -0.57$^{*}$ (0.17)\\   
+       operating $\times$ Saturday                       & -4.1$^{***}$ (0.31)    & -0.24 (0.16)\\      
+      operating $\times$ Sunday                         & -3.8$^{***}$ (0.25)    & -0.11$^{**}$ (0.02)\\     
+      
+       operating $\times$ treatcity $\times$ Monday      & 0.03 (0.26)            & -0.97$^{**}$ (0.14)\\   
+      operating $\times$ treatcity $\times$ Tuesday     & -0.35 (0.25)               & -0.69$^{*}$ (0.23)\\     
+      operating $\times$ treatcity $\times$ Wednesday   & -0.62$^{**}$ (0.25)        & -0.63$^{**}$ (0.08)\\   
+        operating $\times$ treatcity $\times$ Thursday    & -0.51$^{*}$ (0.24)       & -0.32$^{*}$ (0.08)\\   
+      operating $\times$ treatcity $\times$ Friday      & -0.28 (0.21)           & -0.10 (0.15)\\   
+      operating $\times$ treatcity $\times$ Saturday    & -0.16 (0.32)           & -0.09 (0.12)\\   
+      operating $\times$ treatcity $\times$ Sunday      & -0.09 (0.28)           & 0.11 (0.08)\\    
+    
+     
       \midrule
       \emph{Fixed-effects}\\
-      dow\_a                                               & Yes & Yes\\  
-      Address                                              & Yes & Yes\\  
+      day of week-city                                               & Yes & Yes\\  
+      city                                              & Yes & Yes\\  
       month                                                & Yes & Yes\\  
       \midrule
       Observations                                         & 26,194 & 9,867\\ 
@@ -231,11 +232,11 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
 ## DiD with Two Treated Cities Combined {.smaller}
 
 ::::: columns
-::: {.column width="50%"}
+::: {.column width="40%"}
 ![](images/timeline.png){fig-align="center" width="100%"}
 :::
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 ```{=latex}
 \tiny
 \begin{table}[htbp]
@@ -278,23 +279,25 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
    \begin{tabular}{lc}
       \tabularnewline \midrule \midrule
       Dependent Variable:                                  & PM2.5\\  
-      Model:                                               & (1)\\  
       \midrule
       \emph{Variables}\\
-      operating $\times$ dowFriday                         & -3.5$^{***}$ (0.59)\\   
-      operating $\times$ dowMonday                         & -3.3$^{***}$ (0.60)\\   
-      operating $\times$ dowSaturday                       & -3.5$^{***}$ (0.67)\\   
-      operating $\times$ dowSunday                         & -3.2$^{***}$ (0.60)\\   
-      operating $\times$ dowThursday                       & -3.6$^{***}$ (0.55)\\   
-      operating $\times$ dowTuesday                        & -3.2$^{***}$ (0.55)\\   
-      operating $\times$ dowWednesday                      & -3.8$^{***}$ (0.64)\\   
-      operating $\times$ treatcity $\times$ dowFriday      & 0.81 (1.5)\\   
-      operating $\times$ treatcity $\times$ dowMonday      & 0.53 (1.1)\\   
-      operating $\times$ treatcity $\times$ dowSaturday    & 0.94 (1.6)\\   
-      operating $\times$ treatcity $\times$ dowSunday      & 0.89 (1.6)\\   
-      operating $\times$ treatcity $\times$ dowThursday    & 0.46 (1.5)\\   
-      operating $\times$ treatcity $\times$ dowTuesday     & 0.41 (1.3)\\   
-      operating $\times$ treatcity $\times$ dowWednesday   & 0.47 (1.6)\\   
+      operating $\times$ Monday                         & -3.3$^{***}$ (0.60)\\   
+      operating $\times$ Tuesday                        & -3.2$^{***}$ (0.55)\\   
+      operating $\times$ Wednesday                      & -3.8$^{***}$ (0.64)\\  
+      operating $\times$ Thursday                       & -3.6$^{***}$ (0.55)\\   
+      operating $\times$ Friday                         & -3.5$^{***}$ (0.59)\\   
+      operating $\times$ Saturday                       & -3.5$^{***}$ (0.67)\\   
+      operating $\times$ Sunday                         & -3.2$^{***}$ (0.60)\\   
+      
+      operating $\times$ treatcity $\times$ Monday      & 0.53 (1.1)\\   
+      operating $\times$ treatcity $\times$ Tuesday     & 0.41 (1.3)\\   
+      operating $\times$ treatcity $\times$ Wednesday   & 0.47 (1.6)\\   
+      operating $\times$ treatcity $\times$ Thursday    & 0.46 (1.5)\\   
+      operating $\times$ treatcity $\times$ Friday      & 0.81 (1.5)\\   
+      operating $\times$ treatcity $\times$ Saturday    & 0.94 (1.6)\\   
+      operating $\times$ treatcity $\times$ Sunday      & 0.89 (1.6)\\   
+     
+      
       \midrule
       \emph{Fixed-effects}\\
       day of week-city                                               & Yes\\  
@@ -310,22 +313,28 @@ $P_{it}=\gamma (D_i \times Open_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kapp
 \end{table}
 ```
 
-## Results Summary {.smaller}
+## Conclusion {.smaller}
 
--   Although we found reductions on weekdays when analyzing the two cities separately, we do not see the same results when all our data are combined.
+-   Although we found reductions on weekdays when analyzing the two cities separately, we did not see the same results when all our data were combined.
 
--   Data from the American Community Survey showed that very few people above the age of 16 used the light rail to commute to work.
+-   Factors that may confound our results are changes in the attainment status of the treated counties:
+
+    -   Maricopa County, where Phoenix is, no longer had a non-attainment status for 1-hour O3 and CO from 2005.
+
+    -   Mecklenburg County, where Charlotte is, had non-attainment for 8-hour O3 starting in 2004.
+
+## Conclusion {.smaller}
+
+-   Our results confirm findings from Duranton and Turner (2011) that changes in the provision of public transportation do not impact vehicle kilometers traveled.
+
+-   The American Community Surveys showed that very few people above 16 used the light rail to commute to work.
 
 ![](images/acs.png){fig-align="center" width="70%"}
 
 ## Future Work {.smaller}
 
--   Since there are only two treated cities, there is low cross-sectional variation, leading to an underestimation of standard errors.
+-   Our standard errors may be underestimated because we only have 10 cities and 10 clusters.
 
--   We are exploring using synthetic control to recalculate the impacts.
+    -   We are exploring using synthetic control to recalculate the impacts or
 
--   Factors that may confound with our results are changes in attainment status of the treated counties:
-
--   Maricopa County, where Phoenix is in, no longer had non-attainment status for 1-hour O3 and CO from 2005.
-
--   Mecklenberg County, where Charlotte is in, had non-attainment for 8-hour O3 starting 2004.
+    -   Increase the number of treated cities by including Minneapolis, MN, and Houston, TX. However, light rail construction in those cities began mid-2001, making our pre-treatment period very small.
