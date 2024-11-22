@@ -86,7 +86,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 -   We will use **difference-in-difference** as light rail ridership gradually increases in treated cities.
 
-::::: columns
+::: columns
 ::: {.column width="42%"}
 ![](images/chen_whalley.png){width="100%"}
 :::
@@ -94,7 +94,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 ::: {.column width="58%"}
 ![](images/ridership.png){width="100%"}
 :::
-:::::
+:::
 
 ## Treated Area
 
@@ -102,7 +102,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 -   We then find the average daily PM2.5 and meteorological variables within those areas.
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/treated_nc.png){width="100%"}
 :::
@@ -110,7 +110,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 ::: {.column width="50%"}
 ![](images/treated_az.png){width="100%"}
 :::
-:::::
+:::
 
 ## Untreated Area
 
@@ -128,7 +128,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 ## Parallel Trends
 
-::::: columns
+::: columns
 ::: {.column width="50%"}
 ![](images/nc_parallel.png){width="100%"}
 :::
@@ -136,15 +136,20 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 ::: {.column width="50%"}
 ![](images/az_parallel.png){width="100%"}
 :::
-:::::
+:::
 
 ## DiD Specification {.smaller}
 
 First, we ran regressions separately for Charlotte, NC and its control cities, and Phoenix-Mesa, AZ and its control cities. Our regression specification is:
 
-$P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$
+```{=latex}
+\footnotesize{$P_{it}=\gamma (D_i \times Operating_t) + \beta Operating_{it} +  
+W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
 
--   where $P_{it}$ are PM2.5 levels (in ug/m3) for each city $i$ and day $t$.
+
+```
+
+-   where $P_{it}$ are PM2.5 levels (in ug/m3) for city $i$ and day $t$.
 
 -   $D_i$ is a dummy variable that is equal to one when city $i$ is the city with a light rail system.
 
@@ -187,7 +192,6 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
    \end{tabular}
 \end{table}
 ```
-
 ## DiD Results for Two Cities Separately {.smaller}
 
 ```{=latex}
@@ -227,10 +231,9 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
    \end{tabular}
 \end{table}
 ```
-
 ## DiD with Two Treated Cities Combined {.smaller}
 
-::::: columns
+::: columns
 ::: {.column width="40%"}
 ![](images/timeline.png){fig-align="center" width="100%"}
 :::
@@ -265,7 +268,7 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
 \end{table}
 ```
 :::
-:::::
+:::
 
 ## DiD with Two Treated Cities, Each Day of the Week {.smaller}
 
@@ -309,7 +312,6 @@ $P_{it}=\gamma (D_i \times Operating_t) + W'_{it} \beta + \alpha_i + \mu_{it} + 
    \end{tabular}
 \end{table}
 ```
-
 ## Conclusion {.smaller}
 
 -   Although we found reductions on weekdays when analyzing the two cities separately, we did not see the same results when all our data were combined.

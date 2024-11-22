@@ -91,6 +91,8 @@ ggplot(data=pm_cntrl, aes(y=pm25, x=date, col=Address)) +
            ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
   annotate("rect", xmin = as.Date("2012-12-01"), xmax = maxdate, 
            ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
+  annotate("text", x=as.Date("2003-01-01"), y=25, label= "Operating=0") +
+  annotate("text", x=as.Date("2010-06-01"), y=25, label= "Operating=1") +
   theme_bw() + 
   ylab("PM2.5 (in ug/m3)") + 
   xlab("Date") + 
@@ -139,6 +141,8 @@ ggplot(data=pm_cntrl, aes(y=pm25, x=date, col=Address)) +
            ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
   annotate("rect", xmin = as.Date("2012-07-01"), xmax = maxdate, 
            ymin = 0, ymax = 25, alpha = .5,fill = "grey")+
+  annotate("text", x=as.Date("2003-01-01"), y=25, label= "Operating=0") +
+  annotate("text", x=as.Date("2010-06-01"), y=25, label= "Operating=1") +
   theme_bw() + 
   ylab("PM2.5 (in ug/m3)") + 
   xlab("Date") + 
