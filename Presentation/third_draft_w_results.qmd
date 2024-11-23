@@ -86,7 +86,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 -   We will use **difference-in-difference** as light rail ridership gradually increases in treated cities.
 
-::: columns
+::::: columns
 ::: {.column width="42%"}
 ![](images/chen_whalley.png){width="100%"}
 :::
@@ -94,7 +94,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 ::: {.column width="58%"}
 ![](images/ridership.png){width="100%"}
 :::
-:::
+:::::
 
 ## Treated Area
 
@@ -102,7 +102,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 -   We then find the average daily PM2.5 and meteorological variables within those areas.
 
-::: columns
+::::: columns
 ::: {.column width="50%"}
 ![](images/treated_nc.png){width="100%"}
 :::
@@ -110,7 +110,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 ::: {.column width="50%"}
 ![](images/treated_az.png){width="100%"}
 :::
-:::
+:::::
 
 ## Untreated Area
 
@@ -128,7 +128,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 
 ## Parallel Trends
 
-::: columns
+::::: columns
 ::: {.column width="50%"}
 ![](images/nc_parallel.png){width="100%"}
 :::
@@ -136,7 +136,7 @@ The purple line, a new light rail system north of DC, is scheduled to open in la
 ::: {.column width="50%"}
 ![](images/az_parallel.png){width="100%"}
 :::
-:::
+:::::
 
 ## DiD Specification {.smaller}
 
@@ -145,7 +145,6 @@ First, we ran regressions separately for Charlotte, NC and its control cities, a
 ```{=latex}
 \footnotesize{$P_{it}=\gamma (D_i \times Operating_t) + \beta Operating_{it} +  
 W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
-
 
 ```
 
@@ -192,6 +191,7 @@ W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
    \end{tabular}
 \end{table}
 ```
+
 ## DiD Results for Two Cities Separately {.smaller}
 
 ```{=latex}
@@ -231,9 +231,10 @@ W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
    \end{tabular}
 \end{table}
 ```
+
 ## DiD with Two Treated Cities Combined {.smaller}
 
-::: columns
+::::: columns
 ::: {.column width="40%"}
 ![](images/timeline.png){fig-align="center" width="100%"}
 :::
@@ -268,7 +269,7 @@ W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
 \end{table}
 ```
 :::
-:::
+:::::
 
 ## DiD with Two Treated Cities, Each Day of the Week {.smaller}
 
@@ -312,6 +313,7 @@ W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
    \end{tabular}
 \end{table}
 ```
+
 ## Conclusion {.smaller}
 
 -   Although we found reductions on weekdays when analyzing the two cities separately, we did not see the same results when all our data were combined.
@@ -334,6 +336,6 @@ W'_{it} \theta + \alpha_i + \mu_{it} + \kappa_{t} + \epsilon{it}$}
 
 -   Our standard errors may be underestimated because we only have 10 cities and 10 clusters.
 
-    -   We are exploring using synthetic control to recalculate the impacts or
+    -   We are exploring using synthetic control to recalculate the impacts of light rail system openings on air pollution.
 
     -   Increase the number of treated cities by including Minneapolis, MN, and Houston, TX. However, light rail construction in those cities began mid-2001, making our pre-treatment period very small.
